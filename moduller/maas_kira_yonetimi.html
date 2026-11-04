@@ -1,0 +1,2700 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maaş ve Kira Takip Sistemi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; transition: background-color 0.2s, color 0.2s; }
+        
+        /* Light Theme */
+        body.light { background-color: #f8fafc; color: #0f172a; }
+        body.light .ui-card { background-color: #ffffff; border-color: #e2e8f0; color: #0f172a; }
+        body.light .ui-sidebar { background-color: #ffffff; border-color: #e2e8f0; }
+        body.light .ui-input { background-color: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+        body.light .ui-header-subtle { background-color: rgba(248, 250, 252, 0.9); border-color: #e2e8f0; }
+        body.light .ui-subtle-box { background-color: #f1f5f9; border-color: #e2e8f0; }
+        body.light .ui-muted { color: #64748b; }
+        body.light .ui-hover-row:hover { background-color: #f8fafc; }
+        body.light .sidebar-item.active { background-color: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+        body.light .sidebar-item:not(.active) { color: #475569; }
+        body.light .sidebar-item:not(.active):hover { color: #0f172a; background-color: #f1f5f9; }
+
+        /* Dark Theme */
+        body.dark { background-color: #0b1120; color: #f8fafc; }
+        body.dark .ui-card { background-color: #1e293b; border-color: #334155; color: #f8fafc; }
+        body.dark .ui-sidebar { background-color: #111827; border-color: #1f2937; }
+        body.dark .ui-input { background-color: #0f172a; border-color: #334155; color: #ffffff; }
+        body.dark .ui-header-subtle { background-color: rgba(17, 24, 39, 0.9); border-color: #334155; }
+        body.dark .ui-subtle-box { background-color: #0f172a; border-color: #334155; }
+        body.dark .ui-muted { color: #94a3b8; }
+        body.dark .ui-hover-row:hover { background-color: rgba(51, 65, 85, 0.4); }
+        body.dark .sidebar-item.active { background-color: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+        body.dark .sidebar-item:not(.active) { color: #94a3b8; }
+        body.dark .sidebar-item:not(.active):hover { color: #ffffff; background-color: #1f2937; }
+
+        /* Toast animation */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-item { animation: slideInRight 0.3s ease-out forwards; }
+
+        /* Print styles */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            aside { display: none !important; }
+            main { padding: 0 !important; width: 100% !important; max-width: 100% !important; }
+            .print-receipt-only {
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: white !important;
+                z-index: 9999 !important;
+                padding: 20px !important;
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="light min-h-screen flex antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- ======================================================== -->
+    <!-- TOAST NOTIFICATION CONTAINER                             -->
+    <!-- ======================================================== -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+    <!-- ======================================================== -->
+    <!-- GİRİŞ EKRANI (HER AÇILIŞTA GÖRÜNÜR)                      -->
+    <!-- ======================================================== -->
+    <div id="authScreen" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="ui-card rounded-3xl max-w-md w-full p-8 shadow-2xl border text-center relative overflow-hidden">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-indigo-500/25">
+                <i class="fa-solid fa-vault text-2xl"></i>
+            </div>
+            
+            <h2 id="loginCompanyTitle" class="text-xl font-black tracking-tight">Dugan Şirketler Grubu</h2>
+            <p id="loginCompanySubtitle" class="text-xs ui-muted mt-1 font-medium">Personel Maaş & Kira Yönetim Sistemi</p>
+
+            <form onsubmit="handleLogin(event)" class="mt-6 space-y-4 text-left text-xs">
+                <div>
+                    <label class="block font-bold mb-1.5">Kullanıcı Adı:</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="loginUsername" required autocomplete="username" placeholder="Kullanıcı adınızı girin..." class="ui-input w-full border rounded-xl pl-10 pr-4 py-2.5 font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1.5">Şifre:</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Şifrenizi girin..." class="ui-input w-full border rounded-xl pl-10 pr-10 py-2.5 font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'eyeIconLogin')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-indigo-500 transition" title="Şifreyi Göster / Gizle">
+                            <i id="eyeIconLogin" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-500/25 active:scale-95 flex items-center justify-center gap-2 text-sm mt-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Sisteme Giriş Yap</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- KOMUT & HIZLI ARAMA PALETİ (CTRL + K)                    -->
+    <!-- ======================================================== -->
+    <div id="modalSearch" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-start justify-center pt-20 p-4">
+        <div class="ui-card rounded-2xl max-w-xl w-full border shadow-2xl overflow-hidden">
+            <div class="p-4 border-b border-inherit flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-indigo-500 text-lg"></i>
+                <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Personel ara, işlem yap veya sekmeye git... (Örn: Mehmet)" class="bg-transparent border-none outline-none w-full font-bold text-sm">
+                <button onclick="closeModal('modalSearch')" class="ui-muted hover:text-rose-500 text-xs px-2 py-1 ui-subtle-box rounded border">ESC</button>
+            </div>
+            <div id="searchResults" class="p-3 max-h-80 overflow-y-auto space-y-1 text-xs">
+                <!-- Dinamik Arama Sonuçları -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SOL YAN MENÜ (LEFT SIDEBAR - SADE VE TEMİZ)              -->
+    <!-- ======================================================== -->
+    <aside id="mainSidebar" class="ui-sidebar w-64 border-r flex flex-col justify-between shrink-0 h-screen sticky top-0 no-print z-20 shadow-sm">
+        
+        <!-- Üst Kısım: Kurum Logo ve Başlığı -->
+        <div class="p-5 border-b border-inherit space-y-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
+                    <i class="fa-solid fa-building-user text-lg"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <h1 id="sidebarCompanyName" class="text-sm font-extrabold leading-tight truncate">Dugan Şirketler Grubu</h1>
+                    <span id="sidebarCompanySub" class="text-[10px] font-bold text-indigo-500 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 truncate block mt-0.5">MAAŞ & KİRA TAKİP</span>
+                </div>
+            </div>
+
+            <!-- Hızlı Arama Butonu (Ctrl + K) -->
+            <button onclick="openModal('modalSearch')" class="w-full flex items-center justify-between p-2 ui-subtle-box hover:border-indigo-500 rounded-xl border text-xs ui-muted transition">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-[11px] text-indigo-500"></i>
+                    <span>Hızlı Arama...</span>
+                </div>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700">Ctrl+K</span>
+            </button>
+        </div>
+
+        <!-- Orta Kısım: Sadece 4 Temel Operasyonel Sekme -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-1.5">
+            <div class="text-[10px] font-extrabold ui-muted uppercase tracking-wider px-3 mb-2">OPERASYON MENÜSÜ</div>
+
+            <button onclick="switchTab('aylik-takip')" id="side-tab-aylik-takip" class="sidebar-item active w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition">
+                <i class="fa-solid fa-calendar-check w-4 text-center text-sm"></i>
+                <span>1. Aylık Takip</span>
+            </button>
+
+            <button onclick="switchTab('ana-tahakkuk')" id="side-tab-ana-tahakkuk" class="sidebar-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-users w-4 text-center text-sm"></i>
+                <span>2. Ana Tahakkuk (Kadro)</span>
+            </button>
+
+            <button onclick="switchTab('zam')" id="side-tab-zam" class="sidebar-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-arrow-trend-up w-4 text-center text-sm"></i>
+                <span>3. Zam İşlemleri</span>
+            </button>
+
+            <button onclick="switchTab('odeme-gecmisi')" id="side-tab-odeme-gecmisi" class="sidebar-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-receipt w-4 text-center text-sm"></i>
+                <span>4. Ödeme Geçmişi</span>
+            </button>
+        </div>
+
+        <!-- Alt Kısım: Hızlı Aksiyonlar, Ayarlar ve Profil -->
+        <div class="p-4 border-t border-inherit space-y-2.5">
+            <!-- 3 Hızlı İşlem Butonu -->
+            <button onclick="openModal('modalPayment')" class="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm shadow-emerald-500/20 transition active:scale-95">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>+ Ödeme Gir</span>
+            </button>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="openModal('modalChange')" class="flex items-center justify-center gap-1.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-bold shadow-sm shadow-indigo-500/20 transition active:scale-95">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                    <span>Zam Yap</span>
+                </button>
+                <button onclick="openModal('modalPerson')" class="ui-card flex items-center justify-center gap-1.5 py-2 border rounded-xl text-[11px] font-bold transition active:scale-95">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Personel</span>
+                </button>
+            </div>
+
+            <!-- Ayarlar Butonu -->
+            <button onclick="switchTab('ayarlar')" id="side-tab-ayarlar" class="sidebar-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition border border-inherit">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-gear text-indigo-500"></i>
+                    <span>Sistem Ayarları</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-[10px] ui-muted"></i>
+            </button>
+
+            <!-- Kullanıcı Kartı & Çıkış -->
+            <div class="flex items-center justify-between p-2 ui-subtle-box rounded-xl border">
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-user-check text-xs"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <div id="userBadgeName" class="text-xs font-bold truncate">admin</div>
+                        <div class="text-[9px] ui-muted font-medium">Aktif Oturum</div>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" title="Oturumu Kapat (Giriş Ekranına Dön)" class="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ======================================================== -->
+    <!-- SAĞ ANA İÇERİK ALANI                                     -->
+    <!-- ======================================================== -->
+    <main class="flex-1 h-screen overflow-y-auto p-6 md:p-8 space-y-6">
+
+        <!-- ========================================== -->
+        <!-- SEKME 1: AYLIK TAKİP                       -->
+        <!-- ========================================== -->
+        <section id="tab-aylik-takip" class="space-y-6">
+            
+            <!-- ÜST BAR: DÖNEM SEÇİCİ VE FİLTRE -->
+            <div class="ui-card p-4 rounded-2xl border shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold ui-muted uppercase tracking-wider">İncelenen Dönem:</span>
+                    <div class="flex items-center gap-2 ui-subtle-box p-1.5 rounded-xl border">
+                        <i class="fa-regular fa-calendar-days text-indigo-600 ml-2"></i>
+                        <select id="selectYear" class="ui-input font-bold text-sm py-1 px-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                        <span class="ui-muted font-bold">/</span>
+                        <select id="selectMonth" class="ui-input font-bold text-sm py-1 px-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="1">01 - Ocak</option>
+                            <option value="2">02 - Şubat</option>
+                            <option value="3">03 - Mart</option>
+                            <option value="4">04 - Nisan</option>
+                            <option value="5">05 - Mayıs</option>
+                            <option value="6">06 - Haziran</option>
+                            <option value="7">07 - Temmuz</option>
+                            <option value="8">08 - Ağustos</option>
+                            <option value="9">09 - Eylül</option>
+                            <option value="10" selected>10 - Ekim</option>
+                            <option value="11">11 - Kasım</option>
+                            <option value="12">12 - Aralık</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Görünüm Filtresi & Grafik Göster/Gizle -->
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleCharts()" id="btnToggleCharts" class="px-3 py-1.5 text-xs font-bold rounded-xl ui-subtle-box border hover:border-indigo-500 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-indigo-500"></i>
+                        <span id="txtToggleCharts">Grafikleri Göster</span>
+                    </button>
+                    <div class="flex items-center gap-1.5 ui-subtle-box p-1.5 rounded-xl border">
+                        <button onclick="setDashboardView('all')" id="btnViewAll" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition">Tümü</button>
+                        <button onclick="setDashboardView('salary')" id="btnViewSalary" class="px-3 py-1.5 text-xs font-bold rounded-lg ui-muted hover:text-indigo-500 transition dynamic-label-salary-btn">Sadece Maaş</button>
+                        <button onclick="setDashboardView('rent')" id="btnViewRent" class="px-3 py-1.5 text-xs font-bold rounded-lg ui-muted hover:text-indigo-500 transition dynamic-label-rent-btn">Sadece Kira</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 ADET DEV HAP BİLGİ KARTI -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 1. Hak Ediş / Maaş -->
+                <div class="ui-card p-5 rounded-2xl border shadow-sm relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold ui-muted uppercase tracking-wide dynamic-label-total-term">Bu Ayın Toplamı</span>
+                        <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-briefcase"></i></span>
+                    </div>
+                    <div id="kpi-current-accrual" class="text-2xl font-black mt-2">0 ₺</div>
+                    <p class="text-xs ui-muted mt-1 font-medium">Seçili ayın toplam hak ediş tutarı</p>
+                </div>
+
+                <!-- 2. Ödenen -->
+                <div class="ui-card p-5 rounded-2xl border shadow-sm relative overflow-hidden border-emerald-500/30 bg-emerald-500/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wide">Bu Ay Ödenen</span>
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-check"></i></span>
+                    </div>
+                    <div id="kpi-current-paid" class="text-2xl font-black text-emerald-600 mt-2">0 ₺</div>
+                    <div class="text-xs text-emerald-600 mt-1 font-semibold flex items-center gap-3">
+                        <span>🏦 Banka: <b id="kpi-channel-bank">0 ₺</b></span>
+                        <span>💵 Nakit: <b id="kpi-channel-cash">0 ₺</b></span>
+                    </div>
+                </div>
+
+                <!-- 3. Devreden Borç -->
+                <div class="ui-card p-5 rounded-2xl border shadow-sm relative overflow-hidden border-amber-500/30 bg-amber-500/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-amber-600 uppercase tracking-wide">Geçmişten Devreden</span>
+                        <span class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                    </div>
+                    <div id="kpi-prior-debt" class="text-2xl font-black text-amber-600 mt-2">0 ₺</div>
+                    <p class="text-xs text-amber-600/80 mt-1 font-medium">Önceki aylardan kalan eksik ödemeler</p>
+                </div>
+
+                <!-- 4. Toplam Kalan Borç -->
+                <div class="ui-card p-5 rounded-2xl border shadow-sm relative overflow-hidden border-rose-500/30 bg-rose-500/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-rose-600 uppercase tracking-wide">Kapatılacak Toplam Borç</span>
+                        <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                    </div>
+                    <div id="kpi-total-debt" class="text-2xl font-black text-rose-600 mt-2">0 ₺</div>
+                    <p class="text-xs text-rose-600/80 mt-1 font-semibold">Devir + Bu ay kalan net açık</p>
+                </div>
+            </div>
+
+            <!-- GRAFİK BÖLÜMÜ (İSTEĞE BAĞLI GÖSTER/GİZLE) -->
+            <div id="chartsSection" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider">Aylık Bütçe Kalem Dağılımı</h3>
+                        <span class="text-[10px] ui-muted">Oransal Pasta</span>
+                    </div>
+                    <div class="h-56 flex items-center justify-center">
+                        <canvas id="chartDonut"></canvas>
+                    </div>
+                </div>
+
+                <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider">Hak Ediş vs Ödeme Karşılaştırması</h3>
+                        <span class="text-[10px] ui-muted">Aylık Barlar</span>
+                    </div>
+                    <div class="h-56 flex items-center justify-center">
+                        <canvas id="chartBar"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AYLIK DURUM VE PERSONEL LİSTESİ -->
+            <div class="ui-card rounded-2xl border shadow-sm overflow-hidden">
+                <div class="px-6 py-4 ui-header-subtle border-b flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold tracking-tight flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                            DÖNEMLİK PERSONEL HESAP VE MUTABAKAT LİSTESİ
+                        </h2>
+                        <p class="text-xs ui-muted mt-0.5">Seçili aydaki personellerin ödeme ve bakiye durumu</p>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 ui-subtle-box border rounded-lg" id="tablePeriodLabel">Dönem: 2026-10</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="ui-subtle-box ui-muted border-b text-[11px] uppercase tracking-wider font-bold">
+                                <th class="py-3 px-4">Personel</th>
+                                <th class="py-3 px-4 text-right">Geçmiş Devreden</th>
+                                <th class="py-3 px-4 text-right dynamic-label-total-term-th">Bu Ay Hak Ediş</th>
+                                <th class="py-3 px-4 text-right text-emerald-600">Bu Ay Ödenen</th>
+                                <th class="py-3 px-4 text-right">Bu Ay Kalan</th>
+                                <th class="py-3 px-4 text-right text-rose-600 font-extrabold">Kapatılacak Borç</th>
+                                <th class="py-3 px-4 text-center">Ödeme İlerlemesi</th>
+                                <th class="py-3 px-4 text-center">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardTableBody" class="divide-y divide-inherit font-medium">
+                            <!-- Dinamik satırlar -->
+                        </tbody>
+                        <tfoot id="dashboardTableFoot" class="ui-header-subtle font-bold border-t-2">
+                            <!-- Toplamlar -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEKME 2: ANA TAHAKKUK (KADRO VE SABİTLER) -->
+        <!-- ========================================== -->
+        <section id="tab-ana-tahakkuk" class="hidden space-y-6">
+            
+            <!-- HAP BİLGİ KARTLARI -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                    <span class="text-xs font-bold ui-muted uppercase tracking-wide">Kayıtlı Personel Sayısı</span>
+                    <div id="statTotalEmployees" class="text-2xl font-black mt-2">0 Kişi</div>
+                    <p class="text-xs ui-muted mt-1">Aktif kadro</p>
+                </div>
+                <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                    <span class="text-xs font-bold ui-muted uppercase tracking-wide dynamic-label-salary">Net Maaş Toplamı</span>
+                    <div id="statTotalSalary" class="text-2xl font-black text-indigo-500 mt-2">0 ₺</div>
+                    <p class="text-xs ui-muted mt-1">Sabit baz ödeme</p>
+                </div>
+                <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                    <span class="text-xs font-bold ui-muted uppercase tracking-wide dynamic-label-rent">Kira Desteği Toplamı</span>
+                    <div id="statTotalRent" class="text-2xl font-black text-emerald-600 mt-2">0 ₺</div>
+                    <p class="text-xs ui-muted mt-1">Kira karşılanan</p>
+                </div>
+                <div class="ui-card p-5 rounded-2xl border shadow-sm bg-slate-900 text-white">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wide dynamic-label-total-term">Aylık Toplam Sabit</span>
+                    <div id="statTotalPayroll" class="text-2xl font-black text-white mt-2">0 ₺</div>
+                    <p class="text-xs text-slate-400 mt-1">Maaş + Kira + Yardımlar</p>
+                </div>
+            </div>
+
+            <!-- GEÇMİŞ DÖNEM & BAŞLANGIÇ AYI YÖNETİMİ -->
+            <div class="ui-card p-4 rounded-2xl border shadow-sm flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-indigo-500/5 via-transparent to-transparent">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-sm">Takip Başlangıcı & Geçmiş Dönemleri Kapatma</h4>
+                        <p class="text-xs ui-muted mt-0.5">Geçmiş ayları ödediyseniz veya sisteme Ekim 2026'da başladıysanız tüm kadroyu tek tıkla senkronize edin.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold ui-muted">Tüm Kadroyu Başlat:</span>
+                    <input type="month" id="bulkStartMonth" value="2026-10" class="ui-input px-3 py-1.5 rounded-xl border text-xs font-bold">
+                    <button type="button" onclick="applyBulkStartMonth()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-sm active:scale-95">
+                        <i class="fa-solid fa-check-double mr-1.5"></i> Tüm Kadroyu Bu Aydan Başlat
+                    </button>
+                </div>
+            </div>
+
+            <!-- KADRO VE SABİT TAHAKKUK TABLOSU -->
+            <div class="ui-card rounded-2xl border shadow-sm overflow-hidden">
+                <div class="px-6 py-4 ui-header-subtle border-b flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold tracking-tight">KADRO & SABİT KALEM TANIMLARI</h2>
+                        <p class="text-xs ui-muted mt-0.5">Personellerin temel sözleşme tutarları (İsimlerini Sistem Ayarlarından serbestçe değiştirebilirsiniz)</p>
+                    </div>
+                    <button onclick="openModal('modalPerson')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                        <i class="fa-solid fa-plus-circle mr-1"></i> Yeni Personel Ekle
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="ui-subtle-box ui-muted border-b text-[11px] uppercase tracking-wider font-bold">
+                                <th class="py-3 px-4">Kod</th>
+                                <th class="py-3 px-4">Ad Soyad</th>
+                                <th class="py-3 px-4 text-right dynamic-label-salary-th">Net Maaş</th>
+                                <th class="py-3 px-4 text-right dynamic-label-rent-th">Ev Kirası</th>
+                                <th class="py-3 px-4 text-right dynamic-label-soc1-th">Sosyal Yardım 1</th>
+                                <th class="py-3 px-4 text-right dynamic-label-soc2-th">Sosyal Yardım 2</th>
+                                <th class="py-3 px-4 text-right font-extrabold text-indigo-500 dynamic-label-total-term-th">Aylık Toplam</th>
+                                <th class="py-3 px-4 text-center">Başlangıç & Devir</th>
+                                <th class="py-3 px-4 text-center">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personnelTableBody" class="divide-y divide-inherit font-medium">
+                            <!-- JS Doldurur -->
+                        </tbody>
+                        <tfoot id="personnelTableFoot" class="ui-header-subtle font-bold border-t-2">
+                            <!-- Toplamlar -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEKME 3: ZAM İŞLEMLERİ VE GEÇMİŞİ          -->
+        <!-- ========================================== -->
+        <section id="tab-zam" class="hidden space-y-6">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Sol Taraf: Hızlı Zam Yap Formu -->
+                <div class="ui-card p-6 rounded-2xl border shadow-sm h-fit">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-extrabold">Zam / Artış Uygula</h3>
+                            <p class="text-xs ui-muted">Dilediğiniz kaleme bağımsız artış yapın</p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="submitQuickChange(event)" class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-bold mb-1">Personel Seçin:</label>
+                            <select id="quickChangePerson" required class="ui-input w-full border rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-indigo-500">
+                                <!-- JS Select -->
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-1">Artış Yapılacak Kalem:</label>
+                            <select id="quickChangeItem" class="ui-input w-full border rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-indigo-500">
+                                <option value="MAAŞ" class="dynamic-opt-salary">Net Maaş</option>
+                                <option value="KİRA" class="dynamic-opt-rent">Ev Kirası</option>
+                                <option value="SOC1" class="dynamic-opt-soc1">Sosyal Yardım 1</option>
+                                <option value="SOC2" class="dynamic-opt-soc2">Sosyal Yardım 2</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-1">Yürürlük Başlangıç Ayı:</label>
+                            <input type="month" id="quickChangePeriod" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                            <span class="text-[11px] ui-muted mt-1 block">Seçilen aydan itibaren yeni tutar işletilir, geçmiş aylar korunur.</span>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-1">Yeni Tutar (₺):</label>
+                            <input type="number" id="quickChangeAmount" required min="1" step="100" placeholder="Örn: 35000" class="ui-input w-full border rounded-xl px-3 py-2 font-bold text-sm focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-1">Açıklama / Karar Notu:</label>
+                            <input type="text" id="quickChangeNote" placeholder="Örn: 2026 Yılsonu %25 artışı" class="ui-input w-full border rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-md shadow-indigo-500/25 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Artışı Kaydet ve Uygula</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sağ Taraf: Zam Geçmişi Tablosu -->
+                <div class="lg:col-span-2 ui-card rounded-2xl border shadow-sm overflow-hidden flex flex-col">
+                    <div class="px-6 py-4 ui-header-subtle border-b flex items-center justify-between">
+                        <div>
+                            <h2 class="text-sm font-extrabold tracking-tight">YAPILAN ZAMLARIN GEÇMİŞİ</h2>
+                            <p class="text-xs ui-muted mt-0.5">Tüm personellerin kalem bazlı artış geçmişi</p>
+                        </div>
+                        <span id="zamCountBadge" class="px-2.5 py-1 bg-indigo-500/10 text-indigo-500 text-xs font-bold rounded-lg border border-indigo-500/20">0 Kayıt</span>
+                    </div>
+
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="ui-subtle-box ui-muted border-b text-[11px] uppercase tracking-wider font-bold">
+                                    <th class="py-3 px-4">Yürürlük</th>
+                                    <th class="py-3 px-4">Personel</th>
+                                    <th class="py-3 px-4">Kalem</th>
+                                    <th class="py-3 px-4 text-right">Eski Tutar</th>
+                                    <th class="py-3 px-4 text-right text-indigo-500 font-extrabold">Yeni Tutar</th>
+                                    <th class="py-3 px-4">Açıklama</th>
+                                    <th class="py-3 px-4 text-center">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="changesTableBody" class="divide-y divide-inherit font-medium">
+                                <!-- JS Doldurur -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEKME 4: ÖDEME GEÇMİŞİ                     -->
+        <!-- ========================================== -->
+        <section id="tab-odeme-gecmisi" class="hidden space-y-6">
+            
+            <!-- HAP BİLGİ KARTLARI -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                    <span class="text-xs font-bold ui-muted uppercase tracking-wide">Kayıtlı Toplam Ödeme</span>
+                    <div id="statTotalPayments" class="text-2xl font-black mt-2">0 ₺</div>
+                    <p class="text-xs ui-muted mt-1">Tüm zamanların ödemeleri</p>
+                </div>
+                <div class="ui-card p-5 rounded-2xl border shadow-sm border-blue-500/30 bg-blue-500/5">
+                    <span class="text-xs font-bold text-blue-500 uppercase tracking-wide">Banka Havale / EFT</span>
+                    <div id="statBankPayments" class="text-2xl font-black text-blue-500 mt-2">0 ₺</div>
+                    <p class="text-xs text-blue-500/80 mt-1">Resmi banka dekontlu</p>
+                </div>
+                <div class="ui-card p-5 rounded-2xl border shadow-sm border-emerald-500/30 bg-emerald-500/5">
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wide">Kasa (Elden Nakit)</span>
+                    <div id="statCashPayments" class="text-2xl font-black text-emerald-600 mt-2">0 ₺</div>
+                    <p class="text-xs text-emerald-600/80 mt-1">Kasa tediye makbuzu</p>
+                </div>
+            </div>
+
+            <!-- TABLO & FİLTRELER -->
+            <div class="ui-card rounded-2xl border shadow-sm overflow-hidden">
+                <div class="p-4 ui-header-subtle border-b flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-receipt"></i>
+                        </span>
+                        <div>
+                            <h2 class="text-sm font-extrabold tracking-tight">KASA VE BANKA ÖDEME HAREKETLERİ</h2>
+                            <p class="text-xs ui-muted">Personele elden veya bankadan yapılan tüm transferler</p>
+                        </div>
+                    </div>
+
+                    <!-- Filtreler -->
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <select id="filterPayPerson" onchange="renderPaymentsTab()" class="ui-input border rounded-lg px-2.5 py-1.5 font-bold">
+                            <option value="">Tüm Personeller</option>
+                        </select>
+                        <select id="filterPayChannel" onchange="renderPaymentsTab()" class="ui-input border rounded-lg px-2.5 py-1.5 font-bold">
+                            <option value="">Tüm Kanallar (Banka + Kasa)</option>
+                            <option value="BANKA">Sadece Banka</option>
+                            <option value="NAKİT">Sadece Nakit</option>
+                        </select>
+                        <button onclick="openModal('modalPayment')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold transition">
+                            <i class="fa-solid fa-plus-circle mr-1"></i> Yeni Ödeme
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="ui-subtle-box ui-muted border-b text-[11px] uppercase tracking-wider font-bold">
+                                <th class="py-3 px-4">Ödeme Tarihi</th>
+                                <th class="py-3 px-4">Ait Olduğu Ay</th>
+                                <th class="py-3 px-4">Personel</th>
+                                <th class="py-3 px-4">Ödeme Kalemi</th>
+                                <th class="py-3 px-4">Kanal</th>
+                                <th class="py-3 px-4 text-right text-emerald-600 font-extrabold">Tutar</th>
+                                <th class="py-3 px-4">Dekont / Makbuz</th>
+                                <th class="py-3 px-4">Açıklama</th>
+                                <th class="py-3 px-4 text-center">İşlem / Makbuz</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody" class="divide-y divide-inherit font-medium">
+                            <!-- JS Doldurur -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- SEKME 5: SİSTEM AYARLARI (KAPSAMLI VE DERLİ TOPLU)      -->
+        <!-- ======================================================== -->
+        <section id="tab-ayarlar" class="hidden space-y-6">
+            
+            <div class="ui-card p-6 rounded-2xl border shadow-sm">
+                <div class="flex items-center gap-3 pb-4 border-b border-inherit">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-500/20">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-extrabold">Sistem & Yapılandırma Ayarları</h2>
+                        <p class="text-xs ui-muted">Kurum bilgisi, serbest kalem isimleri, tema tercihi, şifre ve yedekleme yönetimi</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    
+                    <!-- KART 1: KURUM & ŞİRKET BİLGİLERİ -->
+                    <div class="ui-card p-5 rounded-2xl border shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fa-solid fa-building text-indigo-500"></i>
+                                <h3 class="text-xs font-extrabold uppercase tracking-wider">1. Kurum / Şirket Bilgileri</h3>
+                            </div>
+                            <form onsubmit="saveCompanySettings(event)" class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block font-bold mb-1">Kurum / Firma Adı:</label>
+                                    <input type="text" id="cfgCompanyName" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1">Alt Başlık / Slogan:</label>
+                                    <input type="text" id="cfgCompanySub" required class="ui-input w-full border rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-sm mt-2">
+                                    <i class="fa-solid fa-floppy-disk mr-1"></i> Kurum Bilgilerini Kaydet
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- KART 2: GÖRÜNÜM & TEMA (DARK / LIGHT) -->
+                    <div class="ui-card p-5 rounded-2xl border shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fa-solid fa-palette text-indigo-500"></i>
+                                <h3 class="text-xs font-extrabold uppercase tracking-wider">2. Görünüm & Tema</h3>
+                            </div>
+                            <p class="text-xs ui-muted mb-4">Göz zevkinize ve çalışma ortamınıza göre arayüz temasını belirleyin.</p>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <button type="button" onclick="setTheme('light')" id="btnThemeLight" class="p-4 rounded-xl border flex flex-col items-center gap-2 transition hover:border-indigo-500 font-bold text-xs">
+                                    <i class="fa-solid fa-sun text-2xl text-amber-500"></i>
+                                    <span>Aydınlık Tema</span>
+                                </button>
+                                <button type="button" onclick="setTheme('dark')" id="btnThemeDark" class="p-4 rounded-xl border flex flex-col items-center gap-2 transition hover:border-indigo-500 font-bold text-xs">
+                                    <i class="fa-solid fa-moon text-2xl text-indigo-400"></i>
+                                    <span>Karanlık Mod (Gece)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KART 3: SERBEST BAŞLIK VE KALEM İSİMLERİ -->
+                    <div class="ui-card p-5 rounded-2xl border shadow-sm md:col-span-2">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-pen-to-square text-indigo-500"></i>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider">3. Serbest Başlık & Kalem İsimlendirmesi</h3>
+                        </div>
+                        <p class="text-xs ui-muted mb-4">Sistemdeki terimleri (Hak ediş, Sosyal yardım vb.) şirketinizin kendi jargonuna göre serbestçe düzenleyin.</p>
+
+                        <form onsubmit="saveCustomLabels(event)" class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-bold mb-1">Genel Toplam Başlığı:</label>
+                                <input type="text" id="cfgTermTotal" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                                <span class="text-[11px] ui-muted mt-0.5 block">Örn: "Maaş & Hak Ediş", "Aylık İstihkak", "Tahakkuk Toplamı"</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div>
+                                    <label class="block font-bold mb-1">1. Kalem İsmi:</label>
+                                    <input type="text" id="cfgColSalary" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1">2. Kalem İsmi:</label>
+                                    <input type="text" id="cfgColRent" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1">3. Kalem İsmi:</label>
+                                    <input type="text" id="cfgColSoc1" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1">4. Kalem İsmi:</label>
+                                    <input type="text" id="cfgColSoc2" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2">
+                                <button type="button" onclick="resetCustomLabels()" class="px-3.5 py-2 ui-subtle-box border rounded-xl font-bold transition">Varsayılana Sıfırla</button>
+                                <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-sm">
+                                    <i class="fa-solid fa-floppy-disk mr-1"></i> Kalem İsimlerini Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- KART 4: KULLANICI ADI & ŞİFRE DEĞİŞTİRME -->
+                    <div class="ui-card p-5 rounded-2xl border shadow-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-lock text-indigo-500"></i>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider">4. Giriş & Şifre Güvenliği</h3>
+                        </div>
+                        <form onsubmit="saveUserCredentials(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-bold mb-1">Mevcut Kullanıcı Adı:</label>
+                                <input type="text" id="cfgUsername" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Mevcut Şifre (Doğrulama İçin):</label>
+                                <input type="password" id="cfgOldPass" required placeholder="Eski şifreniz..." class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Yeni Şifre:</label>
+                                <input type="password" id="cfgNewPass" required placeholder="Yeni şifreniz..." class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white rounded-xl font-bold transition shadow-sm mt-2">
+                                <i class="fa-solid fa-shield-halved mr-1"></i> Şifreyi Güncelle
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- KART 5: YEDEKLEME, GERİ YÜKLEME & DIŞA AKTARMA -->
+                    <div class="ui-card p-5 rounded-2xl border shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fa-solid fa-database text-indigo-500"></i>
+                                <h3 class="text-xs font-extrabold uppercase tracking-wider">5. Veri Yedekleme & Geri Yükleme</h3>
+                            </div>
+                            <p class="text-xs ui-muted mb-3">Sistem verilerinizi bilgisayarınıza tek tıkla indirin veya daha önce aldığınız yedeği geri yükleyin.</p>
+
+                            <div class="space-y-2 text-xs">
+                                <button type="button" onclick="backupData()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Tam Sistem Yedeğini İndir (JSON)</span>
+                                </button>
+
+                                <label class="w-full py-2.5 ui-subtle-box border hover:border-indigo-500 rounded-xl font-bold transition flex items-center justify-center gap-2 cursor-pointer">
+                                    <i class="fa-solid fa-upload text-indigo-500"></i>
+                                    <span>Yedekten Geri Yükle (.json Seç)</span>
+                                    <input type="file" id="fileRestore" accept=".json" onchange="handleRestoreFile(event)" class="hidden">
+                                </label>
+
+                                <button type="button" onclick="exportToExcel()" class="w-full py-2.5 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 border border-emerald-500/30 rounded-xl font-bold transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                    <span>Excel (.csv) Raporunu İndir</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 mt-3 border-t border-inherit">
+                            <button type="button" onclick="resetToFactoryDefaults()" class="text-[11px] text-rose-500 hover:underline font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>Tüm Verileri Temizle ve Fabrika Ayarlarına Dön</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: TEDİYE / TAHSİLAT MAKBUZU (YAZDIRILABİLİR FİŞ)     -->
+    <!-- ======================================================== -->
+    <div id="modalReceipt" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-2xl w-full p-8 shadow-2xl border flex flex-col relative print-receipt-only">
+            
+            <div class="flex items-center justify-between pb-4 border-b border-inherit no-print">
+                <span class="text-xs font-bold text-indigo-500 flex items-center gap-1.5">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>Resmi Muhasebe Tediye Makbuzu</span>
+                </span>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Yazdır / PDF Olarak Kaydet</span>
+                    </button>
+                    <button onclick="closeModal('modalReceipt')" class="ui-muted hover:text-rose-500 text-xl font-bold px-2">&times;</button>
+                </div>
+            </div>
+
+            <!-- Fiş İçeriği (Makbuz Gövdesi) -->
+            <div class="mt-4 p-6 border-2 border-slate-300 dark:border-slate-600 rounded-2xl bg-white text-slate-900 space-y-5">
+                <!-- Şirket Başlığı & Makbuz No -->
+                <div class="flex items-start justify-between border-b-2 border-slate-200 pb-4">
+                    <div>
+                        <h2 id="receiptCompanyName" class="text-lg font-black text-slate-900 tracking-tight">Dugan Şirketler Grubu</h2>
+                        <p class="text-xs text-slate-500 mt-0.5 font-semibold">PERSONEL TEDİYE / ÖDEME MAKBUZU</p>
+                    </div>
+                    <div class="text-right">
+                        <div id="receiptNo" class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-1 rounded border border-indigo-200">MAK-2026-0001</div>
+                        <div id="receiptDate" class="text-xs font-bold text-slate-600 mt-1">Tarih: 16.10.2026</div>
+                    </div>
+                </div>
+
+                <!-- Detay Tablosu -->
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">ÖDEME YAPILAN KİŞİ:</span>
+                        <div id="receiptPersonName" class="text-sm font-black text-slate-900 mt-0.5">Mehmet (M)</div>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">ÖDEME KANALI & DÖNEM:</span>
+                        <div id="receiptChannel" class="text-sm font-black text-slate-900 mt-0.5">Banka Havalesi • 2026-11</div>
+                    </div>
+                </div>
+
+                <!-- Tutar Kutusu -->
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-bold text-emerald-800 uppercase">ÖDENEN NET TUTAR:</span>
+                        <div id="receiptWords" class="text-xs font-bold text-emerald-900 mt-0.5 italic">Yalnız Yirmi Sekiz Bin Türk Lirası</div>
+                    </div>
+                    <div id="receiptAmount" class="text-2xl font-black text-emerald-700">28.000 ₺</div>
+                </div>
+
+                <!-- Açıklama / Dekont No -->
+                <div class="text-xs text-slate-700 space-y-1">
+                    <div><b>Ödeme Kalemi:</b> <span id="receiptItem">Net Maaş Ödemesi</span></div>
+                    <div><b>Dekont / Makbuz No:</b> <span id="receiptRef">EFT-8832</span></div>
+                    <div><b>Açıklama / Not:</b> <span id="receiptNote">Kasım ayı tam maaş transferi</span></div>
+                </div>
+
+                <!-- İmza Kutucukları -->
+                <div class="grid grid-cols-2 gap-8 pt-8 border-t-2 border-dashed border-slate-300 text-center text-xs">
+                    <div>
+                        <div class="font-bold text-slate-800">ÖDEMEYİ YAPAN (TESLİM EDEN)</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Yetkili İmza / Kaşe</div>
+                        <div class="h-16 border-b border-slate-300 mt-2"></div>
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800">ÖDEMEYİ ALAN (TESLİM ALAN)</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Personel Adı / İmza</div>
+                        <div class="h-16 border-b border-slate-300 mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 1: ÖDEME GİRİŞİ                                    -->
+    <!-- ======================================================== -->
+    <div id="modalPayment" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-md w-full p-6 shadow-2xl border">
+            <div class="flex items-center justify-between pb-3 border-b border-inherit">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-money-bill-transfer"></i>
+                    </span>
+                    <h3 class="text-sm font-extrabold">Ödeme Kaydı Ekle</h3>
+                </div>
+                <button onclick="closeModal('modalPayment')" class="ui-muted hover:text-rose-500 text-lg">&times;</button>
+            </div>
+
+            <form onsubmit="submitPayment(event)" class="mt-4 space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold mb-1">Personel:</label>
+                    <select id="payPerson" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-emerald-500">
+                        <!-- JS Dinamik -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">Ödeme Türü / Kalemi:</label>
+                        <select id="payType" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                            <option value="TOPLAM" class="dynamic-pay-total">Tüm Aylık Hak Ediş</option>
+                            <option value="MAAŞ" class="dynamic-pay-salary">Net Maaş Ödemesi</option>
+                            <option value="KİRA" class="dynamic-pay-rent">Ev Kirası Ödemesi</option>
+                            <option value="SOC1" class="dynamic-pay-soc1">Sosyal Yardım 1 Ödemesi</option>
+                            <option value="SOC2" class="dynamic-pay-soc2">Sosyal Yardım 2 Ödemesi</option>
+                            <option value="AVANS">Avans</option>
+                            <option value="DİĞER">Diğer Destek</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Ödeme Kanalı:</label>
+                        <select id="payChannel" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                            <option value="BANKA">🏦 Banka Havalesi</option>
+                            <option value="NAKİT">💵 Elden Nakit (Kasa)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">İşlem Tarihi:</label>
+                        <input type="date" id="payDate" required class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Ait Olduğu Dönem:</label>
+                        <input type="month" id="payPeriod" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1">Ödenen Tutar (₺):</label>
+                    <input type="number" id="payAmount" required min="1" step="50" placeholder="Örn: 25000" class="ui-input w-full border rounded-xl px-3 py-2 font-extrabold text-base focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1">Dekont / Makbuz No:</label>
+                    <input type="text" id="payReceipt" placeholder="Örn: EFT-8831 veya Makbuz-12" class="ui-input w-full border rounded-xl px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1">Açıklama / Not:</label>
+                    <input type="text" id="payNote" placeholder="Örn: Kasım ayı tam transferi" class="ui-input w-full border rounded-xl px-3 py-2">
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button type="button" onclick="closeModal('modalPayment')" class="flex-1 py-2.5 ui-subtle-box border rounded-xl font-bold transition">Vazgeç</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition shadow-md shadow-emerald-500/20">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 2: ZAM UYGULA                                      -->
+    <!-- ======================================================== -->
+    <div id="modalChange" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-md w-full p-6 shadow-2xl border">
+            <div class="flex items-center justify-between pb-3 border-b border-inherit">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </span>
+                    <h3 class="text-sm font-extrabold">Zam / Artış Yap</h3>
+                </div>
+                <button onclick="closeModal('modalChange')" class="ui-muted hover:text-rose-500 text-lg">&times;</button>
+            </div>
+
+            <form onsubmit="submitModalChange(event)" class="mt-4 space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold mb-1">Personel:</label>
+                    <select id="modalChangePerson" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold focus:ring-2 focus:ring-indigo-500">
+                        <!-- JS Dinamik -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">Artış Kalemi:</label>
+                        <select id="modalChangeItem" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                            <option value="MAAŞ" class="dynamic-opt-salary">Net Maaş</option>
+                            <option value="KİRA" class="dynamic-opt-rent">Ev Kirası</option>
+                            <option value="SOC1" class="dynamic-opt-soc1">Sosyal Yardım 1</option>
+                            <option value="SOC2" class="dynamic-opt-soc2">Sosyal Yardım 2</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Yürürlük Başlangıcı:</label>
+                        <input type="month" id="modalChangePeriod" required class="ui-input w-full border rounded-xl px-3 py-2 font-bold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1">Yeni Tutar (₺):</label>
+                    <input type="number" id="modalChangeAmount" required min="1" step="100" placeholder="Örn: 35000" class="ui-input w-full border rounded-xl px-3 py-2 font-extrabold text-base focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-1">Açıklama / Not:</label>
+                    <input type="text" id="modalChangeNote" placeholder="Örn: Yıl ortası enflasyon zammı" class="ui-input w-full border rounded-xl px-3 py-2">
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button type="button" onclick="closeModal('modalChange')" class="flex-1 py-2.5 ui-subtle-box border rounded-xl font-bold transition">Vazgeç</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-md shadow-indigo-500/20">Uygula</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 3: PERSONEL EKLE                                   -->
+    <!-- ======================================================== -->
+    <div id="modalPerson" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-lg w-full p-6 shadow-2xl border">
+            <div class="flex items-center justify-between pb-3 border-b border-inherit">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </span>
+                    <h3 class="text-sm font-extrabold">Yeni Personel Tanımla</h3>
+                </div>
+                <button onclick="closeModal('modalPerson')" class="ui-muted hover:text-rose-500 text-lg">&times;</button>
+            </div>
+
+            <form onsubmit="submitPerson(event)" class="mt-4 space-y-3.5 text-xs">
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">Kod (Kısa):</label>
+                        <input type="text" id="newCode" required maxlength="5" placeholder="Örn: AY" class="ui-input w-full border rounded-xl px-3 py-2 font-bold uppercase">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block font-bold mb-1">Ad Soyad:</label>
+                        <input type="text" id="newName" required placeholder="Örn: Ayşe Yılmaz" class="ui-input w-full border rounded-xl px-3 py-2 font-semibold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-salary-input">Net Maaş (₺):</label>
+                        <input type="number" id="newSalary" min="0" step="100" value="0" class="ui-input w-full border rounded-xl px-3 py-2 font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-rent-input">Ev Kirası (₺):</label>
+                        <input type="number" id="newRent" min="0" step="100" value="0" class="ui-input w-full border rounded-xl px-3 py-2 font-bold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-soc1-input">Sosyal Yardım 1 (₺):</label>
+                        <input type="number" id="newSoc1" min="0" step="50" value="0" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-soc2-input">Sosyal Yardım 2 (₺):</label>
+                        <input type="number" id="newSoc2" min="0" step="50" value="0" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                    </div>
+                </div>
+
+                <!-- BAŞLANGIÇ DÖNEMLERİ & DEVİR BORCU -->
+                <div class="p-3.5 rounded-xl border border-indigo-500/20 bg-indigo-500/5 space-y-2.5">
+                    <div class="flex items-center gap-1.5 font-bold text-indigo-500 text-[11px] uppercase">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Takip Başlangıcı & Geçmiş Bakiye</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold mb-1 text-[11px]">Maaş Başlangıç Ayı:</label>
+                            <input type="month" id="newStartSalary" value="2026-10" class="ui-input w-full border rounded-xl px-2.5 py-1.5 font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1 text-[11px]">Kira Başlangıç Ayı:</label>
+                            <input type="month" id="newStartRent" value="2026-10" class="ui-input w-full border rounded-xl px-2.5 py-1.5 font-bold text-xs">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-[11px]">Devreden Açılış Borcu (₺):</label>
+                        <input type="number" id="newInitialDebt" min="0" step="50" value="0" class="ui-input w-full border rounded-xl px-2.5 py-1.5 font-bold text-rose-600 text-xs">
+                        <span class="text-[9px] ui-muted mt-0.5 block">Geçmiş aylardan kalan ödenmemiş borç varsa yazın, yoksa 0 bırakın.</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeModal('modalPerson')" class="flex-1 py-2.5 ui-subtle-box border rounded-xl font-bold transition">Vazgeç</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-md">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 3B: PERSONEL DÜZENLE                               -->
+    <!-- ======================================================== -->
+    <div id="modalEditPerson" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-lg w-full p-6 shadow-2xl border">
+            <div class="flex items-center justify-between pb-3 border-b border-inherit">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-extrabold">Personel Bilgilerini Düzenle</h3>
+                        <p class="text-[11px] ui-muted" id="editPersonSub">Maaş, kira, başlangıç ayları ve devir bakiyesi</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modalEditPerson')" class="ui-muted hover:text-rose-500 text-lg">&times;</button>
+            </div>
+
+            <form onsubmit="submitEditPerson(event)" class="mt-4 space-y-3.5 text-xs">
+                <input type="hidden" id="editCode">
+
+                <div>
+                    <label class="block font-bold mb-1">Ad Soyad:</label>
+                    <input type="text" id="editName" required class="ui-input w-full border rounded-xl px-3 py-2 font-semibold">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-salary-input">Net Maaş (₺):</label>
+                        <input type="number" id="editSalary" min="0" step="100" class="ui-input w-full border rounded-xl px-3 py-2 font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-rent-input">Ev Kirası (₺):</label>
+                        <input type="number" id="editRent" min="0" step="100" class="ui-input w-full border rounded-xl px-3 py-2 font-bold text-emerald-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-soc1-input">Sosyal Yardım 1 (₺):</label>
+                        <input type="number" id="editSoc1" min="0" step="50" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 dynamic-label-soc2-input">Sosyal Yardım 2 (₺):</label>
+                        <input type="number" id="editSoc2" min="0" step="50" class="ui-input w-full border rounded-xl px-3 py-2 font-medium">
+                    </div>
+                </div>
+
+                <!-- BAŞLANGIÇ DÖNEMLERİ & DEVİR BORCU -->
+                <div class="p-3.5 rounded-xl border border-indigo-500/20 bg-indigo-500/5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-indigo-500 text-xs"></i>
+                        <span class="font-extrabold text-indigo-500 text-[11px] uppercase">Takip Başlangıcı & Geçmiş Bakiye</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1 text-[11px]">Maaş Başlangıç Ayı:</label>
+                            <input type="month" id="editStartSalary" class="ui-input w-full border rounded-xl px-2.5 py-1.5 font-bold text-xs">
+                            <span class="text-[9px] ui-muted mt-0.5 block">Bu aydan önce maaş tahakkuk etmez.</span>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1 text-[11px]">Kira Başlangıç Ayı:</label>
+                            <input type="month" id="editStartRent" class="ui-input w-full border rounded-xl px-2.5 py-1.5 font-bold text-xs">
+                            <span class="text-[9px] ui-muted mt-0.5 block">Kira almıyorsa boş bırakın.</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-1 text-[11px]">Devreden Açılış Borcu (₺):</label>
+                        <input type="number" id="editInitialDebt" min="0" step="50" class="ui-input w-full border rounded-xl px-3 py-1.5 font-black text-rose-600 text-sm">
+                        <span class="text-[10px] ui-muted mt-0.5 block">💡 Sistem öncesi geçmiş aylardan kalan ödenmemiş net borç tutarı. Eğer geçmiş aylar ödendiyse 0 bırakın.</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-between gap-2 border-t border-inherit mt-4 pt-3">
+                    <button type="button" onclick="deletePersonFromEditModal()" class="px-3.5 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 border border-rose-500/20 rounded-xl font-bold text-xs transition flex items-center gap-1.5 active:scale-95" title="Personeli Kadrodan Sil">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Personeli Sil</span>
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeModal('modalEditPerson')" class="px-4 py-2.5 ui-subtle-box border rounded-xl font-bold transition text-xs">Vazgeç</button>
+                        <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition shadow-md text-xs">Değişiklikleri Kaydet</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 3C: PERSONEL SİLME ONAYI                           -->
+    <!-- ======================================================== -->
+    <div id="modalDeletePersonConfirm" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-sm w-full p-6 shadow-2xl border text-center">
+            <div class="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-2xl mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-rose-600">Personeli Kadrodan Sil</h3>
+            <p class="text-xs ui-muted mt-1" id="delPersonConfirmText">Bu personeli silmek istediğinize emin misiniz?</p>
+
+            <div class="my-4 p-3 rounded-xl border border-rose-500/20 bg-rose-500/5 text-left text-xs space-y-1.5">
+                <div class="font-bold text-slate-800 dark:text-slate-200" id="delPersonDetails">-</div>
+                <label class="flex items-center gap-2 cursor-pointer pt-2 border-t border-inherit">
+                    <input type="checkbox" id="delPurgeHistory" checked class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500">
+                    <span class="text-[11px] ui-muted font-medium">Bu personele ait tüm geçmiş ödeme ve zam kayıtlarını da temizle</span>
+                </label>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button" onclick="closeModal('modalDeletePersonConfirm')" class="flex-1 py-2.5 ui-subtle-box border rounded-xl font-bold text-xs transition">Vazgeç</button>
+                <button type="button" onclick="confirmDeletePersonAction()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs transition shadow-md shadow-rose-500/20">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 4: PERSONEL BİREYSEL CARİ EKSTRE DÖKÜMÜ            -->
+    <!-- ======================================================== -->
+    <div id="modalStatement" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="ui-card rounded-2xl max-w-3xl w-full p-6 shadow-2xl border max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-inherit">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <div>
+                        <h3 id="statModalName" class="text-base font-extrabold">Personel Cari Ekstresi</h3>
+                        <p id="statModalSub" class="text-xs ui-muted">Hesap Dökümü ve Hareketler</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="px-3 py-1.5 ui-subtle-box border rounded-lg text-xs font-bold transition">
+                        <i class="fa-solid fa-print mr-1"></i> Yazdır / PDF
+                    </button>
+                    <button onclick="closeModal('modalStatement')" class="ui-muted hover:text-rose-500 text-xl font-bold px-2">&times;</button>
+                </div>
+            </div>
+
+            <!-- Kart Özeti -->
+            <div class="grid grid-cols-3 gap-3 my-4">
+                <div class="ui-subtle-box p-3 rounded-xl border">
+                    <span class="text-[10px] font-bold ui-muted uppercase dynamic-label-salary">Sabit Maaş</span>
+                    <div id="statModalSalary" class="text-sm font-extrabold mt-0.5">0 ₺</div>
+                </div>
+                <div class="ui-subtle-box p-3 rounded-xl border">
+                    <span class="text-[10px] font-bold ui-muted uppercase dynamic-label-rent">Sabit Kira</span>
+                    <div id="statModalRent" class="text-sm font-extrabold text-emerald-600 mt-0.5">0 ₺</div>
+                </div>
+                <div class="p-3 rounded-xl border border-rose-500/30 bg-rose-500/10">
+                    <span class="text-[10px] font-bold text-rose-600 uppercase">Kapatılacak Bakiye</span>
+                    <div id="statModalBalance" class="text-sm font-black text-rose-600 mt-0.5">0 ₺</div>
+                </div>
+            </div>
+
+            <!-- Hareket Tablosu -->
+            <div class="overflow-y-auto flex-1 border border-inherit rounded-xl">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead class="sticky top-0 ui-subtle-box font-bold border-b border-inherit">
+                        <tr>
+                            <th class="py-2.5 px-3">Tarih</th>
+                            <th class="py-2.5 px-3">İşlem / Açıklama</th>
+                            <th class="py-2.5 px-3">Kanal</th>
+                            <th class="py-2.5 px-3 text-right text-indigo-500 dynamic-label-total-term-th">Hak Ediş</th>
+                            <th class="py-2.5 px-3 text-right text-emerald-600">Ödenen</th>
+                            <th class="py-2.5 px-3 text-right font-extrabold">Kalan Bakiye</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statModalTableBody" class="divide-y divide-inherit font-medium">
+                        <!-- JS Doldurur -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- JAVASCRIPT: TÜM MOTOR VE VERİ YÖNETİMİ                   -->
+    <!-- ======================================================== -->
+    <script>
+        // 0. TOAST NOTIFICATION SİSTEMİ
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-slate-900 text-white border-slate-700';
+            let icon = 'fa-circle-info text-blue-400';
+            if (type === 'success') {
+                bg = 'bg-emerald-600 text-white border-emerald-500';
+                icon = 'fa-circle-check text-white';
+            } else if (type === 'error') {
+                bg = 'bg-rose-600 text-white border-rose-500';
+                icon = 'fa-circle-exclamation text-white';
+            }
+
+            toast.className = `toast-item pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border ${bg} text-xs font-bold transition`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-base"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // 1. KURUM & ŞİRKET AYARLARI
+        const defaultCompany = {
+            name: "Dugan Şirketler Grubu",
+            subtitle: "Personel Maaş & Kira Yönetim Sistemi"
+        };
+        let companySettings = JSON.parse(localStorage.getItem('app_company')) || defaultCompany;
+
+        function applyCompanySettings() {
+            document.getElementById('sidebarCompanyName').innerText = companySettings.name;
+            document.getElementById('sidebarCompanySub').innerText = companySettings.subtitle;
+            document.getElementById('loginCompanyTitle').innerText = companySettings.name;
+            document.getElementById('loginCompanySubtitle').innerText = companySettings.subtitle;
+
+            if (document.getElementById('cfgCompanyName')) {
+                document.getElementById('cfgCompanyName').value = companySettings.name;
+                document.getElementById('cfgCompanySub').value = companySettings.subtitle;
+            }
+        }
+
+        function saveCompanySettings(e) {
+            e.preventDefault();
+            companySettings = {
+                name: document.getElementById('cfgCompanyName').value.trim() || defaultCompany.name,
+                subtitle: document.getElementById('cfgCompanySub').value.trim() || defaultCompany.subtitle
+            };
+            localStorage.setItem('app_company', JSON.stringify(companySettings));
+            applyCompanySettings();
+            showToast("Kurum bilgileri başarıyla güncellendi!", "success");
+        }
+
+        // 2. TEMA YÖNETİMİ (DARK / LIGHT)
+        let currentTheme = localStorage.getItem('app_theme') || 'light';
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('app_theme', theme);
+            if (theme === 'dark') {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                document.getElementById('btnThemeDark').classList.add('border-indigo-500', 'bg-indigo-500/10');
+                document.getElementById('btnThemeLight').classList.remove('border-indigo-500', 'bg-indigo-500/10');
+            } else {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                document.getElementById('btnThemeLight').classList.add('border-indigo-500', 'bg-indigo-500/10');
+                document.getElementById('btnThemeDark').classList.remove('border-indigo-500', 'bg-indigo-500/10');
+            }
+            if (chartDonutInstance) updateCharts();
+        }
+
+        // 3. ÖZELLEŞTİRİLEBİLİR SERBEST BAŞLIKLAR (FREE LABELS)
+        const defaultLabels = {
+            termTotal: "Maaş / Hak Ediş",
+            colSalary: "Net Maaş",
+            colRent: "Ev Kirası",
+            colSoc1: "Sosyal Yardım 1",
+            colSoc2: "Sosyal Yardım 2"
+        };
+        let customLabels = JSON.parse(localStorage.getItem('app_labels')) || defaultLabels;
+
+        function applyCustomLabels() {
+            document.querySelectorAll('.dynamic-label-total-term').forEach(el => el.innerText = customLabels.termTotal);
+            document.querySelectorAll('.dynamic-label-total-term-th').forEach(el => el.innerText = customLabels.termTotal);
+            document.querySelectorAll('.dynamic-label-salary').forEach(el => el.innerText = customLabels.colSalary);
+            document.querySelectorAll('.dynamic-label-salary-th').forEach(el => el.innerText = customLabels.colSalary);
+            document.querySelectorAll('.dynamic-label-salary-btn').forEach(el => el.innerText = `Sadece ${customLabels.colSalary}`);
+            document.querySelectorAll('.dynamic-label-salary-input').forEach(el => el.innerText = `${customLabels.colSalary} (₺):`);
+            
+            document.querySelectorAll('.dynamic-label-rent').forEach(el => el.innerText = customLabels.colRent);
+            document.querySelectorAll('.dynamic-label-rent-th').forEach(el => el.innerText = customLabels.colRent);
+            document.querySelectorAll('.dynamic-label-rent-btn').forEach(el => el.innerText = `Sadece ${customLabels.colRent}`);
+            document.querySelectorAll('.dynamic-label-rent-input').forEach(el => el.innerText = `${customLabels.colRent} (₺):`);
+
+            document.querySelectorAll('.dynamic-label-soc1-th').forEach(el => el.innerText = customLabels.colSoc1);
+            document.querySelectorAll('.dynamic-label-soc1-input').forEach(el => el.innerText = `${customLabels.colSoc1} (₺):`);
+
+            document.querySelectorAll('.dynamic-label-soc2-th').forEach(el => el.innerText = customLabels.colSoc2);
+            document.querySelectorAll('.dynamic-label-soc2-input').forEach(el => el.innerText = `${customLabels.colSoc2} (₺):`);
+
+            document.querySelectorAll('.dynamic-opt-salary').forEach(el => el.innerText = `${customLabels.colSalary}`);
+            document.querySelectorAll('.dynamic-opt-rent').forEach(el => el.innerText = `${customLabels.colRent}`);
+            document.querySelectorAll('.dynamic-opt-soc1').forEach(el => el.innerText = `${customLabels.colSoc1}`);
+            document.querySelectorAll('.dynamic-opt-soc2').forEach(el => el.innerText = `${customLabels.colSoc2}`);
+
+            document.querySelectorAll('.dynamic-pay-total').forEach(el => el.innerText = `Tüm ${customLabels.termTotal}`);
+            document.querySelectorAll('.dynamic-pay-salary').forEach(el => el.innerText = `${customLabels.colSalary} Ödemesi`);
+            document.querySelectorAll('.dynamic-pay-rent').forEach(el => el.innerText = `${customLabels.colRent} Ödemesi`);
+            document.querySelectorAll('.dynamic-pay-soc1').forEach(el => el.innerText = `${customLabels.colSoc1} Ödemesi`);
+            document.querySelectorAll('.dynamic-pay-soc2').forEach(el => el.innerText = `${customLabels.colSoc2} Ödemesi`);
+
+            if (document.getElementById('cfgTermTotal')) {
+                document.getElementById('cfgTermTotal').value = customLabels.termTotal;
+                document.getElementById('cfgColSalary').value = customLabels.colSalary;
+                document.getElementById('cfgColRent').value = customLabels.colRent;
+                document.getElementById('cfgColSoc1').value = customLabels.colSoc1;
+                document.getElementById('cfgColSoc2').value = customLabels.colSoc2;
+            }
+        }
+
+        function getItemLabel(itemKey) {
+            if (itemKey === 'MAAŞ') return customLabels.colSalary;
+            if (itemKey === 'KİRA') return customLabels.colRent;
+            if (itemKey === 'SOC1') return customLabels.colSoc1;
+            if (itemKey === 'SOC2') return customLabels.colSoc2;
+            if (itemKey === 'TOPLAM') return customLabels.termTotal;
+            return itemKey;
+        }
+
+        function saveCustomLabels(e) {
+            e.preventDefault();
+            customLabels = {
+                termTotal: document.getElementById('cfgTermTotal').value.trim() || defaultLabels.termTotal,
+                colSalary: document.getElementById('cfgColSalary').value.trim() || defaultLabels.colSalary,
+                colRent: document.getElementById('cfgColRent').value.trim() || defaultLabels.colRent,
+                colSoc1: document.getElementById('cfgColSoc1').value.trim() || defaultLabels.colSoc1,
+                colSoc2: document.getElementById('cfgColSoc2').value.trim() || defaultLabels.colSoc2
+            };
+            localStorage.setItem('app_labels', JSON.stringify(customLabels));
+            applyCustomLabels();
+            renderDashboard();
+            renderPersonnelTab();
+            showToast("Başlıklar ve kalem isimleri güncellendi!", "success");
+        }
+
+        function resetCustomLabels() {
+            if (confirm("Kalem isimlerini varsayılan haline döndürmek istiyor musunuz?")) {
+                customLabels = { ...defaultLabels };
+                localStorage.setItem('app_labels', JSON.stringify(customLabels));
+                applyCustomLabels();
+                renderDashboard();
+                renderPersonnelTab();
+                showToast("Kalem isimleri sıfırlandı.", "info");
+            }
+        }
+
+        // 4. GİRİŞ & GÜVENLİK YÖNETİMİ (SESSIONSTORAGE İLE HER AÇILIŞTA EKRAN GELİR)
+        let appAuth = JSON.parse(localStorage.getItem('app_auth_creds')) || { username: 'admin', password: '1234' };
+        let currentUser = sessionStorage.getItem('app_active_session') || null;
+
+        function checkAuth() {
+            const authEl = document.getElementById('authScreen');
+            if (currentUser) {
+                authEl.classList.add('hidden');
+                document.getElementById('userBadgeName').innerText = currentUser;
+                if (document.getElementById('cfgUsername')) {
+                    document.getElementById('cfgUsername').value = appAuth.username;
+                }
+            } else {
+                authEl.classList.remove('hidden');
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                setTimeout(() => {
+                    const uInput = document.getElementById('loginUsername');
+                    if (uInput) uInput.focus();
+                }, 100);
+            }
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+
+            if (u === appAuth.username && p === appAuth.password) {
+                currentUser = u;
+                sessionStorage.setItem('app_active_session', currentUser);
+                checkAuth();
+                showToast(`Hoş geldiniz, ${currentUser}!`, "success");
+            } else {
+                showToast("Hatalı kullanıcı adı veya şifre!", "error");
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').focus();
+            }
+        }
+
+        function handleLogout() {
+            if (confirm("Oturumu kapatmak ve kilit ekranına dönmek istiyor musunuz?")) {
+                currentUser = null;
+                sessionStorage.removeItem('app_active_session');
+                checkAuth();
+                showToast("Oturum kapatıldı.", "info");
+            }
+        }
+
+        function saveUserCredentials(e) {
+            e.preventDefault();
+            const newU = document.getElementById('cfgUsername').value.trim();
+            const oldP = document.getElementById('cfgOldPass').value.trim();
+            const newP = document.getElementById('cfgNewPass').value.trim();
+
+            if (oldP !== appAuth.password) {
+                showToast("Mevcut şifrenizi yanlış girdiniz!", "error");
+                return;
+            }
+            if (!newP || newP.length < 3) {
+                showToast("Yeni şifre en az 3 karakter olmalıdır!", "error");
+                return;
+            }
+
+            appAuth = { username: newU, password: newP };
+            localStorage.setItem('app_auth_creds', JSON.stringify(appAuth));
+            currentUser = newU;
+            sessionStorage.setItem('app_active_session', currentUser);
+            document.getElementById('userBadgeName').innerText = currentUser;
+            document.getElementById('cfgOldPass').value = '';
+            document.getElementById('cfgNewPass').value = '';
+            showToast("Giriş bilgileri başarıyla güncellendi!", "success");
+        }
+
+        // 5. VERİ DURUMU VE LOCALSTORAGE
+        const defaultPersonnel = [
+            { id: 1, code: "F",  name: "Fatma",  salary: 17000, soc1: 0, soc2: 0, rent: 0,     startSalary: "2026-10", startRent: "",        initialDebt: 0 },
+            { id: 2, code: "M",  name: "Mehmet", salary: 28000, soc1: 0, soc2: 0, rent: 0,     startSalary: "2026-10", startRent: "",        initialDebt: 0 },
+            { id: 3, code: "A",  name: "Ahmet",  salary: 22000, soc1: 0, soc2: 0, rent: 0,     startSalary: "2026-10", startRent: "",        initialDebt: 0 },
+            { id: 4, code: "MD", name: "Murat",  salary: 23000, soc1: 0, soc2: 0, rent: 0,     startSalary: "2026-10", startRent: "",        initialDebt: 0 },
+            { id: 5, code: "SU", name: "Suna",   salary: 0,     soc1: 0, soc2: 0, rent: 45000, startSalary: "",        startRent: "2026-10", initialDebt: 0 }
+        ];
+
+        const defaultChanges = [
+            { id: 1, date: "2026-11-01", period: "2026-11", code: "SU", item: "KİRA", oldAmount: 45000, newAmount: 55000, note: "Kasım ayı kira artışı" },
+            { id: 2, date: "2026-07-01", period: "2026-07", code: "M",  item: "MAAŞ", oldAmount: 25000, newAmount: 28000, note: "Yıl ortası maaş artışı" }
+        ];
+
+        const defaultPayments = [
+            { id: 1, date: "2026-10-05", period: "2026-10", code: "F",  type: "MAAŞ", channel: "BANKA", amount: 17000, receipt: "EFT-8831", note: "Ekim maaş ödemesi" },
+            { id: 2, date: "2026-10-05", period: "2026-10", code: "M",  type: "MAAŞ", channel: "BANKA", amount: 28000, receipt: "EFT-8832", note: "Ekim maaş ödemesi" },
+            { id: 3, date: "2026-10-06", period: "2026-10", code: "A",  type: "MAAŞ", channel: "NAKİT", amount: 20000, receipt: "MAKBUZ-101", note: "Elden kısmi maaş ödemesi" },
+            { id: 4, date: "2026-10-06", period: "2026-10", code: "MD", type: "MAAŞ", channel: "BANKA", amount: 23000, receipt: "EFT-9102", note: "Ekim maaş transferi" },
+            { id: 5, date: "2026-10-01", period: "2026-10", code: "SU", type: "KİRA", channel: "BANKA", amount: 45000, receipt: "EFT-9550", note: "Ekim kira transferi" }
+        ];
+
+        let personnel = JSON.parse(localStorage.getItem('app_personnel')) || defaultPersonnel;
+        let changes   = JSON.parse(localStorage.getItem('app_changes'))   || defaultChanges;
+        let payments  = JSON.parse(localStorage.getItem('app_payments'))  || defaultPayments;
+
+        // Otomatik Veri Migrasyonu: Başlangıç aylarını Ekim 2026'ya bağlayarak geçmiş hayali borçları sıfırla
+        personnel.forEach(p => {
+            if (!p.startSalary && p.salary > 0) p.startSalary = "2026-10";
+            if (!p.startRent && p.rent > 0) p.startRent = "2026-10";
+            if (p.initialDebt === undefined) p.initialDebt = 0;
+        });
+
+        let currentDashboardView = 'all'; // 'all', 'salary', 'rent'
+
+        function saveState() {
+            localStorage.setItem('app_personnel', JSON.stringify(personnel));
+            localStorage.setItem('app_changes', JSON.stringify(changes));
+            localStorage.setItem('app_payments', JSON.stringify(payments));
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(amount || 0) + ' ₺';
+        }
+
+        function getPeriodString(year, month) {
+            return `${year}-${String(month).padStart(2, '0')}`;
+        }
+
+        function getRateForMonth(personCode, item, yearMonthStr) {
+            const p = personnel.find(x => x.code === personCode);
+            if (!p) return 0;
+
+            // Başlangıç Dönemi Kontrolleri: Başlangıç ayından önce hak ediş tahakkuk etmez
+            if (item === 'MAAŞ' && p.startSalary && yearMonthStr < p.startSalary) return 0;
+            if (item === 'KİRA' && p.startRent && yearMonthStr < p.startRent) return 0;
+            if (item === 'SOC1' && p.startSalary && yearMonthStr < p.startSalary) return 0;
+            if (item === 'SOC2' && p.startSalary && yearMonthStr < p.startSalary) return 0;
+
+            let baseVal = 0;
+            if (item === 'MAAŞ') {
+                baseVal = p.salary;
+            } else if (item === 'KİRA') {
+                baseVal = p.rent;
+            } else if (item === 'SOC1') {
+                baseVal = p.soc1;
+            } else if (item === 'SOC2') {
+                baseVal = p.soc2;
+            }
+
+            const relevantChanges = changes
+                .filter(c => c.code === personCode && c.item === item && c.period <= yearMonthStr)
+                .sort((a, b) => a.period.localeCompare(b.period));
+
+            if (relevantChanges.length > 0) {
+                return relevantChanges[relevantChanges.length - 1].newAmount;
+            }
+            return baseVal;
+        }
+
+        // PERSONEL AVATAR RENK PALETİ
+        const avatarGradients = [
+            'from-indigo-600 to-violet-500',
+            'from-emerald-600 to-teal-500',
+            'from-blue-600 to-cyan-500',
+            'from-rose-600 to-pink-500',
+            'from-amber-600 to-orange-500',
+            'from-purple-600 to-fuchsia-500'
+        ];
+        function getAvatarGradient(code) {
+            let hash = 0;
+            for (let i = 0; i < code.length; i++) hash += code.charCodeAt(i);
+            return avatarGradients[hash % avatarGradients.length];
+        }
+
+        // 6. SEKME DEĞİŞTİRME (LEFT SIDEBAR)
+        function switchTab(tabId) {
+            const tabs = ['aylik-takip', 'ana-tahakkuk', 'zam', 'odeme-gecmisi', 'ayarlar'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`side-tab-${t}`);
+                if (t === tabId) {
+                    if (el) el.classList.remove('hidden');
+                    if (btn) btn.classList.add('active');
+                } else {
+                    if (el) el.classList.add('hidden');
+                    if (btn) btn.classList.remove('active');
+                }
+            });
+
+            if (tabId === 'aylik-takip') renderDashboard();
+            if (tabId === 'ana-tahakkuk') renderPersonnelTab();
+            if (tabId === 'zam') renderChangesTab();
+            if (tabId === 'odeme-gecmisi') renderPaymentsTab();
+            if (tabId === 'ayarlar') {
+                applyCompanySettings();
+                applyCustomLabels();
+                setTheme(currentTheme);
+            }
+        }
+
+        // 7. AYLIK TAKİP HESAPLAMA MOTORU
+        function renderDashboard() {
+            const year = parseInt(document.getElementById('selectYear').value);
+            const month = parseInt(document.getElementById('selectMonth').value);
+            const currentPeriodStr = getPeriodString(year, month);
+
+            document.getElementById('tablePeriodLabel').innerText = `Dönem: ${currentPeriodStr}`;
+
+            let totalCurAccrual = 0, totalCurPaid = 0, totalPriorDebt = 0, totalCurRemaining = 0, totalNetDebt = 0;
+            let totalBank = 0, totalCash = 0;
+
+            const tbody = document.getElementById('dashboardTableBody');
+            tbody.innerHTML = '';
+
+            personnel.forEach(p => {
+                let priorAccrual = 0;
+                for (let m = 1; m < month; m++) {
+                    const pStr = getPeriodString(year, m);
+                    if (currentDashboardView === 'all' || currentDashboardView === 'salary') {
+                        priorAccrual += getRateForMonth(p.code, 'MAAŞ', pStr);
+                        priorAccrual += getRateForMonth(p.code, 'SOC1', pStr);
+                        priorAccrual += getRateForMonth(p.code, 'SOC2', pStr);
+                    }
+                    if (currentDashboardView === 'all' || currentDashboardView === 'rent') {
+                        priorAccrual += getRateForMonth(p.code, 'KİRA', pStr);
+                    }
+                }
+
+                let curAccrual = 0;
+                if (currentDashboardView === 'all' || currentDashboardView === 'salary') {
+                    curAccrual += getRateForMonth(p.code, 'MAAŞ', currentPeriodStr);
+                    curAccrual += getRateForMonth(p.code, 'SOC1', currentPeriodStr);
+                    curAccrual += getRateForMonth(p.code, 'SOC2', currentPeriodStr);
+                }
+                if (currentDashboardView === 'all' || currentDashboardView === 'rent') {
+                    curAccrual += getRateForMonth(p.code, 'KİRA', currentPeriodStr);
+                }
+
+                let priorPaid = 0, curPaid = 0;
+                payments.forEach(pay => {
+                    if (pay.code === p.code) {
+                        const isMatch = (currentDashboardView === 'all') || 
+                                        (currentDashboardView === 'salary' && pay.type !== 'KİRA') ||
+                                        (currentDashboardView === 'rent' && pay.type === 'KİRA');
+                        if (isMatch) {
+                            if (pay.period < currentPeriodStr) {
+                                priorPaid += pay.amount;
+                            } else if (pay.period === currentPeriodStr) {
+                                curPaid += pay.amount;
+                                if (pay.channel === 'BANKA') totalBank += pay.amount;
+                                if (pay.channel === 'NAKİT') totalCash += pay.amount;
+                            }
+                        }
+                    }
+                });
+
+                let initialDebt = 0;
+                if (currentDashboardView === 'all' || currentDashboardView === 'salary') {
+                    if (p.initialDebt && (!p.startSalary || currentPeriodStr >= p.startSalary)) {
+                        initialDebt = p.initialDebt;
+                    }
+                }
+
+                const priorDebt = (priorAccrual - priorPaid) + initialDebt;
+                const curRemaining = curAccrual - curPaid;
+                const netDebt = priorDebt + curRemaining;
+
+                totalCurAccrual += curAccrual;
+                totalCurPaid += curPaid;
+                totalPriorDebt += priorDebt;
+                totalCurRemaining += curRemaining;
+                totalNetDebt += netDebt;
+
+                // Progress Bar Hesaplama
+                const percent = curAccrual > 0 ? Math.min(100, Math.round((curPaid / curAccrual) * 100)) : 100;
+                let barColor = 'bg-rose-500';
+                if (percent === 100) barColor = 'bg-emerald-500';
+                else if (percent > 0) barColor = 'bg-amber-500';
+
+                const avatarGrad = getAvatarGradient(p.code);
+
+                const tr = document.createElement('tr');
+                tr.className = "ui-hover-row transition border-b border-inherit";
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr ${avatarGrad} text-white flex items-center justify-center font-black text-xs shadow-sm shrink-0">
+                                ${p.code}
+                            </div>
+                            <div>
+                                <div class="font-extrabold text-sm">${p.name}</div>
+                                <div class="text-[10px] ui-muted font-bold">Kod: ${p.code}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-right font-bold ${priorDebt > 0 ? 'text-amber-500' : 'ui-muted'}">
+                        ${formatMoney(priorDebt)}
+                        ${p.initialDebt > 0 ? `<div class="text-[9px] text-rose-500 font-semibold">(Açılış: ${formatMoney(p.initialDebt)})</div>` : ''}
+                    </td>
+                    <td class="py-3 px-4 text-right font-bold">${formatMoney(curAccrual)}</td>
+                    <td class="py-3 px-4 text-right font-bold text-emerald-600">${formatMoney(curPaid)}</td>
+                    <td class="py-3 px-4 text-right font-bold ${curRemaining > 0 ? '' : 'ui-muted'}">${formatMoney(curRemaining)}</td>
+                    <td class="py-3 px-4 text-right font-black ${netDebt > 0 ? 'text-rose-600' : 'text-emerald-600'}">${formatMoney(netDebt)}</td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="w-24 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mx-auto">
+                            <div class="h-full rounded-full ${barColor}" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="text-[9px] font-bold mt-1 ${percent === 100 ? 'text-emerald-600' : percent > 0 ? 'text-amber-500' : 'text-rose-500'}">%${percent} Ödendi</div>
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        <button onclick="quickPay('${p.code}')" class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 border border-emerald-500/20 rounded-lg text-[11px] font-bold transition mr-1" title="Ödeme Yap">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Öde
+                        </button>
+                        <button onclick="openPersonStatement('${p.code}')" class="px-2.5 py-1 ui-subtle-box hover:border-indigo-500 border rounded-lg text-[11px] font-bold transition mr-1" title="Cari Ekstre">
+                            <i class="fa-solid fa-file-invoice text-[10px]"></i> Ekstre
+                        </button>
+                        <button onclick="openEditPersonModal('${p.code}')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 rounded-lg text-[11px] font-bold transition mr-1" title="Başlangıç Ayı & Borç Düzenle">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Düzenle
+                        </button>
+                        <button onclick="deletePerson('${p.code}')" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-lg text-[11px] font-bold transition" title="Personeli Kadrodan Sil">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('kpi-current-accrual').innerText = formatMoney(totalCurAccrual);
+            document.getElementById('kpi-current-paid').innerText = formatMoney(totalCurPaid);
+            document.getElementById('kpi-prior-debt').innerText = formatMoney(totalPriorDebt);
+            document.getElementById('kpi-total-debt').innerText = formatMoney(totalNetDebt);
+            document.getElementById('kpi-channel-bank').innerText = formatMoney(totalBank);
+            document.getElementById('kpi-channel-cash').innerText = formatMoney(totalCash);
+
+            document.getElementById('dashboardTableFoot').innerHTML = `
+                <tr>
+                    <td class="py-3.5 px-4 text-left font-black uppercase text-xs">GENEL TOPLAMLAR</td>
+                    <td class="py-3.5 px-4 text-right text-amber-500 font-black text-xs">${formatMoney(totalPriorDebt)}</td>
+                    <td class="py-3.5 px-4 text-right font-black text-xs">${formatMoney(totalCurAccrual)}</td>
+                    <td class="py-3.5 px-4 text-right text-emerald-600 font-black text-xs">${formatMoney(totalCurPaid)}</td>
+                    <td class="py-3.5 px-4 text-right font-black text-xs">${formatMoney(totalCurRemaining)}</td>
+                    <td class="py-3.5 px-4 text-right text-rose-600 font-black text-sm">${formatMoney(totalNetDebt)}</td>
+                    <td colspan="2"></td>
+                </tr>
+            `;
+
+            updateCharts();
+        }
+
+        function setDashboardView(view) {
+            currentDashboardView = view;
+            document.getElementById('btnViewAll').className = view === 'all' ? 'px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition' : 'px-3 py-1.5 text-xs font-bold rounded-lg ui-muted hover:text-indigo-500 transition';
+            document.getElementById('btnViewSalary').className = view === 'salary' ? 'px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition' : 'px-3 py-1.5 text-xs font-bold rounded-lg ui-muted hover:text-indigo-500 transition';
+            document.getElementById('btnViewRent').className = view === 'rent' ? 'px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition' : 'px-3 py-1.5 text-xs font-bold rounded-lg ui-muted hover:text-indigo-500 transition';
+            renderDashboard();
+        }
+
+        // CHART.JS GRAFİK ENTEGRASYONU
+        let chartDonutInstance = null;
+        let chartBarInstance = null;
+
+        function toggleCharts() {
+            const el = document.getElementById('chartsSection');
+            const txt = document.getElementById('txtToggleCharts');
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                txt.innerText = "Grafikleri Gizle";
+                updateCharts();
+            } else {
+                el.classList.add('hidden');
+                txt.innerText = "Grafikleri Göster";
+            }
+        }
+
+        function updateCharts() {
+            if (document.getElementById('chartsSection').classList.contains('hidden')) return;
+
+            const year = parseInt(document.getElementById('selectYear').value);
+            const month = parseInt(document.getElementById('selectMonth').value);
+            const currentPeriodStr = getPeriodString(year, month);
+
+            let sumSalary = 0, sumRent = 0, sumSoc1 = 0, sumSoc2 = 0;
+            personnel.forEach(p => {
+                sumSalary += getRateForMonth(p.code, 'MAAŞ', currentPeriodStr);
+                sumRent += getRateForMonth(p.code, 'KİRA', currentPeriodStr);
+                sumSoc1 += getRateForMonth(p.code, 'SOC1', currentPeriodStr);
+                sumSoc2 += getRateForMonth(p.code, 'SOC2', currentPeriodStr);
+            });
+
+            const isDark = document.body.classList.contains('dark');
+            const textColor = isDark ? '#f8fafc' : '#0f172a';
+
+            // 1. Donut Chart (Bütçe Kalem Dağılımı)
+            const ctxDonut = document.getElementById('chartDonut').getContext('2d');
+            if (chartDonutInstance) chartDonutInstance.destroy();
+
+            chartDonutInstance = new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: [customLabels.colSalary, customLabels.colRent, customLabels.colSoc1, customLabels.colSoc2],
+                    datasets: [{
+                        data: [sumSalary, sumRent, sumSoc1, sumSoc2],
+                        backgroundColor: ['#4f46e5', '#10b981', '#8b5cf6', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                    }
+                }
+            });
+
+            // 2. Bar Chart (Hak Ediş vs Ödenen)
+            const ctxBar = document.getElementById('chartBar').getContext('2d');
+            if (chartBarInstance) chartBarInstance.destroy();
+
+            const pLabels = personnel.map(p => p.name);
+            const pAccruals = personnel.map(p => {
+                return getRateForMonth(p.code, 'MAAŞ', currentPeriodStr) +
+                       getRateForMonth(p.code, 'KİRA', currentPeriodStr) +
+                       getRateForMonth(p.code, 'SOC1', currentPeriodStr) +
+                       getRateForMonth(p.code, 'SOC2', currentPeriodStr);
+            });
+            const pPaids = personnel.map(p => {
+                let paid = 0;
+                payments.forEach(pay => {
+                    if (pay.code === p.code && pay.period === currentPeriodStr) paid += pay.amount;
+                });
+                return paid;
+            });
+
+            chartBarInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: pLabels,
+                    datasets: [
+                        { label: 'Hak Ediş', data: pAccruals, backgroundColor: '#4f46e5', borderRadius: 6 },
+                        { label: 'Ödenen', data: pPaids, backgroundColor: '#10b981', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 10 } }, grid: { color: isDark ? '#334155' : '#e2e8f0' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // 8. ANA TAHAKKUK TABLOSU
+        function renderPersonnelTab() {
+            let totalSal = 0, totalRent = 0, totalPayroll = 0;
+            const tbody = document.getElementById('personnelTableBody');
+            tbody.innerHTML = '';
+
+            personnel.forEach(p => {
+                const totalMonth = p.salary + p.rent + p.soc1 + p.soc2;
+                totalSal += p.salary;
+                totalRent += p.rent;
+                totalPayroll += totalMonth;
+
+                const avatarGrad = getAvatarGradient(p.code);
+
+                const tr = document.createElement('tr');
+                tr.className = "ui-hover-row transition border-b border-inherit";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-mono font-bold ui-muted">${p.code}</td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr ${avatarGrad} text-white flex items-center justify-center font-black text-xs shrink-0">
+                                ${p.code}
+                            </div>
+                            <span class="font-extrabold text-sm">${p.name}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-right font-bold">${formatMoney(p.salary)}</td>
+                    <td class="py-3.5 px-4 text-right font-bold text-emerald-600">${formatMoney(p.rent)}</td>
+                    <td class="py-3.5 px-4 text-right ui-muted">${formatMoney(p.soc1)}</td>
+                    <td class="py-3.5 px-4 text-right ui-muted">${formatMoney(p.soc2)}</td>
+                    <td class="py-3.5 px-4 text-right font-black text-indigo-500 text-sm">${formatMoney(totalMonth)}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="text-[11px] font-bold space-y-1">
+                            <span class="inline-block px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 text-[10px]">Maaş: ${p.startSalary || 'Tümü'}</span>
+                            ${p.rent > 0 ? `<br><span class="inline-block px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px]">Kira: ${p.startRent || 'Tümü'}</span>` : ''}
+                            ${p.initialDebt > 0 ? `<br><span class="inline-block px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px]">Devir: ${formatMoney(p.initialDebt)}</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                        <button onclick="openEditPersonModal('${p.code}')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 rounded-lg text-[11px] font-bold transition mr-1" title="Düzenle">
+                            <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                        </button>
+                        <button onclick="quickChangeModal('${p.code}')" class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500 border border-indigo-500/20 rounded-lg text-[11px] font-bold transition mr-1" title="Zam Uygula">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Zam
+                        </button>
+                        <button onclick="deletePerson('${p.code}')" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-lg text-[11px] font-bold transition" title="Sil">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statTotalEmployees').innerText = `${personnel.length} Kişi`;
+            document.getElementById('statTotalSalary').innerText = formatMoney(totalSal);
+            document.getElementById('statTotalRent').innerText = formatMoney(totalRent);
+            document.getElementById('statTotalPayroll').innerText = formatMoney(totalPayroll);
+
+            document.getElementById('personnelTableFoot').innerHTML = `
+                <tr>
+                    <td colspan="2" class="py-3.5 px-4 uppercase font-black text-xs">TOPLAMLAR</td>
+                    <td class="py-3.5 px-4 text-right font-black">${formatMoney(totalSal)}</td>
+                    <td class="py-3.5 px-4 text-right font-black text-emerald-600">${formatMoney(totalRent)}</td>
+                    <td colspan="2"></td>
+                    <td class="py-3.5 px-4 text-right font-black text-indigo-500 text-sm">${formatMoney(totalPayroll)}</td>
+                    <td colspan="2"></td>
+                </tr>
+            `;
+        }
+
+        // 9. ZAM İŞLEMLERİ
+        function renderChangesTab() {
+            const tbody = document.getElementById('changesTableBody');
+            tbody.innerHTML = '';
+
+            document.getElementById('zamCountBadge').innerText = `${changes.length} Artış Kaydı`;
+
+            const sortedChanges = [...changes].sort((a,b) => b.period.localeCompare(a.period));
+
+            sortedChanges.forEach(c => {
+                const p = personnel.find(x => x.code === c.code);
+                const name = p ? p.name : c.code;
+
+                let badgeColor = 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
+                if (c.item === 'KİRA') badgeColor = 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20';
+                else if (c.item === 'SOC1') badgeColor = 'bg-violet-500/10 text-violet-500 border border-violet-500/20';
+                else if (c.item === 'SOC2') badgeColor = 'bg-amber-500/10 text-amber-600 border border-amber-500/20';
+
+                const tr = document.createElement('tr');
+                tr.className = "ui-hover-row transition border-b border-inherit";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold">
+                        <span class="px-2 py-0.5 bg-indigo-500/10 text-indigo-500 rounded border border-indigo-500/20 font-mono">${c.period}</span>
+                    </td>
+                    <td class="py-3 px-4 font-bold">${name} (${c.code})</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${getItemLabel(c.item)}</span>
+                    </td>
+                    <td class="py-3 px-4 text-right ui-muted font-medium">${formatMoney(c.oldAmount)}</td>
+                    <td class="py-3 px-4 text-right font-black text-indigo-500">${formatMoney(c.newAmount)}</td>
+                    <td class="py-3 px-4">${c.note || '-'}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="deleteChange(${c.id})" class="text-rose-500 hover:text-rose-600 font-bold p-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 10. ÖDEME GEÇMİŞİ VE MAKBUZ BUTONU
+        function renderPaymentsTab() {
+            let totalPay = 0, bankPay = 0, cashPay = 0;
+            const tbody = document.getElementById('paymentsTableBody');
+            tbody.innerHTML = '';
+
+            const pFilter = document.getElementById('filterPayPerson') ? document.getElementById('filterPayPerson').value : '';
+            const cFilter = document.getElementById('filterPayChannel') ? document.getElementById('filterPayChannel').value : '';
+
+            const sortedPayments = [...payments].sort((a,b) => b.date.localeCompare(a.date));
+
+            sortedPayments.forEach(pay => {
+                totalPay += pay.amount;
+                if (pay.channel === 'BANKA') bankPay += pay.amount;
+                if (pay.channel === 'NAKİT') cashPay += pay.amount;
+
+                if (pFilter && pay.code !== pFilter) return;
+                if (cFilter && pay.channel !== cFilter) return;
+
+                const p = personnel.find(x => x.code === pay.code);
+                const name = p ? p.name : pay.code;
+
+                const tr = document.createElement('tr');
+                tr.className = "ui-hover-row transition border-b border-inherit";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-mono font-medium ui-muted">${pay.date}</td>
+                    <td class="py-3 px-4 font-bold">${pay.period}</td>
+                    <td class="py-3 px-4 font-extrabold">${name}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold ui-subtle-box border">${getItemLabel(pay.type)}</span></td>
+                    <td class="py-3 px-4">
+                        <span class="inline-flex items-center gap-1 font-bold ${pay.channel === 'BANKA' ? 'text-blue-500' : 'text-emerald-600'}">
+                            <i class="fa-solid ${pay.channel === 'BANKA' ? 'fa-building-columns' : 'fa-money-bill-wave'} text-[11px]"></i>
+                            ${pay.channel}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-right font-black text-emerald-600 text-sm">${formatMoney(pay.amount)}</td>
+                    <td class="py-3 px-4 font-mono ui-muted">${pay.receipt || '-'}</td>
+                    <td class="py-3 px-4">${pay.note || '-'}</td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        <button onclick="openReceiptModal(${pay.id})" title="Tediye Makbuzu Yazdır" class="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500 border border-indigo-500/20 rounded-lg text-[11px] font-bold transition mr-1.5">
+                            <i class="fa-solid fa-receipt"></i> Makbuz
+                        </button>
+                        <button onclick="deletePayment(${pay.id})" title="Sil" class="text-rose-500 hover:text-rose-600 font-bold p-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statTotalPayments').innerText = formatMoney(totalPay);
+            document.getElementById('statBankPayments').innerText = formatMoney(bankPay);
+            document.getElementById('statCashPayments').innerText = formatMoney(cashPay);
+        }
+
+        // 11. RESMİ TEDİYE MAKBUZU (YAZDIRILABİLİR FİŞ) & SAYIYI YAZIYA ÇEVİRME
+        function numberToTurkishWords(num) {
+            if (!num || isNaN(num)) return "Sıfır Türk Lirası";
+            num = Math.floor(num);
+            const ones = ["", "Bir", "İki", "Üç", "Dört", "Beş", "Altı", "Yedi", "Sekiz", "Dokuz"];
+            const tens = ["", "On", "Yirmi", "Otuz", "Kırk", "Elli", "Altmış", "Yetmiş", "Seksen", "Doksan"];
+            
+            function convertGroup(n) {
+                let str = "";
+                let h = Math.floor(n / 100);
+                let rem = n % 100;
+                let t = Math.floor(rem / 10);
+                let o = rem % 10;
+                if (h > 0) str += (h === 1 ? "Yüz" : ones[h] + " Yüz");
+                if (t > 0) str += (str ? " " : "") + tens[t];
+                if (o > 0) str += (str ? " " : "") + ones[o];
+                return str.trim();
+            }
+
+            let result = "";
+            let millions = Math.floor(num / 1000000);
+            let thousands = Math.floor((num % 1000000) / 1000);
+            let remainder = num % 1000;
+
+            if (millions > 0) result += convertGroup(millions) + " Milyon ";
+            if (thousands > 0) {
+                result += (thousands === 1 ? "Bin " : convertGroup(thousands) + " Bin ");
+            }
+            if (remainder > 0) result += convertGroup(remainder);
+
+            return "Yalnız " + result.trim() + " Türk Lirası";
+        }
+
+        function openReceiptModal(paymentId) {
+            const pay = payments.find(x => x.id === paymentId);
+            if (!pay) return;
+
+            const p = personnel.find(x => x.code === pay.code);
+            const pName = p ? `${p.name} (${p.code})` : pay.code;
+
+            document.getElementById('receiptCompanyName').innerText = companySettings.name;
+            document.getElementById('receiptNo').innerText = `MAK-${pay.period.replace('-', '')}-${String(pay.id).slice(-4)}`;
+            document.getElementById('receiptDate').innerText = `Tarih: ${pay.date}`;
+            document.getElementById('receiptPersonName').innerText = pName;
+            document.getElementById('receiptChannel').innerText = `${pay.channel === 'BANKA' ? 'Banka Havalesi' : 'Kasa Elden Nakit'} • Dönem: ${pay.period}`;
+            document.getElementById('receiptAmount').innerText = formatMoney(pay.amount);
+            document.getElementById('receiptWords').innerText = numberToTurkishWords(pay.amount);
+            document.getElementById('receiptItem').innerText = getItemLabel(pay.type);
+            document.getElementById('receiptRef').innerText = pay.receipt || 'Resmi Dekont Bulunmuyor';
+            document.getElementById('receiptNote').innerText = pay.note || 'Belirtilmedi';
+
+            openModal('modalReceipt');
+        }
+
+        // 12. HIZLI KOMUT PALETİ & ARAMA (CTRL + K)
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                openModal('modalSearch');
+                setTimeout(() => document.getElementById('searchInput').focus(), 100);
+            }
+            if (e.key === 'Escape') {
+                closeModal('modalSearch');
+            }
+        });
+
+        function handleSearch(q) {
+            const res = document.getElementById('searchResults');
+            res.innerHTML = '';
+            q = q.trim().toLowerCase();
+            if (!q) {
+                res.innerHTML = '<div class="p-3 text-center ui-muted">Aramak için personel adı veya işlem yazın...</div>';
+                return;
+            }
+
+            // Personel Arama
+            const matchedPersonnel = personnel.filter(p => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q));
+            if (matchedPersonnel.length > 0) {
+                res.innerHTML += '<div class="text-[10px] font-extrabold ui-muted uppercase px-2 py-1">Personeller</div>';
+                matchedPersonnel.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = "p-2 ui-subtle-box rounded-xl border flex items-center justify-between";
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-sm">${p.name}</span>
+                            <span class="text-[10px] ui-muted">(${p.code})</span>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="closeModal('modalSearch'); quickPay('${p.code}')" class="px-2 py-1 bg-emerald-600 text-white rounded text-[10px] font-bold">Öde</button>
+                            <button onclick="closeModal('modalSearch'); openPersonStatement('${p.code}')" class="px-2 py-1 bg-indigo-600 text-white rounded text-[10px] font-bold">Ekstre</button>
+                            <button onclick="closeModal('modalSearch'); openEditPersonModal('${p.code}')" class="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">Düzenle</button>
+                        </div>
+                    `;
+                    res.appendChild(item);
+                });
+            }
+
+            // Sayfa Yönlendirmeleri
+            const pages = [
+                { id: 'aylik-takip', name: 'Aylık Takip Paneli', icon: 'fa-calendar-check' },
+                { id: 'ana-tahakkuk', name: 'Ana Tahakkuk (Kadro)', icon: 'fa-users' },
+                { id: 'zam', name: 'Zam & Artış İşlemleri', icon: 'fa-arrow-trend-up' },
+                { id: 'odeme-gecmisi', name: 'Kasa & Banka Ödemeleri', icon: 'fa-receipt' },
+                { id: 'ayarlar', name: 'Sistem Ayarları', icon: 'fa-sliders' }
+            ];
+            const matchedPages = pages.filter(pg => pg.name.toLowerCase().includes(q));
+            if (matchedPages.length > 0) {
+                res.innerHTML += '<div class="text-[10px] font-extrabold ui-muted uppercase px-2 py-1 mt-2">Menü Sayfaları</div>';
+                matchedPages.forEach(pg => {
+                    const item = document.createElement('div');
+                    item.className = "p-2 ui-subtle-box rounded-xl border flex items-center justify-between cursor-pointer hover:border-indigo-500 transition";
+                    item.onclick = () => { closeModal('modalSearch'); switchTab(pg.id); };
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid ${pg.icon} text-indigo-500"></i>
+                            <span class="font-bold">${pg.name}</span>
+                        </div>
+                        <span class="text-[10px] ui-muted">Git &rarr;</span>
+                    `;
+                    res.appendChild(item);
+                });
+            }
+
+            if (res.children.length === 0) {
+                res.innerHTML = '<div class="p-3 text-center ui-muted">Sonuç bulunamadı.</div>';
+            }
+        }
+
+        // 13. MODALLAR VE DOLDURMALAR
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function populateSelects() {
+            const selects = [
+                document.getElementById('payPerson'),
+                document.getElementById('modalChangePerson'),
+                document.getElementById('quickChangePerson'),
+                document.getElementById('filterPayPerson')
+            ];
+
+            selects.forEach(sel => {
+                if (!sel) return;
+                const isFilter = sel.id === 'filterPayPerson';
+                const currentVal = sel.value;
+                sel.innerHTML = isFilter ? '<option value="">Tüm Personeller</option>' : '';
+                personnel.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.code;
+                    opt.innerText = `${p.name} (${p.code})`;
+                    sel.appendChild(opt);
+                });
+                if (currentVal) sel.value = currentVal;
+            });
+        }
+
+        function quickPay(code) {
+            populateSelects();
+            document.getElementById('payPerson').value = code;
+            const year = document.getElementById('selectYear').value;
+            const month = document.getElementById('selectMonth').value;
+            document.getElementById('payPeriod').value = getPeriodString(year, month);
+            openModal('modalPayment');
+        }
+
+        function quickChangeModal(code) {
+            populateSelects();
+            document.getElementById('modalChangePerson').value = code;
+            openModal('modalChange');
+        }
+
+        function openPersonStatement(code) {
+            const p = personnel.find(x => x.code === code);
+            if (!p) return;
+
+            document.getElementById('statModalName').innerText = `${p.name} Bireysel Ekstresi`;
+            document.getElementById('statModalSub').innerText = `${companySettings.name} | Kod: ${p.code}`;
+
+            const year = parseInt(document.getElementById('selectYear').value);
+            const month = parseInt(document.getElementById('selectMonth').value);
+            const curPStr = getPeriodString(year, month);
+
+            const curSal = getRateForMonth(code, 'MAAŞ', curPStr);
+            const curRent = getRateForMonth(code, 'KİRA', curPStr);
+            document.getElementById('statModalSalary').innerText = formatMoney(curSal);
+            document.getElementById('statModalRent').innerText = formatMoney(curRent);
+
+            const transactions = [];
+
+            if (p.initialDebt && p.initialDebt > 0) {
+                const startPeriod = p.startSalary || '2026-10';
+                transactions.push({
+                    date: `${startPeriod}-01`,
+                    type: 'DEVİR',
+                    channel: 'AÇILIŞ',
+                    desc: 'Sistem Öncesi Devreden Geçmiş Borç (Açılış Bakiyesi)',
+                    accrual: p.initialDebt,
+                    payment: 0
+                });
+            }
+
+            for (let m = 1; m <= 12; m++) {
+                const pStr = getPeriodString(year, m);
+                const s = getRateForMonth(code, 'MAAŞ', pStr);
+                const r = getRateForMonth(code, 'KİRA', pStr);
+                const sc1 = getRateForMonth(code, 'SOC1', pStr);
+                const sc2 = getRateForMonth(code, 'SOC2', pStr);
+                if (s > 0) {
+                    transactions.push({ date: `${pStr}-01`, type: 'TAHAKKUK', channel: 'SİSTEM', desc: `${m}. Ay ${customLabels.colSalary}`, accrual: s, payment: 0 });
+                }
+                if (r > 0) {
+                    transactions.push({ date: `${pStr}-01`, type: 'TAHAKKUK', channel: 'SİSTEM', desc: `${m}. Ay ${customLabels.colRent}`, accrual: r, payment: 0 });
+                }
+                if (sc1 > 0) {
+                    transactions.push({ date: `${pStr}-01`, type: 'TAHAKKUK', channel: 'SİSTEM', desc: `${m}. Ay ${customLabels.colSoc1}`, accrual: sc1, payment: 0 });
+                }
+                if (sc2 > 0) {
+                    transactions.push({ date: `${pStr}-01`, type: 'TAHAKKUK', channel: 'SİSTEM', desc: `${m}. Ay ${customLabels.colSoc2}`, accrual: sc2, payment: 0 });
+                }
+            }
+
+            payments.filter(pay => pay.code === code).forEach(pay => {
+                transactions.push({ date: pay.date, type: 'ÖDEME', channel: pay.channel, desc: `${pay.period} ${getItemLabel(pay.type)} Ödemesi (${pay.receipt || pay.note || ''})`, accrual: 0, payment: pay.amount });
+            });
+
+            transactions.sort((a,b) => a.date.localeCompare(b.date));
+
+            const tbody = document.getElementById('statModalTableBody');
+            tbody.innerHTML = '';
+
+            let runningBalance = 0;
+            transactions.forEach(t => {
+                runningBalance += (t.accrual - t.payment);
+                const tr = document.createElement('tr');
+                tr.className = "ui-hover-row transition border-b border-inherit";
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-mono ui-muted">${t.date}</td>
+                    <td class="py-2.5 px-3 font-bold">${t.desc}</td>
+                    <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.channel === 'BANKA' ? 'bg-blue-500/10 text-blue-500' : t.channel === 'NAKİT' ? 'bg-emerald-500/10 text-emerald-600' : 'ui-subtle-box'}">${t.channel}</span></td>
+                    <td class="py-2.5 px-3 text-right font-bold text-indigo-500">${t.accrual > 0 ? formatMoney(t.accrual) : '-'}</td>
+                    <td class="py-2.5 px-3 text-right font-bold text-emerald-600">${t.payment > 0 ? formatMoney(t.payment) : '-'}</td>
+                    <td class="py-2.5 px-3 text-right font-black ${runningBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}">${formatMoney(runningBalance)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statModalBalance').innerText = formatMoney(runningBalance);
+            openModal('modalStatement');
+        }
+
+        // 14. CRUD İŞLEMLERİ
+        function submitPayment(e) {
+            e.preventDefault();
+            const newPayment = {
+                id: Date.now(),
+                code: document.getElementById('payPerson').value,
+                type: document.getElementById('payType').value,
+                channel: document.getElementById('payChannel').value,
+                date: document.getElementById('payDate').value,
+                period: document.getElementById('payPeriod').value,
+                amount: parseFloat(document.getElementById('payAmount').value) || 0,
+                receipt: document.getElementById('payReceipt').value,
+                note: document.getElementById('payNote').value
+            };
+            payments.push(newPayment);
+            saveState();
+            closeModal('modalPayment');
+            renderDashboard();
+            renderPaymentsTab();
+            showToast("Ödeme kaydı başarıyla eklendi!", "success");
+        }
+
+        function submitQuickChange(e) {
+            e.preventDefault();
+            const code = document.getElementById('quickChangePerson').value;
+            const item = document.getElementById('quickChangeItem').value;
+            const period = document.getElementById('quickChangePeriod').value;
+            const newAmount = parseFloat(document.getElementById('quickChangeAmount').value) || 0;
+            const note = document.getElementById('quickChangeNote').value;
+
+            const oldAmount = getRateForMonth(code, item, period);
+
+            changes.push({
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                period: period,
+                code: code,
+                item: item,
+                oldAmount: oldAmount,
+                newAmount: newAmount,
+                note: note
+            });
+
+            saveState();
+            renderChangesTab();
+            renderDashboard();
+            document.getElementById('quickChangeAmount').value = '';
+            document.getElementById('quickChangeNote').value = '';
+            showToast("Artış başarıyla uygulandı!", "success");
+        }
+
+        function submitModalChange(e) {
+            e.preventDefault();
+            const code = document.getElementById('modalChangePerson').value;
+            const item = document.getElementById('modalChangeItem').value;
+            const period = document.getElementById('modalChangePeriod').value;
+            const newAmount = parseFloat(document.getElementById('modalChangeAmount').value) || 0;
+            const note = document.getElementById('modalChangeNote').value;
+
+            const oldAmount = getRateForMonth(code, item, period);
+
+            changes.push({
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                period: period,
+                code: code,
+                item: item,
+                oldAmount: oldAmount,
+                newAmount: newAmount,
+                note: note
+            });
+
+            saveState();
+            closeModal('modalChange');
+            renderChangesTab();
+            renderDashboard();
+            showToast("Artış başarıyla uygulandı!", "success");
+        }
+
+        function submitPerson(e) {
+            e.preventDefault();
+            const code = document.getElementById('newCode').value.trim().toUpperCase();
+            if (personnel.some(x => x.code === code)) {
+                showToast("Bu koda sahip personel zaten var!", "error");
+                return;
+            }
+            personnel.push({
+                id: Date.now(),
+                code: code,
+                name: document.getElementById('newName').value.trim(),
+                salary: parseFloat(document.getElementById('newSalary').value) || 0,
+                rent: parseFloat(document.getElementById('newRent').value) || 0,
+                soc1: parseFloat(document.getElementById('newSoc1').value) || 0,
+                soc2: parseFloat(document.getElementById('newSoc2').value) || 0,
+                startSalary: document.getElementById('newStartSalary').value || "2026-10",
+                startRent: document.getElementById('newStartRent').value || "",
+                initialDebt: parseFloat(document.getElementById('newInitialDebt').value) || 0
+            });
+            saveState();
+            populateSelects();
+            closeModal('modalPerson');
+            renderPersonnelTab();
+            renderDashboard();
+            showToast("Personel kadroya başarıyla eklendi!", "success");
+        }
+
+        function openEditPersonModal(code) {
+            const p = personnel.find(x => x.code === code);
+            if (!p) return;
+
+            document.getElementById('editCode').value = p.code;
+            document.getElementById('editPersonSub').innerText = `${p.name} (${p.code}) Kartı`;
+            document.getElementById('editName').value = p.name;
+            document.getElementById('editSalary').value = p.salary || 0;
+            document.getElementById('editRent').value = p.rent || 0;
+            document.getElementById('editSoc1').value = p.soc1 || 0;
+            document.getElementById('editSoc2').value = p.soc2 || 0;
+            document.getElementById('editStartSalary').value = p.startSalary || '2026-10';
+            document.getElementById('editStartRent').value = p.startRent || '';
+            document.getElementById('editInitialDebt').value = p.initialDebt || 0;
+
+            openModal('modalEditPerson');
+        }
+
+        function submitEditPerson(e) {
+            e.preventDefault();
+            const code = document.getElementById('editCode').value;
+            const p = personnel.find(x => x.code === code);
+            if (!p) return;
+
+            p.name = document.getElementById('editName').value.trim();
+            p.salary = parseFloat(document.getElementById('editSalary').value) || 0;
+            p.rent = parseFloat(document.getElementById('editRent').value) || 0;
+            p.soc1 = parseFloat(document.getElementById('editSoc1').value) || 0;
+            p.soc2 = parseFloat(document.getElementById('editSoc2').value) || 0;
+            p.startSalary = document.getElementById('editStartSalary').value;
+            p.startRent = document.getElementById('editStartRent').value;
+            p.initialDebt = parseFloat(document.getElementById('editInitialDebt').value) || 0;
+
+            saveState();
+            closeModal('modalEditPerson');
+            populateSelects();
+            renderPersonnelTab();
+            renderDashboard();
+            renderChangesTab();
+            showToast(`${p.name} bilgileri ve başlangıç ayarları güncellendi!`, "success");
+        }
+
+        function applyBulkStartMonth() {
+            const targetPeriod = document.getElementById('bulkStartMonth').value;
+            if (!targetPeriod) return;
+
+            if (confirm(`Tüm kayıtlı personellerin maaş ve kira takip başlangıcı "${targetPeriod}" olarak ayarlanacak.\nBu aydan önceki aylar için tahakkuk üretilmeyecek ve geçmiş hayali borçlar temizlenecektir.\n\nOnaylıyor musunuz?`)) {
+                personnel.forEach(p => {
+                    if (p.salary > 0) p.startSalary = targetPeriod;
+                    if (p.rent > 0) p.startRent = targetPeriod;
+                });
+                saveState();
+                renderPersonnelTab();
+                renderDashboard();
+                showToast(`Tüm personellerin takip başlangıcı ${targetPeriod} yapıldı!`, "success");
+            }
+        }
+
+        let targetDeletePersonCode = null;
+
+        function deletePerson(code) {
+            const p = personnel.find(x => x.code === code);
+            if (!p) return;
+            targetDeletePersonCode = code;
+
+            document.getElementById('delPersonConfirmText').innerText = `"${p.name}" (${p.code}) adlı personeli kadrodan silmek istediğinize emin misiniz?`;
+            document.getElementById('delPersonDetails').innerHTML = `
+                <div><span class="ui-muted font-bold">Personel:</span> <span class="font-extrabold">${p.name} (Kod: ${p.code})</span></div>
+                <div><span class="ui-muted font-bold">Maaş / Kira:</span> <span class="font-bold text-indigo-500">${formatMoney(p.salary)}</span> / <span class="font-bold text-emerald-600">${formatMoney(p.rent)}</span></div>
+            `;
+            openModal('modalDeletePersonConfirm');
+        }
+
+        function deletePersonFromEditModal() {
+            const code = document.getElementById('editCode').value;
+            deletePerson(code);
+        }
+
+        function confirmDeletePersonAction() {
+            if (!targetDeletePersonCode) return;
+            const code = targetDeletePersonCode;
+            const p = personnel.find(x => x.code === code);
+            const pName = p ? p.name : code;
+
+            const purgeHistory = document.getElementById('delPurgeHistory').checked;
+
+            personnel = personnel.filter(x => x.code !== code);
+
+            if (purgeHistory) {
+                payments = payments.filter(x => x.code !== code);
+                changes = changes.filter(x => x.code !== code);
+            }
+
+            saveState();
+            closeModal('modalDeletePersonConfirm');
+            closeModal('modalEditPerson');
+            populateSelects();
+            renderPersonnelTab();
+            renderDashboard();
+            renderChangesTab();
+            renderPaymentsTab();
+
+            showToast(`${pName} başarıyla silindi!`, "info");
+            targetDeletePersonCode = null;
+        }
+
+        function deletePayment(id) {
+            if (confirm("Bu ödeme kaydını silmek istediğinize emin misiniz?")) {
+                payments = payments.filter(x => x.id !== id);
+                saveState();
+                renderPaymentsTab();
+                renderDashboard();
+                showToast("Ödeme kaydı silindi.", "info");
+            }
+        }
+
+        function deleteChange(id) {
+            if (confirm("Bu zam kaydını silmek istediğinize emin misiniz?")) {
+                changes = changes.filter(x => x.id !== id);
+                saveState();
+                renderChangesTab();
+                renderDashboard();
+                showToast("Zam kaydı silindi.", "info");
+            }
+        }
+
+        // 15. YEDEKLEME, GERİ YÜKLEME VE EXCEL
+        function backupData() {
+            const data = { 
+                personnel, 
+                changes, 
+                payments, 
+                customLabels, 
+                companySettings, 
+                exportDate: new Date().toISOString() 
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Maas_Kira_Tam_Yedek_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showToast("Tam sistem yedeği indirildi!", "success");
+        }
+
+        function handleRestoreFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.personnel) personnel = data.personnel;
+                    if (data.changes) changes = data.changes;
+                    if (data.payments) payments = data.payments;
+                    if (data.customLabels) customLabels = data.customLabels;
+                    if (data.companySettings) companySettings = data.companySettings;
+                    saveState();
+                    localStorage.setItem('app_labels', JSON.stringify(customLabels));
+                    localStorage.setItem('app_company', JSON.stringify(companySettings));
+                    applyCompanySettings();
+                    applyCustomLabels();
+                    populateSelects();
+                    renderDashboard();
+                    renderPersonnelTab();
+                    renderChangesTab();
+                    renderPaymentsTab();
+                    showToast("Yedek başarıyla geri yüklendi!", "success");
+                } catch (err) {
+                    showToast("Geçersiz yedek dosyası: " + err.message, "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToFactoryDefaults() {
+            if (confirm("DİKKAT: Tüm personeller, ödemeler ve ayarlar silinip varsayılan demo verilerine dönülecektir. Onaylıyor musunuz?")) {
+                localStorage.clear();
+                sessionStorage.clear();
+                location.reload();
+            }
+        }
+
+        function exportToExcel() {
+            const year = parseInt(document.getElementById('selectYear').value);
+            const month = parseInt(document.getElementById('selectMonth').value);
+            const currentPeriodStr = getPeriodString(year, month);
+
+            let csv = `PERSONEL KODU;AD SOYAD;GECMIS DEVREDEN;${customLabels.termTotal};BU AY ODENEN;BU AY KALAN;KAPATILACAK BORC\n`;
+
+            personnel.forEach(p => {
+                let priorAccrual = 0;
+                for (let m = 1; m < month; m++) {
+                    const pStr = getPeriodString(year, m);
+                    priorAccrual += getRateForMonth(p.code, 'MAAŞ', pStr) + getRateForMonth(p.code, 'KİRA', pStr) + getRateForMonth(p.code, 'SOC1', pStr) + getRateForMonth(p.code, 'SOC2', pStr);
+                }
+                const curAccrual = getRateForMonth(p.code, 'MAAŞ', currentPeriodStr) + getRateForMonth(p.code, 'KİRA', currentPeriodStr) + getRateForMonth(p.code, 'SOC1', currentPeriodStr) + getRateForMonth(p.code, 'SOC2', currentPeriodStr);
+
+                let priorPaid = 0, curPaid = 0;
+                payments.forEach(pay => {
+                    if (pay.code === p.code) {
+                        if (pay.period < currentPeriodStr) priorPaid += pay.amount;
+                        else if (pay.period === currentPeriodStr) curPaid += pay.amount;
+                    }
+                });
+
+                const initialDebt = p.initialDebt || 0;
+                const priorDebt = (priorAccrual - priorPaid) + initialDebt;
+                const curRem = curAccrual - curPaid;
+                const netDebt = priorDebt + curRem;
+
+                csv += `"${p.code}";"${p.name}";${priorDebt};${curAccrual};${curPaid};${curRem};${netDebt}\n`;
+            });
+
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Maas_Kira_Ozet_${currentPeriodStr}.csv`;
+            a.click();
+            showToast("Excel raporu indirildi!", "success");
+        }
+
+        document.getElementById('selectYear').addEventListener('change', renderDashboard);
+        document.getElementById('selectMonth').addEventListener('change', renderDashboard);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTheme(currentTheme);
+            checkAuth();
+            applyCompanySettings();
+            applyCustomLabels();
+            populateSelects();
+            renderDashboard();
+            renderPersonnelTab();
+            renderChangesTab();
+            renderPaymentsTab();
+
+            document.getElementById('selectYear').value = "2026";
+            document.getElementById('selectMonth').value = "10";
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('payDate').value = today;
+            document.getElementById('payPeriod').value = "2026-10";
+            document.getElementById('modalChangePeriod').value = "2026-10";
+            document.getElementById('quickChangePeriod').value = "2026-10";
+        });
+    </script>
+</body>
+</html>
