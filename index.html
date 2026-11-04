@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -1794,17 +1794,17 @@
         </div>
     </div>
 
-        <!-- ==================== MODAL: WHATSAPP PERSONEL & MAAŞ RAPORU ==================== -->
+    <!-- ==================== MODAL: WHATSAPP PERSONEL & MAAŞ RAPORU ==================== -->
     <div id="modalPersonelWhatsAppRapor" class="modal-overlay">
-        <div class="modal-card" style="max-width: 680px; width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-card" style="max-width: 760px; width: 95%; max-height: 92vh; display: flex; flex-direction: column;">
             <div class="modal-header" style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.14), rgba(18, 140, 126, 0.08)); border-bottom: 1px solid rgba(37, 211, 102, 0.25); flex-shrink: 0;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
                     <div>
-                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main);">WhatsApp Maaş & Gider Raporu</h3>
-                        <div style="font-size: 11px; color: var(--text-muted);">Cari ay ve geçmiş aylardan kalan bakiyelerin kurumsal tablosu</div>
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main);">Personel Maaş & Gider Raporu</h3>
+                        <div style="font-size: 11px; color: var(--text-muted);">Renkli grafik tablo kartı ve WhatsApp bildirim merkezi</div>
                     </div>
                 </div>
                 <button onclick="closeModal('modalPersonelWhatsAppRapor')" class="sidebar-toggle-btn">&times;</button>
@@ -1862,34 +1862,70 @@
                     </div>
                 </div>
 
-                <!-- 1. GÖRSEL TABLO GÖRÜNÜMÜ (CANLI VE NET) -->
-                <div id="reportVisualTablesContainer" style="margin-bottom: 14px;">
-                    <!-- JavaScript ile dinamik geçmiş ay ve cari ay tabloları buraya yüklenir -->
+                <!-- SEKMELER: RENKLİ TABLO GÖRSELİ & METİN FORMATI -->
+                <div style="display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">
+                    <button type="button" id="tabBtnReportImage" class="btn btn-primary" onclick="switchReportTab('image')" style="font-size: 12px; padding: 6px 14px; font-weight: 700;">
+                        <i class="fa-solid fa-image"></i> 🎨 Renkli Tablo Resmi (Önerilen)
+                    </button>
+                    <button type="button" id="tabBtnReportText" class="btn btn-subtle" onclick="switchReportTab('text')" style="font-size: 12px; padding: 6px 14px; font-weight: 700;">
+                        <i class="fa-solid fa-align-left"></i> 📝 Metin Formatı (Alternatif)
+                    </button>
                 </div>
 
-                <!-- 2. WHATSAPP METİN GÖRÜNÜMÜ (DÜZENLENEBİLİR) -->
-                <div class="form-group" style="margin-bottom: 6px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label style="font-size: 11px; font-weight: 700; color: var(--accent-gold); display: flex; align-items: center; gap: 6px;">
-                            <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> WhatsApp Mesaj Metni (Düzenlenebilir)
-                        </label>
-                        <span style="font-size: 10px; color: var(--text-dim);" id="reportCharCount">0 karakter</span>
+                <!-- 1. RENKLİ TABLO GÖRSELİ SEKME İÇERİĞİ -->
+                <div id="reportTabImageContent">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                        <div style="font-size: 11.5px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle-check" style="color: #10b981;"></i> WhatsApp İçin Yüksek Çözünürlüklü Renkli Tablo Kartı
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button type="button" class="btn btn-primary" onclick="copyReportTableAsImage()" style="font-size: 11.5px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; padding: 5px 12px;">
+                                <i class="fa-solid fa-camera"></i> 📸 Resmi Kopyala
+                            </button>
+                            <button type="button" class="btn btn-subtle" onclick="downloadReportImage()" style="font-size: 11.5px; font-weight: 700; padding: 5px 12px;">
+                                <i class="fa-solid fa-download"></i> 💾 PNG İndir
+                            </button>
+                        </div>
                     </div>
-                    <textarea id="reportMessageText" class="input-control" rows="7" style="width: 100%; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; line-height: 1.5; background: #0b1120; color: #f1f5f9; border-color: rgba(37, 211, 102, 0.4); resize: vertical; padding: 10px;" oninput="updateReportCharCount()"></textarea>
+
+                    <div id="reportImagePreviewContainer" style="background: #070b13; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; max-height: 440px; overflow-y: auto;">
+                        <img id="reportCardPreviewImg" alt="Maaş Raporu Görseli" style="max-width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); display: inline-block;" />
+                    </div>
+
+                    <div style="background: rgba(37, 211, 102, 0.08); border: 1px solid rgba(37, 211, 102, 0.25); border-radius: 8px; padding: 8px 12px; margin-top: 10px; font-size: 11.5px; color: #a7f3d0; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 18px; color: #25D366; flex-shrink: 0;"></i>
+                        <span><strong>WhatsApp Gönderimi:</strong> 'WhatsApp ile Gönder'e bastığınızda bu renkli görsel otomatik panoya kopyalanır. Açılan sohbette klavyeden <strong>CTRL+V</strong> (veya sağ tık &gt; Yapıştır) yaparak resmi görsel olarak anında gönderebilirsiniz.</span>
+                    </div>
                 </div>
 
-                <div style="font-size: 10.5px; color: var(--text-dim); margin-top: 2px;">
-                    ğŸ’¡ WhatsApp'a aktarılmadan önce metni dilediğiniz gibi düzenleyebilir veya özel not ekleyebilirsiniz.
+                <!-- 2. METİN FORMATI SEKME İÇERİĞİ -->
+                <div id="reportTabTextContent" style="display: none;">
+                    <div class="form-group" style="margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 11px; font-weight: 700; color: var(--accent-gold); display: flex; align-items: center; gap: 6px;">
+                                <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> WhatsApp Mesaj Metni (Düzenlenebilir)
+                            </label>
+                            <span style="font-size: 10px; color: var(--text-dim);" id="reportCharCount">0 karakter</span>
+                        </div>
+                        <textarea id="reportMessageText" class="input-control" rows="8" style="width: 100%; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; line-height: 1.5; background: #0b1120; color: #f1f5f9; border-color: rgba(37, 211, 102, 0.4); resize: vertical; padding: 10px;" oninput="updateReportCharCount()"></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                        <span style="font-size: 10.5px; color: var(--text-dim);">💡 İsteğe göre metin formatında kopyalayıp SMS veya e-posta olarak da gönderebilirsiniz.</span>
+                        <button type="button" class="btn btn-subtle" onclick="copyReportTextToClipboard()" style="font-size: 11px; font-weight: 700;">
+                            <i class="fa-solid fa-copy"></i> Metni Kopyala
+                        </button>
+                    </div>
                 </div>
             </div>
 
-                        <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; flex-shrink: 0;">
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; flex-shrink: 0;">
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button type="button" class="btn btn-primary" onclick="copyReportTextToClipboard()" style="font-weight: 700; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);" title="Tablo metnini panoya kopyalar (WhatsApp'a Ctrl+V yapabilirsiniz)">
-                        <i class="fa-solid fa-copy"></i> 📋 Tablo Metnini Kopyala
+                    <button type="button" class="btn btn-primary" onclick="copyReportTableAsImage()" style="font-weight: 700; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);" title="Tablo görselini panoya kopyalar">
+                        <i class="fa-solid fa-camera"></i> 📸 Resmi Kopyala
                     </button>
-                    <button type="button" class="btn btn-subtle" onclick="copyReportTableAsImage()" style="font-weight: 700; border: 1.5px solid var(--accent-gold); color: var(--accent-gold); background: rgba(234, 179, 8, 0.08);" title="Tabloyu resim olarak kopyalar (WhatsApp'a Ctrl+V ile doğrudan resim olarak yapıştırabilirsiniz)">
-                        <i class="fa-solid fa-camera"></i> 📸 Tablo Resmini Kopyala
+                    <button type="button" class="btn btn-subtle" onclick="downloadReportImage()" title="PNG Görseli Olarak İndir">
+                        <i class="fa-solid fa-download"></i> 💾 PNG İndir
                     </button>
                     <button type="button" class="btn btn-subtle" onclick="printReportText()" title="Raporu Yazdır / PDF Olarak Kaydet">
                         <i class="fa-solid fa-print"></i> Yazdır / PDF
@@ -1900,8 +1936,8 @@
                     <button type="button" class="btn btn-subtle" onclick="sendReportToWhatsApp('web')" title="WhatsApp Web sekmesini açar" style="border-color: rgba(37, 211, 102, 0.4); color: #25D366;">
                         <i class="fa-brands fa-whatsapp"></i> Web'de Aç
                     </button>
-                    <button type="button" class="btn btn-success" onclick="sendReportToWhatsApp('app')" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; font-weight: 800; border: none; padding: 10px 18px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);" title="Tabloyu kopyalar ve WhatsApp'ı açar">
-                        <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> WhatsApp ile Gönder
+                    <button type="button" class="btn btn-success" onclick="sendReportToWhatsApp('app')" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; font-weight: 800; border: none; padding: 10px 20px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35); display: inline-flex; align-items: center; gap: 8px;" title="Resmi panoya kopyalar ve WhatsApp'ı açar">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 17px;"></i> WhatsApp ile Gönder
                     </button>
                 </div>
             </div>

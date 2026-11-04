@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // PERSONEL, MAAŞ VE KİRA YÖNETİMİ MODÜLÜ (ORİJİNAL İŞLEYİŞ, SAF & NET)
 // ============================================================================
 
@@ -1279,6 +1279,41 @@ function getPeriodTurkishLabel(periodStr) {
     return `${mName} ${y}`;
 }
 
+
+// ============================================================================
+// WHATSAPP & GRAFİK MAAŞ VE GİDER RAPORU (RENKLİ GÖRSEL KART & METİN)
+// ============================================================================
+
+function switchReportTab(tabName) {
+    const tabImg = document.getElementById('reportTabImageContent');
+    const tabTxt = document.getElementById('reportTabTextContent');
+    const btnImg = document.getElementById('tabBtnReportImage');
+    const btnTxt = document.getElementById('tabBtnReportText');
+    if (!tabImg || !tabTxt) return;
+
+    if (tabName === 'image') {
+        tabImg.style.display = 'block';
+        tabTxt.style.display = 'none';
+        if (btnImg) {
+            btnImg.className = 'btn btn-primary';
+            btnImg.style.background = '';
+        }
+        if (btnTxt) {
+            btnTxt.className = 'btn btn-subtle';
+        }
+    } else {
+        tabImg.style.display = 'none';
+        tabTxt.style.display = 'block';
+        if (btnImg) {
+            btnImg.className = 'btn btn-subtle';
+        }
+        if (btnTxt) {
+            btnTxt.className = 'btn btn-primary';
+            btnTxt.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+        }
+    }
+}
+
 function openPersonelWhatsAppRaporModal() {
     const defaultFirma = localStorage.getItem('app_report_firma_name') || (typeof kurumInfo !== 'undefined' && kurumInfo.name ? kurumInfo.name : 'A Firması');
     const fInput = document.getElementById('reportFirmaAdi');
@@ -1301,6 +1336,7 @@ function openPersonelWhatsAppRaporModal() {
     const rMonth = document.getElementById('reportSelectAy');
     if (rMonth) rMonth.value = pageMonth;
 
+    switchReportTab('image');
     generatePersonelWhatsAppReportText();
     openModal('modalPersonelWhatsAppRapor');
 }
@@ -1324,16 +1360,20 @@ function updateReportCharCount() {
     }
 }
 
-function generatePersonelWhatsAppReportText() {
+// ----------------------------------------------------------------------------
+// 1. DÖNEM BAZLI RAPOR VERİSİ HESAPLAMA MOTORU
+// ----------------------------------------------------------------------------
+function getCalculatedReportDataset() {
     const firmaAdi = (document.getElementById('reportFirmaAdi')?.value || '').trim() || (typeof kurumInfo !== 'undefined' && kurumInfo.name ? kurumInfo.name : 'A Firması');
     const year = parseInt(document.getElementById('reportSelectYil')?.value || '2026', 10);
     const month = parseInt(document.getElementById('reportSelectAy')?.value || '10', 10);
     const currentPeriod = getPeriodStr(year, month);
+    const currentPeriodLabel = getPeriodTurkishLabel(currentPeriod);
     const kapsam = document.getElementById('reportKapsam')?.value || 'ALL';
-
     const labels = getSocialLabels();
+    const nowStr = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const nowTimeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-    // 1. Tüm aktif dönemleri topla
     const allPeriodsSet = new Set();
     dbPersonel.forEach(p => {
         if (p.startSalary) allPeriodsSet.add(p.startSalary);
@@ -1346,21 +1386,16 @@ function generatePersonelWhatsAppReportText() {
 
     const sortedPeriods = Array.from(allPeriodsSet).filter(p => /^\d{4}-\d{2}$/.test(p)).sort();
     const minPeriod = sortedPeriods[0] || currentPeriod;
-
-    // Ay ay genişlet
     const expandedPeriods = [];
     let [curY, curM] = minPeriod.split('-').map(Number);
     const [targetY, targetM] = currentPeriod.split('-').map(Number);
     while (curY < targetY || (curY === targetY && curM <= targetM)) {
         expandedPeriods.push(getPeriodStr(curY, curM));
         curM++;
-        if (curM > 12) {
-            curM = 1;
-            curY++;
-        }
+        if (curM > 12) { curM = 1; curY++; }
     }
 
-    function calcPeriodTotals(period) {
+    function calcPeriod(period) {
         let effSalary = 0, effS1 = 0, effS2 = 0, effS3 = 0, effRent = 0;
         let remSalary = 0, remS1 = 0, remS2 = 0, remS3 = 0, remRent = 0;
         let paidSalary = 0, paidS1 = 0, paidS2 = 0, paidS3 = 0, paidRent = 0, paidOther = 0;
@@ -1371,6 +1406,12 @@ function generatePersonelWhatsAppReportText() {
             const pEffS2 = getEffectiveRate(p.code, 'SOSYAL-2', period);
             const pEffS3 = getEffectiveRate(p.code, 'SOSYAL-3', period);
             const pEffRent = getEffectiveRate(p.code, 'KİRA', period);
+
+            effSalary += pEffSalary;
+            effS1 += pEffS1;
+            effS2 += pEffS2;
+            effS3 += pEffS3;
+            effRent += pEffRent;
 
             let pPaidSalary = 0, pPaidS1 = 0, pPaidS2 = 0, pPaidS3 = 0, pPaidRent = 0, pPaidOther = 0;
             dbPersonelPayments.forEach(pay => {
@@ -1385,12 +1426,6 @@ function generatePersonelWhatsAppReportText() {
                 }
             });
 
-            effSalary += pEffSalary;
-            effS1 += pEffS1;
-            effS2 += pEffS2;
-            effS3 += pEffS3;
-            effRent += pEffRent;
-
             paidSalary += pPaidSalary;
             paidS1 += pPaidS1;
             paidS2 += pPaidS2;
@@ -1398,11 +1433,23 @@ function generatePersonelWhatsAppReportText() {
             paidRent += pPaidRent;
             paidOther += pPaidOther;
 
-            remSalary += Math.max(0, pEffSalary - pPaidSalary);
-            remS1 += Math.max(0, pEffS1 - pPaidS1);
-            remS2 += Math.max(0, pEffS2 - pPaidS2);
-            remS3 += Math.max(0, pEffS3 - pPaidS3);
-            remRent += Math.max(0, pEffRent - pPaidRent);
+            let leftOther = pPaidOther;
+            let actSalary = Math.min(pEffSalary, pPaidSalary); leftOther += (pPaidSalary - actSalary);
+            let needSalary = pEffSalary - actSalary; let extraSalary = Math.min(needSalary, leftOther); actSalary += extraSalary; leftOther -= extraSalary;
+            let actS1 = Math.min(pEffS1, pPaidS1); leftOther += (pPaidS1 - actS1);
+            let needS1 = pEffS1 - actS1; let extraS1 = Math.min(needS1, leftOther); actS1 += extraS1; leftOther -= extraS1;
+            let actS2 = Math.min(pEffS2, pPaidS2); leftOther += (pPaidS2 - actS2);
+            let needS2 = pEffS2 - actS2; let extraS2 = Math.min(needS2, leftOther); actS2 += extraS2; leftOther -= extraS2;
+            let actS3 = Math.min(pEffS3, pPaidS3); leftOther += (pPaidS3 - actS3);
+            let needS3 = pEffS3 - actS3; let extraS3 = Math.min(needS3, leftOther); actS3 += extraS3; leftOther -= extraS3;
+            let actRent = Math.min(pEffRent, pPaidRent); leftOther += (pPaidRent - actRent);
+            let needRent = pEffRent - actRent; let extraRent = Math.min(needRent, leftOther); actRent += extraRent; leftOther -= extraRent;
+
+            remSalary += Math.max(0, pEffSalary - actSalary);
+            remS1 += Math.max(0, pEffS1 - actS1);
+            remS2 += Math.max(0, pEffS2 - actS2);
+            remS3 += Math.max(0, pEffS3 - actS3);
+            remRent += Math.max(0, pEffRent - actRent);
         });
 
         const totalEff = effSalary + effS1 + effS2 + effS3 + effRent;
@@ -1412,22 +1459,422 @@ function generatePersonelWhatsAppReportText() {
         return {
             period,
             label: getPeriodTurkishLabel(period),
+            remSalary, remS1, remS2, remS3, remRent, totalRem,
             effSalary, effS1, effS2, effS3, effRent, totalEff,
             paidSalary, paidS1, paidS2, paidS3, paidRent, paidOther, totalPaid,
-            remSalary, remS1, remS2, remS3, remRent, totalRem
+            hasS3: (effS3 > 0 || remS3 > 0)
         };
     }
 
-    const pastPeriods = expandedPeriods.filter(p => p < currentPeriod);
-    const pastDataList = pastPeriods.map(p => calcPeriodTotals(p));
-    const curData = calcPeriodTotals(currentPeriod);
-    const initialDebtTotal = dbPersonel.reduce((sum, p) => sum + (Number(p.initialDebt) || 0), 0);
+    const pastDataList = [];
+    expandedPeriods.forEach(p => {
+        if (p < currentPeriod) pastDataList.push(calcPeriod(p));
+    });
+    const curData = calcPeriod(currentPeriod);
+    const pastWithDebt = pastDataList.filter(d => d.totalRem > 0);
+    const initialDebtTotal = (kapsam !== 'CURRENT_ONLY') ? dbPersonel.reduce((sum, p) => sum + (Number(p.initialDebt) || 0), 0) : 0;
 
-    const nowStr = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    let totalPastDebt = initialDebtTotal;
+    pastWithDebt.forEach(d => { totalPastDebt += d.totalRem; });
+    const curRemaining = (kapsam !== 'PAST_ONLY') ? curData.totalRem : 0;
+    const grandTotal = (kapsam === 'CURRENT_ONLY' ? 0 : totalPastDebt) + curRemaining;
 
-    // ==========================================
-    // 2. WHATSAPP MESAJ METNİ (GERÇEK TABLO FORMATINDA)
-    // ==========================================
+    return {
+        firmaAdi, year, month, currentPeriod, currentPeriodLabel,
+        kapsam, labels, nowStr, nowTimeStr,
+        pastWithDebt, curData, initialDebtTotal, totalPastDebt, curRemaining, grandTotal
+    };
+}
+
+// ----------------------------------------------------------------------------
+// 2. RENKLİ YÜKSEK ÇÖZÜNÜRLÜKLÜ TABLO GÖRSELİ (CANVAS RENDERER)
+// ----------------------------------------------------------------------------
+function generatePersonelReportCanvas() {
+    const data = getCalculatedReportDataset();
+    const canvasW = 740;
+
+    function drawRoundedRect(ctx, x, y, w, h, r, fill, stroke, lw) {
+        if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+        ctx.beginPath();
+        ctx.moveTo(x + r.tl, y);
+        ctx.lineTo(x + w - r.tr, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+        ctx.lineTo(x + w, y + h - r.br);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+        ctx.lineTo(x + r.bl, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+        ctx.lineTo(x, y + r.tl);
+        ctx.quadraticCurveTo(x, y, x + r.tl, y);
+        ctx.closePath();
+        if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+        if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1; ctx.stroke(); }
+    }
+
+    // Dinamik Yükseklik Hesabı
+    let contentH = 105; // Header
+    if (data.initialDebtTotal > 0 && data.kapsam !== 'CURRENT_ONLY') {
+        contentH += 50; // Başlangıç devreden borcu
+    }
+    if (data.kapsam !== 'CURRENT_ONLY') {
+        if (data.pastWithDebt.length > 0) {
+            data.pastWithDebt.forEach(d => {
+                contentH += (d.hasS3 ? 205 : 180) + 16;
+            });
+        } else {
+            contentH += 60; // Geçmiş borç yok kartı
+        }
+    }
+    if (data.kapsam !== 'PAST_ONLY') {
+        contentH += (data.curData.hasS3 ? 205 : 180) + 16;
+    }
+    contentH += 82 + 16; // Genel Toplam Banner
+    contentH += 40; // Footer
+    const canvasH = Math.max(480, contentH);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasW * 2;
+    canvas.height = canvasH * 2;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+
+    // 1. Ana Arka Plan
+    const bgGrad = ctx.createLinearGradient(0, 0, canvasW, canvasH);
+    bgGrad.addColorStop(0, '#0b1120');
+    bgGrad.addColorStop(1, '#0f172a');
+    drawRoundedRect(ctx, 0, 0, canvasW, canvasH, 20, bgGrad, '#1e293b', 2);
+
+    // 2. Üst Başlık Kartı (Header Box)
+    const headerGrad = ctx.createLinearGradient(20, 18, canvasW - 40, 78);
+    headerGrad.addColorStop(0, '#1e293b');
+    headerGrad.addColorStop(1, '#0f172a');
+    drawRoundedRect(ctx, 20, 18, canvasW - 40, 74, 14, headerGrad, 'rgba(56, 189, 248, 0.25)', 1);
+
+    // Header Sol: İkon Rozeti
+    drawRoundedRect(ctx, 32, 29, 52, 52, 12, 'linear-gradient(135deg, #2563eb, #1d4ed8)', 'rgba(255,255,255,0.2)', 1);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('₺', 58, 55);
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+
+    // Header Sol: Firma & Rapor Başlığı
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(data.firmaAdi.toUpperCase(), 96, 47);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('PERSONEL MAAŞ & GİDER HESAP ÖZETİ', 96, 67);
+
+    // Header Sağ: Tarih & Dönem Rozetleri
+    const badgeX = canvasW - 32;
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('Tarih: ' + data.nowStr, badgeX, 44);
+
+    drawRoundedRect(ctx, badgeX - 150, 52, 150, 24, 6, 'rgba(56, 189, 248, 0.12)', 'rgba(56, 189, 248, 0.4)', 1);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('Dönem: ' + data.currentPeriodLabel, badgeX - 10, 68);
+    ctx.textAlign = 'left';
+
+    let curY = 106;
+
+    // Kart Çizim Yardımcısı
+    function drawSectionCard(isPast, title, badgeText, periodData, subtotalLabel) {
+        const cardX = 20;
+        const cardW = canvasW - 40;
+        const cardH = periodData.hasS3 ? 205 : 180;
+        const accentColor = isPast ? '#f59e0b' : '#38bdf8';
+        const accentBorder = isPast ? 'rgba(245, 158, 11, 0.35)' : 'rgba(56, 189, 248, 0.35)';
+        const headerBg = isPast ? 'rgba(245, 158, 11, 0.16)' : 'rgba(56, 189, 248, 0.16)';
+        const subtotalBg = isPast ? 'rgba(245, 158, 11, 0.12)' : 'rgba(56, 189, 248, 0.12)';
+
+        // Kart Arka Planı
+        drawRoundedRect(ctx, cardX, curY, cardW, cardH, 12, '#111c30', accentBorder, 1.2);
+
+        // Başlık Bandı
+        drawRoundedRect(ctx, cardX, curY, cardW, 36, { tl: 12, tr: 12, bl: 0, br: 0 }, headerBg, null, 0);
+
+        // Başlık Metni
+        ctx.fillStyle = accentColor;
+        ctx.font = 'bold 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(title, cardX + 14, curY + 23);
+
+        // Başlık Sağ Rozeti
+        ctx.textAlign = 'right';
+        ctx.fillStyle = isPast ? '#fbbf24' : '#bae6fd';
+        ctx.font = 'bold 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(badgeText, cardX + cardW - 14, curY + 23);
+        ctx.textAlign = 'left';
+
+        // Kalem Satırları
+        const rows = [
+            { badge: 'MAAŞ', badgeCol: '#f87171', badgeBg: 'rgba(239, 68, 68, 0.18)', label: 'Net Personel Maaşları', val: periodData.remSalary },
+            { badge: (data.labels.sosyal1.toUpperCase().split(' ')[0] || 'SGK').substring(0, 8), badgeCol: '#38bdf8', badgeBg: 'rgba(56, 189, 248, 0.18)', label: data.labels.sosyal1, val: periodData.remS1 },
+            { badge: (data.labels.sosyal2.toUpperCase().split(' ')[0] || 'VERGİ').substring(0, 8), badgeCol: '#c084fc', badgeBg: 'rgba(192, 132, 252, 0.18)', label: data.labels.sosyal2, val: periodData.remS2 }
+        ];
+        if (periodData.hasS3) {
+            rows.push({ badge: (data.labels.sosyal3.toUpperCase().split(' ')[0] || 'EK').substring(0, 8), badgeCol: '#818cf8', badgeBg: 'rgba(129, 140, 248, 0.18)', label: data.labels.sosyal3, val: periodData.remS3 });
+        }
+        rows.push({ badge: 'KİRA', badgeCol: '#fbbf24', badgeBg: 'rgba(251, 191, 36, 0.18)', label: 'Mülk Kira Bedeli', val: periodData.remRent });
+
+        let rowY = curY + 45;
+        rows.forEach((r, idx) => {
+            const itemH = 26;
+            // Rozet
+            drawRoundedRect(ctx, cardX + 14, rowY + 3, 58, 18, 5, r.badgeBg, null, 0);
+            ctx.fillStyle = r.badgeCol;
+            ctx.font = 'bold 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(r.badge, cardX + 14 + 29, rowY + 15);
+            ctx.textAlign = 'left';
+
+            // Etiket
+            ctx.fillStyle = '#f1f5f9';
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillText(r.label, cardX + 82, rowY + 16);
+
+            // Tutar
+            ctx.textAlign = 'right';
+            if (r.val > 0) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillText(formatTL(r.val), cardX + cardW - 14, rowY + 16);
+            } else {
+                ctx.fillStyle = '#64748b';
+                ctx.font = '11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillText('₺0,00 (Ödendi)', cardX + cardW - 14, rowY + 16);
+            }
+            ctx.textAlign = 'left';
+
+            // İnce Çizgi
+            if (idx < rows.length - 1) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.beginPath();
+                ctx.moveTo(cardX + 14, rowY + itemH);
+                ctx.lineTo(cardX + cardW - 14, rowY + itemH);
+                ctx.stroke();
+            }
+
+            rowY += itemH;
+        });
+
+        // Alt Toplam Çubuğu
+        const subY = curY + cardH - 34;
+        drawRoundedRect(ctx, cardX, subY, cardW, 34, { tl: 0, tr: 0, bl: 12, br: 12 }, subtotalBg, accentBorder, 1);
+
+        ctx.fillStyle = isPast ? '#fef08a' : '#bae6fd';
+        ctx.font = 'bold 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(subtotalLabel, cardX + 14, subY + 21);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = accentColor;
+        ctx.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(formatTL(periodData.totalRem), cardX + cardW - 14, subY + 22);
+        ctx.textAlign = 'left';
+
+        curY += cardH + 14;
+    }
+
+    // Devreden Başlangıç Borcu (Varsa)
+    if (data.initialDebtTotal > 0 && data.kapsam !== 'CURRENT_ONLY') {
+        const cardX = 20;
+        const cardW = canvasW - 40;
+        drawRoundedRect(ctx, cardX, curY, cardW, 36, 10, 'rgba(245, 158, 11, 0.15)', 'rgba(245, 158, 11, 0.4)', 1);
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('💼 DEVREDEN BAŞLANGIÇ AÇILIŞ BORCU', cardX + 14, curY + 23);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(formatTL(data.initialDebtTotal), cardX + cardW - 14, curY + 23);
+        ctx.textAlign = 'left';
+        curY += 46;
+    }
+
+    // Geçmiş Aylar Borçları
+    if (data.kapsam !== 'CURRENT_ONLY') {
+        if (data.pastWithDebt.length > 0) {
+            data.pastWithDebt.forEach(d => {
+                drawSectionCard(true, '⚠️ GEÇMİŞ AY BORÇLARI — ' + d.label.toUpperCase(), 'ÖDENMEMİŞ KALAN BAKİYE', d, d.label.toUpperCase() + ' TOPLAM KALAN BORÇ');
+            });
+        } else {
+            // Geçmiş Borç Yok Kartı
+            const cardX = 20;
+            const cardW = canvasW - 40;
+            drawRoundedRect(ctx, cardX, curY, cardW, 46, 10, 'rgba(16, 185, 129, 0.1)', 'rgba(16, 185, 129, 0.3)', 1);
+            ctx.fillStyle = '#34d399';
+            ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillText('✅ Geçmiş dönemlere ait gecikmiş/ödenmemiş borç bulunmamaktadır.', cardX + 16, curY + 28);
+            curY += 58;
+        }
+    }
+
+    // Cari Ay Borçları
+    if (data.kapsam !== 'PAST_ONLY') {
+        drawSectionCard(false, '📌 CARİ AY HESAP TABLOSU — ' + data.curData.label.toUpperCase(), 'CARİ DÖNEM TAHAKKUKU', data.curData, data.curData.label.toUpperCase() + ' CARİ AY TOPLAMI');
+    }
+
+    // GENEL ÖDENECEK TOPLAM BANNER
+    const bannerX = 20;
+    const bannerW = canvasW - 40;
+    const bannerH = 74;
+    const bannerGrad = ctx.createLinearGradient(bannerX, curY, bannerX + bannerW, curY + bannerH);
+    bannerGrad.addColorStop(0, '#064e3b');
+    bannerGrad.addColorStop(0.5, '#047857');
+    bannerGrad.addColorStop(1, '#0f766e');
+    drawRoundedRect(ctx, bannerX, curY, bannerW, bannerH, 14, bannerGrad, '#10b981', 1.8);
+
+    // Banner Sol Bilgi
+    ctx.fillStyle = '#ecfdf5';
+    ctx.font = 'bold 13.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('💳 ÖDENECEK GENEL TOPLAM TUTAR', bannerX + 18, curY + 31);
+
+    ctx.fillStyle = '#a7f3d0';
+    ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(`Geçmiş Borçlar: ${formatTL(data.totalPastDebt)}   •   Cari Ay: ${formatTL(data.curRemaining)}`, bannerX + 18, curY + 53);
+
+    // Banner Sağ Tutar
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#fef08a';
+    ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(formatTL(data.grandTotal), bannerX + bannerW - 18, curY + 46);
+    ctx.textAlign = 'left';
+
+    curY += bannerH + 16;
+
+    // Alt Bilgi (Footer)
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('🔒 Kurumsal Yönetim Sistemi • Resmi Finans Hesap Özeti', 24, curY + 12);
+
+    ctx.textAlign = 'right';
+    ctx.fillText(`${data.nowStr} ${data.nowTimeStr} • dgn systems`, canvasW - 24, curY + 12);
+    ctx.textAlign = 'left';
+
+    return canvas;
+}
+
+// ----------------------------------------------------------------------------
+// 3. CANLI GÖRSEL ÖNİZLEME GÜNCELLEME
+// ----------------------------------------------------------------------------
+function updatePersonelReportVisualPreview() {
+    try {
+        const previewImg = document.getElementById('reportCardPreviewImg');
+        if (!previewImg) return;
+        const canvas = generatePersonelReportCanvas();
+        if (canvas) {
+            previewImg.src = canvas.toDataURL('image/png');
+        }
+    } catch (e) {
+        console.error('Önizleme güncellenirken hata:', e);
+    }
+}
+
+// ----------------------------------------------------------------------------
+// 4. TABLO RESMİNİ KOPYALA
+// ----------------------------------------------------------------------------
+function copyReportTableAsImage() {
+    try {
+        const canvas = generatePersonelReportCanvas();
+        if (!canvas) {
+            showToast('Görsel oluşturulamadı.', 'error');
+            return;
+        }
+
+        canvas.toBlob(function(blob) {
+            if (!blob) {
+                showToast('Görsel verisi alınamadı.', 'error');
+                return;
+            }
+            if (navigator.clipboard && window.ClipboardItem) {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(function() {
+                    showToast('📸 Renkli tablo resmi panoya kopyalandı! WhatsApp veya herhangi bir yere CTRL+V ile yapıştırabilirsiniz.');
+                }).catch(function(err) {
+                    console.warn('Clipboard write hatası, indirmeye yönlendiriliyor:', err);
+                    downloadReportImage();
+                });
+            } else {
+                downloadReportImage();
+            }
+        }, 'image/png');
+    } catch (err) {
+        console.error('Resim kopyalama hatası:', err);
+        showToast('Resim kopyalanamadı.', 'error');
+    }
+}
+
+// ----------------------------------------------------------------------------
+// 5. RESMİ PNG OLARAK İNDİR
+// ----------------------------------------------------------------------------
+function downloadReportImage() {
+    try {
+        const canvas = generatePersonelReportCanvas();
+        if (!canvas) return;
+        const year = document.getElementById('reportSelectYil')?.value || '2026';
+        const month = document.getElementById('reportSelectAy')?.value || '10';
+        const link = document.createElement('a');
+        link.download = `Maas_Gider_Raporu_${year}_${month}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('💾 Rapor görseli PNG olarak indirildi!');
+    } catch (e) {
+        console.error('İndirme hatası:', e);
+        showToast('Görsel indirilemedi.', 'error');
+    }
+}
+
+// ----------------------------------------------------------------------------
+// 6. WHATSAPP İLE GÖNDER (RESMİ KOPYALA + SOHBETİ AÇ)
+// ----------------------------------------------------------------------------
+function sendReportToWhatsApp(mode) {
+    const data = getCalculatedReportDataset();
+
+    // 1. Resmi doğrudan panoya kopyala
+    copyReportTableAsImage();
+
+    // 2. Telefon numarasını temizle
+    let phone = (document.getElementById('reportWhatsAppPhone')?.value || '').trim();
+    phone = phone.replace(/[^0-9]/g, '');
+    if (phone.startsWith('0')) {
+        phone = '90' + phone.substring(1);
+    } else if (phone.length === 10) {
+        phone = '90' + phone;
+    }
+
+    // Kısa, temiz ve kurumsal başlık mesajı
+    const caption = `Sayın Yetkili, ${data.firmaAdi} - ${data.currentPeriodLabel} dönemi Personel Maaş & Gider Hesap Tablosu ekte yer almaktadır. Toplam Tutar: ${formatTL(data.grandTotal)}`;
+    const encodedCaption = encodeURIComponent(caption);
+
+    setTimeout(function() {
+        if (phone && phone.length >= 10) {
+            if (mode === 'web') {
+                window.open('https://web.whatsapp.com/send?phone=' + phone + '&text=' + encodedCaption, '_blank');
+            } else {
+                window.location.href = 'whatsapp://send?phone=' + phone + '&text=' + encodedCaption;
+            }
+        } else {
+            if (mode === 'web') {
+                window.open('https://web.whatsapp.com/', '_blank');
+            } else {
+                window.location.href = 'whatsapp://send?text=' + encodedCaption;
+            }
+        }
+        showToast('📸 Renkli tablo resmi panoya kopyalandı! WhatsApp açıldığında sohbette CTRL+V (Yapıştır) yaparak görseli hemen gönderebilirsiniz.');
+    }, 250);
+}
+
+// ----------------------------------------------------------------------------
+// 7. WHATSAPP METİN FORMATI OLUŞTURUCU (ALTERNATİF)
+// ----------------------------------------------------------------------------
+function generatePersonelWhatsAppReportText() {
+    const data = getCalculatedReportDataset();
+
     function makeWhatsAppAsciiTable(items, totalLabel, totalVal) {
         const col1W = 18;
         const col2W = 12;
@@ -1466,35 +1913,27 @@ function generatePersonelWhatsAppReportText() {
     }
 
     const lines = [];
-
-    lines.push(`*${firmaAdi.toUpperCase()} - PERSONEL MAAŞ & GİDER RAPORU*`);
-    lines.push(`Tarih: ${nowStr}`);
+    lines.push(`*${data.firmaAdi.toUpperCase()} - PERSONEL MAAŞ & GİDER RAPORU*`);
+    lines.push(`Tarih: ${data.nowStr}`);
     lines.push(``);
 
-    let genelGecmisToplam = 0;
-
-    // Devreden açılış borcu
-    if (initialDebtTotal > 0 && kapsam !== 'CURRENT_ONLY') {
-        lines.push(`*Devreden Açılış Borcu:* ${formatTL(initialDebtTotal)}`);
+    if (data.initialDebtTotal > 0 && data.kapsam !== 'CURRENT_ONLY') {
+        lines.push(`*Devreden Açılış Borcu:* ${formatTL(data.initialDebtTotal)}`);
         lines.push(``);
-        genelGecmisToplam += initialDebtTotal;
     }
 
     // Geçmiş Aylar Tabloları
-    if (kapsam !== 'CURRENT_ONLY') {
-        const pastWithDebt = pastDataList.filter(d => d.totalRem > 0);
-
-        if (pastWithDebt.length > 0) {
-            pastWithDebt.forEach(d => {
-                genelGecmisToplam += d.totalRem;
+    if (data.kapsam !== 'CURRENT_ONLY') {
+        if (data.pastWithDebt.length > 0) {
+            data.pastWithDebt.forEach(d => {
                 lines.push(`*1. GEÇMİŞ AY BORÇLARI (${d.label.toUpperCase()})*`);
                 const items = [
                     { label: 'Net Maaş', val: formatTL(d.remSalary) },
-                    { label: labels.sosyal1, val: formatTL(d.remS1) },
-                    { label: labels.sosyal2, val: formatTL(d.remS2) }
+                    { label: data.labels.sosyal1, val: formatTL(d.remS1) },
+                    { label: data.labels.sosyal2, val: formatTL(d.remS2) }
                 ];
-                if (d.effS3 > 0 || d.remS3 > 0) {
-                    items.push({ label: labels.sosyal3, val: formatTL(d.remS3) });
+                if (d.hasS3) {
+                    items.push({ label: data.labels.sosyal3, val: formatTL(d.remS3) });
                 }
                 items.push({ label: 'Kira Bedeli', val: formatTL(d.remRent) });
 
@@ -1509,34 +1948,31 @@ function generatePersonelWhatsAppReportText() {
     }
 
     // Cari Ay Tablosu
-    if (kapsam !== 'PAST_ONLY') {
-        lines.push(`*2. CARİ AY BORÇLARI (${curData.label.toUpperCase()})*`);
+    if (data.kapsam !== 'PAST_ONLY') {
+        lines.push(`*2. CARİ AY BORÇLARI (${data.curData.label.toUpperCase()})*`);
         const curItems = [
-            { label: 'Net Maaş', val: formatTL(curData.remSalary) },
-            { label: labels.sosyal1, val: formatTL(curData.remS1) },
-            { label: labels.sosyal2, val: formatTL(curData.remS2) }
+            { label: 'Net Maaş', val: formatTL(data.curData.remSalary) },
+            { label: data.labels.sosyal1, val: formatTL(data.curData.remS1) },
+            { label: data.labels.sosyal2, val: formatTL(data.curData.remS2) }
         ];
-        if (curData.effS3 > 0 || curData.remS3 > 0) {
-            curItems.push({ label: labels.sosyal3, val: formatTL(curData.remS3) });
+        if (data.curData.hasS3) {
+            curItems.push({ label: data.labels.sosyal3, val: formatTL(data.curData.remS3) });
         }
-        curItems.push({ label: 'Kira Bedeli', val: formatTL(curData.remRent) });
+        curItems.push({ label: 'Kira Bedeli', val: formatTL(data.curData.remRent) });
 
-        lines.push(makeWhatsAppAsciiTable(curItems, `${curData.label.toUpperCase()} TOPLAM`, formatTL(curData.totalRem)));
+        lines.push(makeWhatsAppAsciiTable(curItems, `${data.curData.label.toUpperCase()} TOPLAM`, formatTL(data.curData.totalRem)));
         lines.push(``);
     }
 
-    // Genel Toplam Kartı
-    const cariKalan = (kapsam !== 'PAST_ONLY') ? curData.totalRem : 0;
-    const genelToplamKalan = genelGecmisToplam + cariKalan;
-
+    // Genel Özet
     lines.push(`*GENEL ÖZET*`);
     const summaryLines = [
         '```',
         '==================================',
-        '  Geçmiş Borçlar : ' + padLStr(formatTL(genelGecmisToplam), 14),
-        '  Cari Ay Borcu  : ' + padLStr(formatTL(cariKalan), 14),
+        '  Geçmiş Borçlar : ' + padLStr(formatTL(data.totalPastDebt), 14),
+        '  Cari Ay Borcu  : ' + padLStr(formatTL(data.curRemaining), 14),
         '==================================',
-        '  TOPLAM ÖDENECEK: ' + padLStr(formatTL(genelToplamKalan), 14),
+        '  TOPLAM ÖDENECEK: ' + padLStr(formatTL(data.grandTotal), 14),
         '==================================',
         '```'
     ];
@@ -1544,13 +1980,15 @@ function generatePersonelWhatsAppReportText() {
     lines.push(``);
     lines.push(`Bilgilerinize arz olunur.`);
 
-
     const fullMessage = lines.join('\n');
     const msgEl = document.getElementById('reportMessageText');
     if (msgEl) {
         msgEl.value = fullMessage;
     }
     updateReportCharCount();
+
+    // Canlı görsel önizlemeyi de anında yenile
+    updatePersonelReportVisualPreview();
 }
 
 function copyReportTextToClipboard(silent) {
@@ -1569,61 +2007,13 @@ function copyReportTextToClipboard(silent) {
             document.execCommand('copy');
             success = true;
         }
-    } catch (e) {
-        try {
-            document.execCommand('copy');
-            success = true;
-        } catch (e2) {}
-    }
-    if (!silent) {
-        showToast('âœ… Rapor metni panoya kopyalandı! WhatsApp sohbetinize CTRL+V ile anında yapıştırabilirsiniz.');
+        if (!silent) {
+            showToast('📋 Rapor metni panoya kopyalandı! WhatsApp veya SMS ile paylaşabilirsiniz.');
+        }
+    } catch (err) {
+        if (!silent) showToast('Kopyalama başarısız oldu.', 'error');
     }
     return success;
-}
-
-function sendReportToWhatsApp(mode) {
-    const text = document.getElementById('reportMessageText')?.value || '';
-    if (!text.trim()) {
-        showToast('Rapor metni boş olamaz!', 'error');
-        return;
-    }
-
-    // 1. ANINDA PANAYA KOPYALA (Sıfır bekleme, her zaman hazır)
-    copyReportTextToClipboard(true);
-
-    let phone = (document.getElementById('reportWhatsAppPhone')?.value || '').trim();
-    phone = phone.replace(/[^0-9]/g, '');
-    if (phone.startsWith('0')) {
-        phone = '90' + phone.substring(1);
-    } else if (phone.length === 10) {
-        phone = '90' + phone;
-    }
-
-    const encoded = encodeURIComponent(text);
-
-    // Telefon numarası girilmişse
-    if (phone && phone.length >= 10) {
-        if (mode === 'web') {
-            window.open('https://web.whatsapp.com/send?phone=' + phone + '&text=' + encoded, '_blank');
-        } else {
-            // Doğrudan masaüstü WhatsApp uygulamasını tetikle
-            window.location.href = 'whatsapp://send?phone=' + phone + '&text=' + encoded;
-            setTimeout(function() {
-                showToast('âœ… Rapor panoya kopyalandı! Açılan WhatsApp sohbetine CTRL+V yapabilirsiniz.');
-            }, 600);
-        }
-        return;
-    }
-
-    // Telefon numarası yoksa:
-    // Metin zaten panoya kopyalandı!
-    if (mode === 'web') {
-        window.open('https://web.whatsapp.com/', '_blank');
-        showToast('âœ… Rapor kopyalandı! WhatsApp Web açılıyor, istediğiniz sohbete CTRL+V ile yapıştırabilirsiniz.');
-    } else {
-        window.location.href = 'whatsapp://send?text=' + encoded;
-        showToast('âœ… Rapor panoya kopyalandı! WhatsApp açılıyor (sohbete CTRL+V ile anında yapıştırabilirsiniz).');
-    }
 }
 
 function printReportText() {
@@ -1659,261 +2049,4 @@ function printReportText() {
     setTimeout(() => {
         printWindow.print();
     }, 400);
-}
-
-
-// ============================================================================
-// TABLOYU DOĞRUDAN RESİM (GÖRSEL) OLARAK KOPYALA
-// ============================================================================
-function copyReportTableAsImage() {
-    const firmaAdi = (document.getElementById('reportFirmaAdi')?.value || '').trim() || (typeof kurumInfo !== 'undefined' && kurumInfo.name ? kurumInfo.name : 'A Firması');
-    const nowStr = new Date().toLocaleDateString('tr-TR');
-    const year = parseInt(document.getElementById('reportSelectYil')?.value || '2026', 10);
-    const month = parseInt(document.getElementById('reportSelectAy')?.value || '10', 10);
-    const currentPeriod = getPeriodStr(year, month);
-    const kapsam = document.getElementById('reportKapsam')?.value || 'ALL';
-    const labels = getSocialLabels();
-
-    const allPeriodsSet = new Set();
-    dbPersonel.forEach(p => {
-        if (p.startSalary) allPeriodsSet.add(p.startSalary);
-        if (p.startRent) allPeriodsSet.add(p.startRent);
-    });
-    dbPersonelPayments.forEach(pay => {
-        if (pay.period) allPeriodsSet.add(pay.period);
-    });
-    allPeriodsSet.add(currentPeriod);
-
-    const sortedPeriods = Array.from(allPeriodsSet).filter(p => /^\d{4}-\d{2}$/.test(p)).sort();
-    const minPeriod = sortedPeriods[0] || currentPeriod;
-    const expandedPeriods = [];
-    let [curY, curM] = minPeriod.split('-').map(Number);
-    const [targetY, targetM] = currentPeriod.split('-').map(Number);
-    while (curY < targetY || (curY === targetY && curM <= targetM)) {
-        expandedPeriods.push(getPeriodStr(curY, curM));
-        curM++;
-        if (curM > 12) { curM = 1; curY++; }
-    }
-
-    function calcTotals(period) {
-        let remSalary = 0, remS1 = 0, remS2 = 0, remS3 = 0, remRent = 0;
-        dbPersonel.forEach(p => {
-            const effSalary = getEffectiveRate(p.code, 'MAAŞ', period);
-            const effS1 = getEffectiveRate(p.code, 'SOSYAL-1', period);
-            const effS2 = getEffectiveRate(p.code, 'SOSYAL-2', period);
-            const effS3 = getEffectiveRate(p.code, 'SOSYAL-3', period);
-            const effRent = getEffectiveRate(p.code, 'KİRA', period);
-            let pPaidSalary = 0, pPaidS1 = 0, pPaidS2 = 0, pPaidS3 = 0, pPaidRent = 0, pPaidOther = 0;
-            dbPersonelPayments.forEach(pay => {
-                if (pay.code === p.code && pay.period === period) {
-                    const amt = Number(pay.amount) || 0;
-                    if (pay.type === 'MAAŞ') pPaidSalary += amt;
-                    else if (pay.type === 'SOSYAL-1') pPaidS1 += amt;
-                    else if (pay.type === 'SOSYAL-2') pPaidS2 += amt;
-                    else if (pay.type === 'SOSYAL-3') pPaidS3 += amt;
-                    else if (pay.type === 'KİRA') pPaidRent += amt;
-                    else pPaidOther += amt;
-                }
-            });
-            let leftOther = pPaidOther;
-            let actSalary = Math.min(effSalary, pPaidSalary); leftOther += (pPaidSalary - actSalary);
-            let needSalary = effSalary - actSalary; let extraSalary = Math.min(needSalary, leftOther); actSalary += extraSalary; leftOther -= extraSalary;
-            let actS1 = Math.min(effS1, pPaidS1); leftOther += (pPaidS1 - actS1);
-            let needS1 = effS1 - actS1; let extraS1 = Math.min(needS1, leftOther); actS1 += extraS1; leftOther -= extraS1;
-            let actS2 = Math.min(effS2, pPaidS2); leftOther += (pPaidS2 - actS2);
-            let needS2 = effS2 - actS2; let extraS2 = Math.min(needS2, leftOther); actS2 += extraS2; leftOther -= extraS2;
-            let actS3 = Math.min(effS3, pPaidS3); leftOther += (pPaidS3 - actS3);
-            let needS3 = effS3 - actS3; let extraS3 = Math.min(needS3, leftOther); actS3 += extraS3; leftOther -= extraS3;
-            let actRent = Math.min(effRent, pPaidRent); leftOther += (pPaidRent - actRent);
-            let needRent = effRent - actRent; let extraRent = Math.min(needRent, leftOther); actRent += extraRent; leftOther -= extraRent;
-
-            remSalary += Math.max(0, effSalary - actSalary);
-            remS1 += Math.max(0, effS1 - actS1);
-            remS2 += Math.max(0, effS2 - actS2);
-            remS3 += Math.max(0, effS3 - actS3);
-            remRent += Math.max(0, effRent - actRent);
-        });
-        const totalRem = remSalary + remS1 + remS2 + remS3 + remRent;
-        return {
-            period,
-            label: getPeriodTurkishLabel(period),
-            remSalary, remS1, remS2, remS3, remRent, totalRem
-        };
-    }
-
-    const pastDataList = [];
-    expandedPeriods.forEach(p => {
-        if (p < currentPeriod) pastDataList.push(calcTotals(p));
-    });
-    const curData = calcTotals(currentPeriod);
-    const pastWithDebt = pastDataList.filter(d => d.totalRem > 0);
-
-    let cardCount = 0;
-    if (kapsam !== 'CURRENT_ONLY' && pastWithDebt.length > 0) cardCount += pastWithDebt.length;
-    if (kapsam !== 'PAST_ONLY') cardCount += 1;
-    const baseH = 130 + (cardCount * 175) + 85;
-    const canvasW = 600;
-    const canvasH = Math.max(380, baseH);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = canvasW * 2;
-    canvas.height = canvasH * 2;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(2, 2);
-
-    const grad = ctx.createLinearGradient(0, 0, canvasW, canvasH);
-    grad.addColorStop(0, '#0f172a');
-    grad.addColorStop(1, '#1e293b');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvasW, canvasH);
-
-    ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(1, 1, canvasW - 2, canvasH - 2);
-
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = 'bold 17px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(firmaAdi.toUpperCase() + ' - PERSONEL MAAŞ & GİDER RAPORU', 24, 38);
-
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('Rapor Tarihi: ' + nowStr, 24, 58);
-
-    ctx.strokeStyle = 'rgba(234, 179, 8, 0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(24, 72);
-    ctx.lineTo(canvasW - 24, 72);
-    ctx.stroke();
-
-    let curYPos = 92;
-    let genelGecmisToplam = 0;
-
-    function drawSectionTable(title, titleColor, data, totalLabel, isPast) {
-        ctx.fillStyle = titleColor;
-        ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText(title, 24, curYPos);
-
-        const boxX = 24;
-        const boxY = curYPos + 10;
-        const boxW = canvasW - 48;
-        const boxH = 130;
-
-        ctx.fillStyle = isPast ? 'rgba(245, 158, 11, 0.05)' : 'rgba(56, 189, 248, 0.05)';
-        ctx.fillRect(boxX, boxY, boxW, boxH);
-        ctx.strokeStyle = isPast ? 'rgba(245, 158, 11, 0.3)' : 'rgba(56, 189, 248, 0.3)';
-        ctx.strokeRect(boxX, boxY, boxW, boxH);
-
-        ctx.fillStyle = '#64748b';
-        ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText('KALEM', boxX + 14, boxY + 20);
-        ctx.textAlign = 'right';
-        ctx.fillText('KALAN TUTAR', boxX + boxW - 14, boxY + 20);
-        ctx.textAlign = 'left';
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.beginPath();
-        ctx.moveTo(boxX + 10, boxY + 26);
-        ctx.lineTo(boxX + boxW - 10, boxY + 26);
-        ctx.stroke();
-
-        const rows = [
-            { label: 'Net Maaş', val: formatTL(data.remSalary), col: '#f87171' },
-            { label: labels.sosyal1, val: formatTL(data.remS1), col: '#38bdf8' },
-            { label: labels.sosyal2, val: formatTL(data.remS2), col: '#a78bfa' },
-            { label: 'Kira Bedeli', val: formatTL(data.remRent), col: '#fbbf24' }
-        ];
-
-        let rY = boxY + 44;
-        rows.forEach(r => {
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-            ctx.fillText(r.label, boxX + 14, rY);
-            ctx.textAlign = 'right';
-            ctx.fillStyle = r.col;
-            ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-            ctx.fillText(r.val, boxX + boxW - 14, rY);
-            ctx.textAlign = 'left';
-            rY += 19;
-        });
-
-        ctx.fillStyle = isPast ? 'rgba(245, 158, 11, 0.15)' : 'rgba(56, 189, 248, 0.15)';
-        ctx.fillRect(boxX, boxY + boxH - 25, boxW, 25);
-        ctx.fillStyle = isPast ? '#fbbf24' : '#38bdf8';
-        ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText(totalLabel, boxX + 14, boxY + boxH - 8);
-        ctx.textAlign = 'right';
-        ctx.fillText(formatTL(data.totalRem), boxX + boxW - 14, boxY + boxH - 8);
-        ctx.textAlign = 'left';
-
-        curYPos += boxH + 28;
-    }
-
-    if (kapsam !== 'CURRENT_ONLY') {
-        if (pastWithDebt.length > 0) {
-            pastWithDebt.forEach(d => {
-                genelGecmisToplam += d.totalRem;
-                drawSectionTable('1. GEÇMİŞ AY BORÇLARI (' + d.label.toUpperCase() + ')', '#f59e0b', d, d.label.toUpperCase() + ' TOPLAM KALAN', true);
-            });
-        }
-    }
-
-    if (kapsam !== 'PAST_ONLY') {
-        drawSectionTable('2. CARİ AY BORÇLARI (' + curData.label.toUpperCase() + ')', '#38bdf8', curData, 'CARİ AY (' + curData.label.toUpperCase() + ') TOPLAM', false);
-    }
-
-    const cariKalan = (kapsam !== 'PAST_ONLY') ? curData.totalRem : 0;
-    const genelToplam = genelGecmisToplam + cariKalan;
-
-    const totBoxX = 24;
-    const totBoxY = curYPos;
-    const totBoxW = canvasW - 48;
-    const totBoxH = 46;
-
-    const totGrad = ctx.createLinearGradient(totBoxX, totBoxY, totBoxX + totBoxW, totBoxY);
-    totGrad.addColorStop(0, 'rgba(234, 179, 8, 0.18)');
-    totGrad.addColorStop(1, 'rgba(16, 185, 129, 0.18)');
-    ctx.fillStyle = totGrad;
-    ctx.fillRect(totBoxX, totBoxY, totBoxW, totBoxH);
-    ctx.strokeStyle = '#eab308';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(totBoxX, totBoxY, totBoxW, totBoxH);
-
-    ctx.fillStyle = '#e2e8f0';
-    ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('ÖDENECEK GENEL TOPLAM TUTAR:', totBoxX + 14, totBoxY + 29);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 17px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(formatTL(genelToplam), totBoxX + totBoxW - 14, totBoxY + 30);
-    ctx.textAlign = 'left';
-
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-    ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('dgn • systems', canvasW - 95, canvasH - 6);
-
-    canvas.toBlob(function(blob) {
-        if (!blob) {
-            showToast('Görsel oluşturulamadı.', 'error');
-            return;
-        }
-        if (navigator.clipboard && window.ClipboardItem) {
-            const item = new ClipboardItem({ 'image/png': blob });
-            navigator.clipboard.write([item]).then(function() {
-                showToast('📸 Tablo resmi panoya kopyalandı! WhatsApp sohbetine CTRL+V ile doğrudan resim olarak yapıştırabilirsiniz.');
-            }).catch(function() {
-                const link = document.createElement('a');
-                link.download = `Maas_Raporu_${currentPeriod}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast('Görsel indirildi!');
-            });
-        } else {
-            const link = document.createElement('a');
-            link.download = `Maas_Raporu_${currentPeriod}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            showToast('Görsel indirildi!');
-        }
-    }, 'image/png');
 }

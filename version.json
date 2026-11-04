@@ -1,14 +1,14 @@
-{
-  "appName": "Kurumsal Yönetim Sistemi",
-  "version": "1.1.0",
+﻿{
+  "appName": "Kurumsal YÃ¶netim Sistemi",
+  "version": "1.2.0",
   "releaseDate": "2026-11-04",
-  "title": "WhatsApp Tablo Raporu & Hız Güncellemesi",
-  "author": "dgn • systems",
+  "title": "Renkli GÃ¶rsel MaaÅŸ Raporu & WhatsApp Entegrasyonu",
+  "author": "dgn â€¢ systems",
   "notes": [
-    "WhatsApp raporları için hizalı gerçek tablo formatı eklendi.",
-    "Tabloyu resim (görsel) olarak kopyalama özelliği getirildi.",
-    "Masaüstü klasörü sadeleştirildi, temiz kısayol oluşturuldu.",
-    "Tek tıkla sistem güncelleme altyapısı kuruldu."
+    "WhatsApp iÃ§in yÃ¼ksek Ã§Ã¶zÃ¼nÃ¼rlÃ¼klÃ¼, renkli ve net maaÅŸ & gider tablosu gÃ¶rsel kartÄ± eklendi.",
+    "Rapor ekranÄ±na canlÄ± renkli grafik tablo kartÄ± Ã¶nizlemesi ve sekme sistemi getirildi.",
+    "Tek tÄ±kla tablo resmini panoya kopyalama ve doÄŸrudan WhatsApp'a yapÄ±ÅŸtÄ±rma entegrasyonu tamamlandÄ±.",
+    "Rapor gÃ¶rselini tek tÄ±kla HD PNG olarak bilgisayara indirme Ã¶zelliÄŸi eklendi."
   ],
   "minAppVersion": "1.0.0",
   "downloadUrl": ""
