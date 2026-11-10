@@ -1,0 +1,17 @@
+{
+  "appName": "Kurumsal Yönetim Sistemi",
+  "version": "1.4.0",
+  "releaseDate": "2026-11-10",
+  "title": "DerPro Estetik & Çoklu Tema Motoru (Sıfır Göz Karmaşası & Üst Düzey Kurumsal Arayüz)",
+  "author": "dgn • systems",
+  "notes": [
+    "DerPro referans sistemi incelenerek arayüz tepeden tırnağa profesyonel muhasebe standardına uyarlandı.",
+    "Tüm kaba kutular ve göz yoran çerçeveler kaldırılarak DerPro'nun ferah, sade ve dinamik tasarım dili uygulandı.",
+    "Yeni tipografi: 'Poppins' ana arayüz fontu, 'Playfair Display' / 'Cormorant Garamond' kurumsal başlıklar ve 'tabular-nums' sayısal hizalama.",
+    "5 Özgün DerPro Teması entegre edildi: Açık Zümrüt & Soft Slate, Koyu Sapphire, Gri Charcoal, Bordo Burgundy, Monokai Pro.",
+    "Sol menü footer alanına tek tıkla canlı tema değiştiren hızlı seçici dropdown eklendi.",
+    "Sade ve kompakt KPI kartları, 48px DerPro başlık barı ve nefes alan dinamik veri tabloları."
+  ],
+  "minAppVersion": "1.0.0",
+  "downloadUrl": ""
+}

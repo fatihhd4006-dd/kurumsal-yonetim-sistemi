@@ -1,0 +1,4442 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&#214;&#287;renci Y&#246;netim Sistemi</title>
+    <!-- Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   KURUMSAL YÖNETİM SİSTEMİ - SOFT & EXECUTIVE LIGHT THEME
+   Dingin, ferah, gözü yormayan, modern açık renkli kurumsal tema
+   ========================================================================== */
+
+:root, [data-theme="light"] {
+    /* Soft & Modern Açık Renk Paleti */
+    --bg-body: #f8fafc;              /* Ana tuval: Dingin hafif arduvaz/kırık beyaz */
+    --bg-sidebar: #ffffff;           /* Sol menü: Ferah saf beyaz */
+    --bg-card: #ffffff;              /* Kartlar: Temiz beyaz */
+    --bg-card-subtle: #f1f5f9;       /* İç kutular ve alt başlık alanları */
+    --bg-card-hover: #f8fafc;        /* Kart/Satır hover durumu */
+    --bg-input: #ffffff;             /* Form girdileri */
+    --bg-header: #ffffff;            /* Üst başlık alanı */
+    
+    /* Yumuşak ve Zarif Kenarlıklar */
+    --border-color: #e2e8f0;         /* Standart açık gri çizgi */
+    --border-hover: #cbd5e1;         /* Vurgulu çizgi */
+    --border-subtle: #f1f5f9;        /* Çok hafif ayırıcı */
+    --border-focus: #3b82f6;         /* Odaklanma mavisi */
+    
+    /* Vurgulu Açık Tema Renkleri */
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    
+    --accent-gold: #d97706;          /* Kehribar/altın */
+    --accent-gold-hover: #b45309;
+    --accent-gold-light: #fef3c7;
+    --accent-gold-glow: rgba(217, 119, 6, 0.15);
+    
+    --success: #059669;              /* Zümrüt yeşili */
+    --success-light: #ecfdf5;
+    
+    --danger: #dc2626;               /* Mercan kırmızı */
+    --danger-light: #fef2f2;
+    
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+    
+    --info: #0284c7;                 /* Gökyüzü mavisi */
+    --info-light: #f0f9ff;
+    
+    /* Yüksek Okunabilirlikli Tipografi */
+    --text-main: #0f172a;            /* Derin arduvaz - net ve okunabilir */
+    --text-muted: #64748b;           /* Dingin orta gri */
+    --text-dim: #94a3b8;             /* Pasif/yardımcı metinler */
+    
+    /* Düzen Ölçüleri */
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 72px;
+    --header-height: 64px;
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    
+    /* Yumuşak Diffused Gölgeler */
+    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    --shadow-card-hover: 0 4px 14px -2px rgba(0, 0, 0, 0.08);
+    --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --shadow-modal: 0 20px 45px -10px rgba(0, 0, 0, 0.18);
+}
+
+/* 2. EXECUTIVE DARK SLATE TEMA (Asil, Derin Arduvaz Koyu Tema) */
+[data-theme="dark"] {
+    --bg-body: #0b0f19;
+    --bg-sidebar: #0f172a;
+    --bg-card: #141e33;
+    --bg-card-subtle: #1e293b;
+    --bg-card-hover: #1e2c45;
+    --bg-input: #0f172a;
+    --bg-header: #0f172a;
+    
+    --border-color: #27354f;
+    --border-hover: #3b4e70;
+    --border-subtle: #1e293b;
+    --border-focus: #3b82f6;
+    
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-light: rgba(59, 130, 246, 0.18);
+    
+    --accent-gold: #fbbf24;
+    --accent-gold-hover: #d97706;
+    --accent-gold-light: rgba(251, 191, 36, 0.18);
+    --accent-gold-glow: rgba(251, 191, 36, 0.25);
+    
+    --success: #10b981;
+    --success-light: rgba(16, 185, 129, 0.18);
+    
+    --danger: #ef4444;
+    --danger-light: rgba(239, 68, 68, 0.18);
+    
+    --warning: #f59e0b;
+    --warning-light: rgba(245, 158, 11, 0.18);
+    
+    --info: #38bdf8;
+    --info-light: rgba(56, 189, 248, 0.18);
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+    --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.45);
+    --shadow-dropdown: 0 20px 25px -5px rgba(0, 0, 0, 0.55);
+    --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
+}
+
+/* 3. NORDIC MIDNIGHT NAVY TEMA (Arktik Gece Mavisi) */
+[data-theme="nordic"] {
+    --bg-body: #070d1a;
+    --bg-sidebar: #0b1528;
+    --bg-card: #0f1d38;
+    --bg-card-subtle: #172a4d;
+    --bg-card-hover: #1c325c;
+    --bg-input: #0b1528;
+    --bg-header: #0b1528;
+    
+    --border-color: #1e3661;
+    --border-hover: #2d4d87;
+    --border-subtle: #172a4d;
+    --border-focus: #38bdf8;
+    
+    --primary: #38bdf8;
+    --primary-hover: #0ea5e9;
+    --primary-light: rgba(56, 189, 248, 0.18);
+    
+    --accent-gold: #fbbf24;
+    --accent-gold-hover: #f59e0b;
+    --accent-gold-light: rgba(251, 191, 36, 0.18);
+    --accent-gold-glow: rgba(251, 191, 36, 0.25);
+    
+    --success: #34d399;
+    --success-light: rgba(52, 211, 153, 0.18);
+    
+    --danger: #f87171;
+    --danger-light: rgba(248, 113, 113, 0.18);
+    
+    --warning: #fbbf24;
+    --warning-light: rgba(251, 191, 36, 0.18);
+    
+    --info: #38bdf8;
+    --info-light: rgba(56, 189, 248, 0.18);
+    
+    --text-main: #f0f4fc;
+    --text-muted: #9bb2d6;
+    --text-dim: #627b9f;
+    
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-dropdown: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+    --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* 4. EMERALD PRESTIGE TEMA (Kurumsal Zümrüt Yeşili) */
+[data-theme="emerald"] {
+    --bg-body: #03140e;
+    --bg-sidebar: #072017;
+    --bg-card: #0b2b20;
+    --bg-card-subtle: #10392b;
+    --bg-card-hover: #154535;
+    --bg-input: #072017;
+    --bg-header: #072017;
+    
+    --border-color: #1a4d3b;
+    --border-hover: #266b53;
+    --border-subtle: #10392b;
+    --border-focus: #10b981;
+    
+    --primary: #10b981;
+    --primary-hover: #059669;
+    --primary-light: rgba(16, 185, 129, 0.18);
+    
+    --accent-gold: #f59e0b;
+    --accent-gold-hover: #d97706;
+    --accent-gold-light: rgba(245, 158, 11, 0.18);
+    --accent-gold-glow: rgba(245, 158, 11, 0.25);
+    
+    --success: #10b981;
+    --success-light: rgba(16, 185, 129, 0.18);
+    
+    --danger: #f43f5e;
+    --danger-light: rgba(244, 63, 94, 0.18);
+    
+    --warning: #f59e0b;
+    --warning-light: rgba(245, 158, 11, 0.18);
+    
+    --info: #06b6d4;
+    --info-light: rgba(6, 182, 212, 0.18);
+    
+    --text-main: #f0fdf4;
+    --text-muted: #a7d9c6;
+    --text-dim: #609882;
+    
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-dropdown: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+    --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* GLOBAL RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* İNCE TEMİZ KAYDIRMA ÇUBUKLARI */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ==========================================================================
+   GİRİŞ EKRANI (AUTH OVERLAY) - EXECUTIVE DARK SLATE & GOLD GLOW
+   ========================================================================== */
+.auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 12%, #1e293b 0%, #0f172a 60%, #060911 100%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: fixed;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+/* Mikro Nokta / Blueprint Izgara Deseni */
+.auth-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
+    background-size: 26px 26px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.auth-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Yumuşak Işık Hüzmeleri (Ambient Orbs) */
+.auth-ambient-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.auth-orb-1 {
+    width: 520px;
+    height: 520px;
+    top: -120px;
+    left: -120px;
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.16) 0%, rgba(217, 119, 6, 0.03) 50%, transparent 70%);
+    filter: blur(65px);
+    animation: pulseOrb1 10s ease-in-out infinite alternate;
+}
+
+.auth-orb-2 {
+    width: 560px;
+    height: 560px;
+    bottom: -140px;
+    right: -140px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.16) 0%, rgba(37, 99, 235, 0.03) 50%, transparent 70%);
+    filter: blur(75px);
+    animation: pulseOrb2 12s ease-in-out infinite alternate;
+}
+
+/* Arka Plan Kurumsal Su Damgası Fligranı */
+.auth-bg-watermark {
+    position: absolute;
+    right: 4%;
+    bottom: -40px;
+    font-size: 380px;
+    color: rgba(255, 255, 255, 0.018);
+    pointer-events: none;
+    z-index: 1;
+    transform: rotate(-8deg);
+    user-select: none;
+}
+
+/* Üst Bilgi Barı */
+.auth-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 22px 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.auth-top-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    pointer-events: auto;
+}
+
+.auth-top-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    pointer-events: auto;
+}
+
+/* Orta İçerik Sarmalayıcı */
+.auth-content-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 640px;
+    margin: auto;
+    padding: 30px 15px 15px 15px;
+}
+
+/* Giriş Kartı (Glassmorphism & Lüks Arduvaz) */
+.auth-card {
+    background: rgba(30, 41, 59, 0.74);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 440px;
+    padding: 36px 34px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75), 0 0 40px rgba(217, 119, 6, 0.08);
+    text-align: center;
+    animation: zoomModal 0.25s ease-out;
+    position: relative;
+}
+
+/* Canlı Durum Rozeti */
+.auth-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 13px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    color: #34d399;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    letter-spacing: 0.3px;
+}
+
+.auth-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: pulseDot 2s infinite;
+}
+
+.auth-crest {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 16px auto;
+    border-radius: 18px;
+    background: rgba(217, 119, 6, 0.14);
+    border: 1.5px solid var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(217, 119, 6, 0.25);
+}
+
+.auth-title {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: #f8fafc;
+    margin-bottom: 6px;
+}
+
+.auth-subtitle {
+    font-size: 12.5px;
+    color: #94a3b8;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+}
+
+.auth-form label {
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Giriş Alanı & Şifre Göz Butonu */
+.auth-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 14px;
+    color: #64748b;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.auth-input {
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    padding: 12px 42px 12px 40px !important;
+    width: 100% !important;
+    font-size: 14.5px !important;
+    letter-spacing: 1.5px !important;
+    transition: all 0.2s ease !important;
+}
+
+.auth-input:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.24) !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    outline: none;
+}
+
+.auth-pass-toggle {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 6px 8px;
+    font-size: 15px;
+    border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+    z-index: 1;
+}
+
+.auth-pass-toggle:hover {
+    color: var(--accent-gold);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.auth-btn-submit {
+    width: 100%;
+    padding: 13px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 8px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #b45309 100%);
+    border: none;
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.35);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.auth-btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(217, 119, 6, 0.45);
+    filter: brightness(1.06);
+}
+
+.auth-reset-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #94a3b8 !important;
+    font-size: 10.5px !important;
+    padding: 5px 12px !important;
+    border-radius: 8px !important;
+    transition: all 0.15s ease !important;
+}
+
+.auth-reset-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #f1f5f9 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Alt Güven & Özellik Rozetleri */
+.auth-features-bar {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.auth-feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    flex: 1;
+    min-width: 175px;
+    max-width: 195px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-feature-pill:hover {
+    transform: translateY(-2px);
+    border-color: rgba(217, 119, 6, 0.3);
+}
+
+.auth-feature-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(217, 119, 6, 0.14);
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.auth-feature-text strong {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1.25;
+}
+
+.auth-feature-text span {
+    display: block;
+    font-size: 10px;
+    color: #94a3b8;
+    line-height: 1.25;
+    margin-top: 2px;
+}
+
+.auth-footer-note {
+    margin-top: 20px;
+    font-size: 11px;
+    color: #64748b;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Animasyonlar & Mobil Uyumluluk */
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+@keyframes pulseOrb1 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(35px, 25px) scale(1.08); }
+}
+
+@keyframes pulseOrb2 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-35px, -25px) scale(1.06); }
+}
+
+@media (max-width: 680px) {
+    .auth-top-bar {
+        position: relative;
+        padding: 10px 15px 0 15px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .auth-content-wrap {
+        padding: 15px 10px;
+    }
+    .auth-features-bar {
+        flex-direction: column;
+        align-items: center;
+    }
+    .auth-feature-pill {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   APP SHELL LAYOUT
+   ========================================================================== */
+.app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   SIDEBAR (SOL MENÜ & AKORDİYON PANEL)
+   ========================================================================== */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: 100vh;
+    user-select: none;
+    z-index: 100;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow-x: hidden;
+    box-shadow: 1px 0 3px rgba(0, 0, 0, 0.02);
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: #fef3c7;
+    border: 1.5px solid var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-info {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.brand-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: 0.2px;
+    line-height: 1.2;
+}
+
+.brand-sub {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.sidebar-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+}
+
+.sidebar-toggle-btn:hover {
+    color: var(--text-main);
+    background: #e2e8f0;
+    border-color: var(--border-hover);
+}
+
+/* SIDEBAR NAV LIST */
+.sidebar-nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    scroll-behavior: smooth;
+}
+
+/* AKORDİYON GRUP STİLLERİ (SOFT LIGHT) */
+.nav-group {
+    border-radius: var(--radius-md);
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.nav-group:hover {
+    border-color: var(--border-hover);
+    background: #f1f5f9;
+}
+
+.nav-group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    user-select: none;
+}
+
+.nav-group-header:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.nav-group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-group-chevron {
+    font-size: 11px;
+    color: var(--text-dim);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+}
+
+.nav-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--bg-card-subtle);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.nav-group-sub {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    padding: 0 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.nav-group-sub.open {
+    max-height: 500px;
+    opacity: 1;
+    padding-bottom: 8px;
+}
+
+.nav-sub-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.nav-sub-item:hover {
+    color: var(--text-main);
+    background: #e2e8f0;
+}
+
+.nav-sub-item.active {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    font-weight: 700;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.nav-item:hover {
+    color: var(--text-main);
+    background: #f1f5f9;
+}
+
+.nav-item.active {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    font-weight: 700;
+}
+
+.nav-icon {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* SIDEBAR FOOTER & GÜVENLİ ÇIKIŞ */
+.sidebar-footer {
+    padding: 12px 10px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+}
+
+.user-badge-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.user-avatar-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    border: 1px solid var(--border-color);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.user-name-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.user-status-text {
+    font-size: 10px;
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.status-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
+}
+
+.btn-sidebar-logout {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.18s ease;
+}
+
+.btn-sidebar-logout:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    box-shadow: 0 3px 12px rgba(220, 38, 38, 0.25);
+}
+
+/* ==========================================================================
+   SIDEBAR DARALMIŞ DURUM (.sidebar.collapsed)
+   ========================================================================== */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width) !important;
+}
+
+.sidebar.collapsed .brand-info,
+.sidebar.collapsed .nav-group-header-left span,
+.sidebar.collapsed .nav-group-chevron,
+.sidebar.collapsed .nav-badge,
+.sidebar.collapsed .nav-sub-item span,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .user-badge-card,
+.sidebar.collapsed .btn-sidebar-logout .logout-label {
+    display: none !important;
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 0;
+    justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-brand {
+    display: none !important;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn {
+    width: 38px;
+    height: 38px;
+    margin: 0 auto;
+    font-size: 15px;
+    color: var(--accent-gold);
+}
+
+.sidebar.collapsed .sidebar-nav {
+    padding: 12px 6px;
+    align-items: center;
+}
+
+.sidebar.collapsed .nav-group {
+    background: transparent;
+    border: none;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.sidebar.collapsed .nav-group-header {
+    justify-content: center;
+    padding: 10px 0;
+    border-radius: var(--radius-sm);
+}
+
+.sidebar.collapsed .nav-group-header-left {
+    justify-content: center;
+    gap: 0;
+}
+
+.sidebar.collapsed .nav-group-header i {
+    font-size: 16px;
+    margin: 0;
+    width: auto;
+}
+
+.sidebar.collapsed .nav-group-sub {
+    padding: 0;
+    gap: 4px;
+}
+
+.sidebar.collapsed .nav-sub-item {
+    justify-content: center;
+    padding: 10px 0;
+    gap: 0;
+}
+
+.sidebar.collapsed .nav-sub-item i {
+    font-size: 14px;
+    margin: 0;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.sidebar.collapsed .nav-item .nav-icon {
+    margin: 0;
+    font-size: 15px;
+}
+
+.sidebar.collapsed .sidebar-footer {
+    padding: 12px 6px;
+    align-items: center;
+}
+
+.sidebar.collapsed .btn-sidebar-logout {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0 auto;
+    border-radius: 10px;
+    justify-content: center;
+}
+
+.sidebar.collapsed .btn-sidebar-logout i {
+    font-size: 15px;
+    margin: 0;
+}
+
+/* ==========================================================================
+   MAIN WRAPPER & TOP HEADER
+   ========================================================================== */
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--bg-body);
+}
+
+.top-header {
+    height: var(--header-height);
+    background-color: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 50;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.topbar-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.topbar-toggle-btn:hover {
+    color: var(--text-main);
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+}
+
+.header-title-box h2 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.1px;
+}
+
+.header-title-box p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+/* SPOTLIGHT SEARCH PILL (CTRL + K) */
+.header-search-btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+}
+
+.header-search-btn:hover {
+    border-color: var(--primary);
+    color: var(--text-main);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card);
+}
+
+.header-search-btn kbd {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+}
+
+.header-right-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-main);
+    font-feature-settings: "tnum";
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.header-divider {
+    width: 1px;
+    height: 22px;
+    background: var(--border-color);
+    margin: 0 4px;
+}
+
+/* DROPDOWN KAPSAYICILARI */
+.header-dropdown-container {
+    position: relative;
+}
+
+.tool-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.18s ease;
+    position: relative;
+}
+
+.tool-btn:hover, .tool-btn.active {
+    color: var(--text-main);
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+}
+
+.tool-btn .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--danger);
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 3px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-sidebar);
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+}
+
+.header-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-dropdown);
+    padding: 6px;
+    min-width: 200px;
+    z-index: 1000;
+    display: none;
+    animation: zoomModal 0.16s ease-out;
+}
+
+.header-dropdown-menu.show {
+    display: block;
+}
+
+/* TEMA MENÜSÜ */
+.theme-dropdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.theme-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s ease;
+}
+
+.theme-dropdown-item:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-color);
+}
+
+.theme-dropdown-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.theme-swatch-circle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+/* AKILLI BİLDİRİM MERKEZİ PANELİ */
+.notification-menu-panel {
+    min-width: 360px;
+    max-width: 400px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.notification-panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-card-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.notification-panel-header h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.notification-panel-list {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.notification-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.notification-row:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-color);
+    transform: translateY(-1px);
+}
+
+.notification-row-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.notification-row-body {
+    flex: 1;
+    overflow: hidden;
+}
+
+.notification-row-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-row-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+.notification-row-amount {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--danger);
+    font-feature-settings: "tnum";
+}
+
+/* ÜST HEADER GÜVENLİ ÇIKIŞ BUTONU */
+.btn-logout-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--danger-light);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout-header:hover {
+    background: var(--danger);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
+}
+
+/* ==========================================================================
+   MAIN VIEWPORT & CARDS (SCROLL KİLİDİ VE MOUSE WHEEL DESTEĞİ)
+   ========================================================================== */
+.viewport-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: calc(100vh - var(--header-height));
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    padding: 24px 28px 60px 28px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+}
+
+.view-section {
+    display: none;
+    animation: fadeInView 0.2s ease-out forwards;
+}
+
+.view-section.active {
+    display: block;
+}
+
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* KPI KARTLARI (SOFT LIGHT DİNLENDİRİCİ TASARIM) */
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #cbd5e1;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-hover);
+}
+
+.kpi-card.gold-border {
+    border-color: #fde68a;
+    background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+}
+
+.kpi-card.gold-border::before {
+    background: linear-gradient(90deg, #d97706, #f59e0b);
+}
+
+.kpi-card.gold-border .kpi-number {
+    color: #b45309;
+}
+
+.kpi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.kpi-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.kpi-number {
+    font-size: 23px;
+    font-weight: 800;
+    color: var(--text-main);
+    font-feature-settings: "tnum";
+    letter-spacing: -0.5px;
+}
+
+.kpi-footer {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ==========================================================================
+   İÇERİK KUTULARI (CARD-BOX)
+   ========================================================================== */
+.card-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-card);
+}
+
+.card-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.box-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ==========================================================================
+   FORM KONTROLLERİ VE BUTONLAR
+   ========================================================================== */
+.input-control, .select-control {
+    background-color: var(--bg-input);
+    border: 1px solid #cbd5e1;
+    color: var(--text-main);
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.input-control:focus, .select-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.18s ease;
+}
+
+.btn-primary { 
+    background: var(--primary); 
+    color: #fff; 
+}
+.btn-primary:hover { 
+    background: var(--primary-hover); 
+    box-shadow: 0 3px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-gold { 
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); 
+    color: #ffffff; 
+    font-weight: 800; 
+}
+.btn-gold:hover { 
+    filter: brightness(1.05); 
+    box-shadow: 0 3px 12px rgba(217, 119, 6, 0.25);
+}
+
+.btn-success { 
+    background: var(--success); 
+    color: #fff; 
+}
+.btn-success:hover { 
+    background: #047857; 
+    box-shadow: 0 3px 12px rgba(5, 150, 105, 0.25);
+}
+
+.btn-danger { 
+    background: var(--danger); 
+    color: #fff; 
+}
+.btn-danger:hover { 
+    background: #b91c1c; 
+}
+
+.btn-subtle { 
+    background: var(--bg-card-subtle); 
+    border-color: var(--border-color); 
+    color: var(--text-main); 
+}
+.btn-subtle:hover { 
+    background: var(--bg-card-hover); 
+    border-color: var(--border-hover);
+}
+
+/* ==========================================================================
+   TABLOLAR (NET, FERAH VE DİNLENDİRİCİ)
+   ========================================================================== */
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.data-table th {
+    background-color: var(--bg-card-subtle);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.data-table tr:hover td {
+    background-color: var(--bg-card-hover);
+}
+
+.data-table tfoot td {
+    font-weight: 800;
+    background-color: var(--bg-card-subtle);
+    border-top: 2px solid var(--border-color);
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   ROZETLER (BADGES)
+   ========================================================================== */
+.badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.badge-success { background: var(--success-light); color: var(--success); border: 1px solid var(--success); }
+.badge-danger  { background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger); }
+.badge-warning { background: var(--warning-light); color: var(--warning); border: 1px solid var(--warning); }
+.badge-info    { background: var(--info-light); color: var(--info); border: 1px solid var(--info); }
+.badge-gold    { background: var(--accent-gold-light); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+
+/* ==========================================================================
+   MODALLAR
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-modal);
+    animation: zoomModal 0.2s ease-out;
+}
+
+@keyframes zoomModal {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-card);
+}
+
+.modal-header h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.modal-body {
+    padding: 20px 22px;
+    background: var(--bg-card);
+}
+
+.modal-footer {
+    padding: 15px 22px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--bg-card-subtle);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* ==========================================================================
+   GLOBAL COMMAND PALETTE (CTRL + K SPOTLIGHT)
+   ========================================================================== */
+.command-palette-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 8vh;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.command-palette-overlay.active {
+    display: flex;
+}
+
+.command-palette-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 660px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    animation: zoomModal 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.command-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-card);
+}
+
+.command-input-wrapper i {
+    font-size: 16px;
+    color: var(--accent-gold);
+}
+
+.command-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    font-family: inherit;
+}
+
+.command-input::placeholder {
+    color: var(--text-dim);
+}
+
+.command-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--bg-card-subtle);
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.command-filter-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.command-filter-pill:hover {
+    color: var(--text-main);
+    border-color: var(--border-hover);
+}
+
+.command-filter-pill.active {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
+
+.command-results-list {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.command-group-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    padding: 6px 10px 4px 10px;
+}
+
+.command-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: var(--bg-card-subtle);
+    transition: all 0.12s ease;
+}
+
+.command-result-item:hover, .command-result-item.selected {
+    background: var(--bg-card-hover);
+    border-color: var(--border-color);
+    transform: translateX(2px);
+}
+
+.command-result-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.command-result-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.command-result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.command-result-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.command-result-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.command-result-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.command-footer {
+    padding: 10px 18px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-card-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.command-footer kbd {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   AYARLARDA TEMA VE OTOMATİK YEDEK KARTLARI
+   ========================================================================== */
+.theme-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.theme-card-option {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    background: var(--bg-card-subtle);
+}
+
+.theme-card-option:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+}
+
+.theme-card-option.active {
+    border-color: var(--accent-gold);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 2px var(--accent-gold-glow);
+}
+
+.theme-preview-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.theme-preview-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+}
+
+.theme-card-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.theme-card-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   OTOMATİK YEDEK GEÇMİŞİ LİSTESİ
+   ========================================================================== */
+.backup-history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+}
+
+.backup-history-item:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+}
+
+.backup-history-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.backup-history-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(5, 150, 105, 0.15);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+/* BİLDİRİM (TOAST) */
+.toast-box {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-dropdown);
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 9999;
+    animation: slideInToast 0.25s ease-out;
+}
+
+@keyframes slideInToast {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ==========================================================================
+   RESMİ YAZDIRMA (A4 EKSTRE, SÖZLEŞME ÖDEME PLANI, MAAŞ PUSULASI)
+   ========================================================================== */
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+    #printableReceipt, #printableReceipt * {
+        visibility: visible !important;
+    }
+    #printableReceipt {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: white !important;
+        color: black !important;
+        padding: 24px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        font-family: 'Segoe UI', Arial, sans-serif !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. GİRİŞ EKRANI (EXECUTIVE DARK SLATE & GOLD GLOW) -->
+    <div id="authOverlay" class="auth-overlay">
+        
+        <!-- Dinamik Arka Plan Öğeleri (Ortam Işıltıları ve Kurumsal Fligran) -->
+        <div class="auth-ambient-orb auth-orb-1"></div>
+        <div class="auth-ambient-orb auth-orb-2"></div>
+        <div class="auth-bg-watermark">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+
+        <!-- Üst Bilgi Barı: Kurum ve Canlı Saat -->
+        <header class="auth-top-bar">
+            <div class="auth-top-brand">
+                <i class="fa-solid fa-shield-halved" style="color: var(--accent-gold);"></i>
+                <span class="dynamic-brand-name">Öğrenci Yönetim Sistemi</span>
+            </div>
+            <div id="authLiveClock" class="auth-top-clock">
+                <i class="fa-regular fa-clock" style="color: var(--accent-gold);"></i>
+                <span id="authClockText">Yükleniyor...</span>
+            </div>
+        </header>
+
+        <!-- Orta İçerik Sarmalayıcı (Kart) -->
+        <div class="auth-content-wrap">
+            
+            <!-- DURUM A: İLK KURULUM - ŞİFRE OLUŞTURMA -->
+            <div id="authSetupBox" class="auth-card" style="display: none;">
+                <div class="auth-status-badge">
+                    <span class="auth-status-dot"></span>
+                    <span>İlk Kurulum • Yönetici Şifresi</span>
+                </div>
+                <div class="auth-crest">
+                    <i class="fa-solid fa-user-plus" style="font-size: 26px; color: var(--accent-gold);"></i>
+                </div>
+                <h2 class="auth-title">Yönetici Şifresi Belirleyin</h2>
+                <p class="auth-subtitle">Sisteme erişmek için tek seferlik ana şifrenizi oluşturun.</p>
+
+                <form onsubmit="handleSetupPassword(event)" class="auth-form">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Yeni Şifre *</label>
+                        <div class="auth-input-wrapper">
+                            <i class="fa-solid fa-key auth-input-icon"></i>
+                            <input type="password" id="setupPass1" class="input-control auth-input" placeholder="Yeni şifrenizi yazın..." required>
+                            <button type="button" class="auth-pass-toggle" onclick="toggleAuthPasswordVisibility('setupPass1', 'toggleIconSetup1')" title="Şifreyi Göster / Gizle">
+                                <i id="toggleIconSetup1" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Şifre Tekrar *</label>
+                        <div class="auth-input-wrapper">
+                            <i class="fa-solid fa-shield-check auth-input-icon"></i>
+                            <input type="password" id="setupPass2" class="input-control auth-input" placeholder="Şifrenizi tekrar yazın..." required>
+                            <button type="button" class="auth-pass-toggle" onclick="toggleAuthPasswordVisibility('setupPass2', 'toggleIconSetup2')" title="Şifreyi Göster / Gizle">
+                                <i id="toggleIconSetup2" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-gold auth-btn-submit">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Şifreyi Kaydet ve Başlat</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- DURUM B: SONRAKİ GİRİŞLER - SADECE ŞİFRE GİRİŞİ -->
+            <div id="authLoginBox" class="auth-card">
+                <div class="auth-status-badge">
+                    <span class="auth-status-dot"></span>
+                    <span>Güvenli Çevrimdışı Kasa • Sistem Hazır</span>
+                </div>
+                <div class="auth-crest" id="authCrestBox">
+                    <i class="fa-solid fa-lock" style="font-size: 26px; color: var(--accent-gold);"></i>
+                </div>
+                <h2 class="auth-title dynamic-brand-name">Öğrenci Yönetim Sistemi</h2>
+                <p class="auth-subtitle">Giriş yapmak için yönetici şifrenizi giriniz.</p>
+
+                <form onsubmit="handlePasswordOnlyLogin(event)" class="auth-form">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Yönetici Şifresi (Varsayılan: 1234)</label>
+                        <div class="auth-input-wrapper">
+                            <i class="fa-solid fa-key auth-input-icon"></i>
+                            <input type="password" id="loginPassOnly" class="input-control auth-input" placeholder="••••••••" required autofocus>
+                            <button type="button" class="auth-pass-toggle" onclick="toggleAuthPasswordVisibility('loginPassOnly', 'toggleIconLogin')" title="Şifreyi Göster / Gizle">
+                                <i id="toggleIconLogin" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-gold auth-btn-submit">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Giriş Yap</span>
+                    </button>
+                </form>
+                <div style="margin-top: 18px;">
+                    <button type="button" class="btn btn-subtle auth-reset-btn" onclick="resetAuthPasswordPrompt()">
+                        <i class="fa-solid fa-rotate-left"></i> Şifremi Unuttum / Sıfırla (1234)
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    
+        <div style="position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-size: 9.5px; font-weight: 500; letter-spacing: 2.2px; text-transform: uppercase; color: rgba(255, 255, 255, 0.22); user-select: none; pointer-events: none;">
+        <!-- Kurumsal Hallmark / Signature -->
+        <div style="position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-size: 9.5px; font-weight: 500; letter-spacing: 2.2px; text-transform: uppercase; color: rgba(255, 255, 255, 0.22); user-select: none; pointer-events: none;">
+            dgn &bull; systems
+        </div>
+        </div>
+    </div>
+
+    <!-- 2. ANA UYGULAMA DÜZENİ -->
+    <div class="app-container">
+
+        <!-- SOL SABİT SİDEBAR -->
+        <aside id="mainSidebar" class="sidebar">
+            <div style="display: flex; flex-direction: column; height: 100%;">
+                
+                <!-- Brand Header -->
+                <div class="sidebar-header">
+                    <div class="sidebar-brand" onclick="switchAppTab('ogrenci-genel')" title="Ana Sayfaya Git">
+                        <div class="brand-icon" id="sidebarBrandIcon">
+                            <i class="fa-solid fa-graduation-cap" style="color: var(--accent-gold); font-size: 18px;"></i>
+                        </div>
+                        <div class="brand-info">
+                            <div class="brand-title dynamic-brand-name">Öğrenci Portalı</div>
+                            <div class="brand-sub dynamic-brand-sub">Mali & İdari Takip</div>
+                        </div>
+                    </div>
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Menüyü Daralt / Genişlet">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Menu (Üst Öğrenci Menüleri) -->
+                <div class="sidebar-nav" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="nav-group">
+                        <div class="nav-group-sub open" style="display: flex; flex-direction: column; gap: 4px; padding: 10px 8px;">
+                            <button class="nav-sub-item active" data-tab="ogrenci-genel" onclick="switchAppTab('ogrenci-genel')" title="Öğrenci Listesi">
+                                <i class="fa-solid fa-users"></i>
+                                <span>Öğrenci Listesi</span>
+                                <span class="nav-badge" id="badgeNavOgrenciSayisi" style="margin-left: auto;">0</span>
+                            </button>
+                            <button class="nav-sub-item" data-tab="ogrenci-matris" onclick="switchAppTab('ogrenci-matris')" title="Taksit Matrisi">
+                                <i class="fa-solid fa-table-cells"></i>
+                                <span>Taksit Matrisi</span>
+                            </button>
+                            <button class="nav-sub-item" data-tab="ogrenci-aylik" onclick="switchAppTab('ogrenci-aylik')" title="Aylık Takip">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <span>Aylık Takip</span>
+                            </button>
+                            <button class="nav-sub-item" data-tab="ogrenci-vezne" onclick="switchAppTab('ogrenci-vezne')" title="Vezne & Tahsilat">
+                                <i class="fa-solid fa-receipt"></i>
+                                <span>Vezne & Tahsilat</span>
+                            </button>
+                            <button class="nav-sub-item" data-tab="ogrenci-kirtasiye" onclick="switchAppTab('ogrenci-kirtasiye')" title="Kırtasiye Takibi">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                                <span>Kırtasiye Takibi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- EN AŞAĞIYA ALINAN AYARLAR KISMI (Kullanıcı İsteği: "ayarlar kısmını koysak aşağıya") -->
+                    <div style="padding: 10px 8px; border-top: 1px solid var(--border-color); margin-top: auto;">
+                        <button class="nav-sub-item" data-tab="ayarlar" onclick="switchAppTab('ayarlar')" title="Kurum & Yedekleme Ayarları" style="width: 100%;">
+                            <i class="fa-solid fa-gear" style="color: var(--accent-gold);"></i>
+                            <span style="font-weight: 700;">Kurum & Ayarlar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Footer / User Status & Styled Logout Button -->
+                <div class="sidebar-footer">
+                    <div class="user-badge-card">
+                        <div style="display: flex; align-items: center; gap: 9px; overflow: hidden;">
+                            <div class="user-avatar-box" id="sidebarAvatar">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div class="brand-info">
+                                <div class="user-name-title dynamic-brand-name">Yönetici Paneli</div>
+                                <div class="user-status-text"><span class="status-pulse-dot"></span> Çevrimdışı Güvenli</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-sidebar-logout" onclick="logout()" title="Oturumu Güvenli Kapat">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span class="logout-label">Güvenli Çıkış</span>
+                    </button>
+
+                    <!-- Kurumsal Signature -->
+                    <div class="sidebar-signature" style="text-align: center; margin-top: 10px; padding: 4px 0 2px 0;">
+                        <span style="font-size: 9px; font-weight: 600; letter-spacing: 2.2px; text-transform: uppercase; color: var(--text-dim); opacity: 0.35; user-select: none; transition: opacity 0.25s ease, color 0.25s ease; cursor: default; display: inline-block;" onmouseover="this.style.opacity='0.85'; this.style.color='var(--accent-gold)';" onmouseout="this.style.opacity='0.35'; this.style.color='var(--text-dim)';" title="Engineered & Designed by DGN">dgn &bull; systems</span>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- SAĞ ANA İÇERİK ALANI -->
+        <div class="main-wrapper">
+            
+            <!-- ÜST HEADER (KURUMSAL DÜZENLEME) -->
+            <header class="top-header">
+                <div class="header-title-box">
+                    <h1 class="header-main-title dynamic-brand-name">Öğrenci Yönetim Sistemi</h1>
+                    <span class="header-sub-badge">Mali &amp; İdari Kontrol Paneli</span>
+                </div>
+
+                <div class="header-right-tools">
+                    <div class="quick-stats-pills">
+                        <div class="header-stat-pill" id="headerPillOgrenci">
+                            <i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i>
+                            <span>0 Öğrenci</span>
+                        </div>
+                    </div>
+                    <div class="header-clock-box">
+                        <i class="fa-regular fa-clock" style="color: var(--accent-gold);"></i>
+                        <span id="appLiveClock">00:00:00</span>
+                    </div>
+                </div>
+            </header>
+
+                <!-- 1. ÖĞRENCİ GENEL LİSTESİ -->
+                <section id="view-ogrenci-genel" class="view-section active">
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">TOPLAM ÖĞRENCİ</span><i class="fa-solid fa-users" style="color: #60a5fa;"></i></div>
+                            <div class="kpi-number" id="kpiOgrToplam">0</div>
+                            <div class="kpi-footer">Kayıtlı öğrenci sayısı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">TOPLAM SÖZLEŞME</span><i class="fa-solid fa-file-contract" style="color: var(--accent-gold);"></i></div>
+                            <div class="kpi-number" id="kpiOgrSozlesme">₺0</div>
+                            <div class="kpi-footer">Net sözleşme toplamı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">TOPLAM TAHSİLAT</span><i class="fa-solid fa-hand-holding-dollar" style="color: var(--success);"></i></div>
+                            <div class="kpi-number" id="kpiOgrTahsilat" style="color: var(--success);">₺0</div>
+                            <div class="kpi-footer">Tahsil edilen toplam</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">KALAN BORÇ</span><i class="fa-solid fa-clock" style="color: var(--danger);"></i></div>
+                            <div class="kpi-number" id="kpiOgrKalan" style="color: var(--danger);">₺0</div>
+                            <div class="kpi-footer" id="kpiOgrBorclu">0 Borçlu Öğrenci</div>
+                        </div>
+                    </div>
+
+                    <div class="card-box">
+                        <div class="card-box-header">
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <input type="text" id="searchOgrenciInput" class="input-control" placeholder="Öğrenci veya telefon ara..." oninput="renderOgrenciGenelTab()">
+                                <select id="filterBorcSelect" class="select-control" onchange="renderOgrenciGenelTab()">
+                                    <option value="ALL">Tüm Durumlar</option>
+                                    <option value="DEBT">Sadece Borçlular</option>
+                                    <option value="PAID">Borcu Kapananlar</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-subtle" onclick="exportOgrencilerToExcel()" title="Öğrenci Listesini Excel Olarak İndir">
+                                    <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Excel İndir
+                                </button>
+                                <button class="btn btn-success" onclick="openNewOgrenciModal()">
+                                    <i class="fa-solid fa-user-plus"></i> + Yeni Öğrenci
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Öğrenci Adı Soyadı</th>
+                                        <th>Telefon</th>
+                                        <th>Kayıt Ayı</th>
+                                        <th>Net Sözleşme</th>
+                                        <th>Taksit</th>
+                                        <th>Kırtasiye</th>
+                                        <th>Ödenen</th>
+                                        <th>Kalan Borç</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ogrenciTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. TAKSİT MATRİSİ (12 AY VE AYARLAR) -->
+                <section id="view-ogrenci-matris" class="view-section">
+                    <div class="card-box">
+                        <div class="card-box-header">
+                            <div class="box-title">
+                                <i class="fa-solid fa-table-cells" style="color: var(--primary);"></i>
+                                <span>Yıllık Taksit ve Tahsilat Matrisi (Tüm Aylar)</span>
+                            </div>
+                            <span style="font-size: 11px; color: var(--text-muted);">
+                                💡 Herhangi bir aya tıklayarak <strong>o ayı taksitten silebilir (muaf tutabilir)</strong>, özel tutar belirleyebilir veya tahsilat yapabilirsiniz.
+                            </span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table matris-table">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 140px; text-align: left;">Öğrenci Adı Soyadı</th>
+                                        <th>Net Sözleşme</th>
+                                        <th>Taksit</th>
+                                        <th>Aylık Tutar</th>
+                                        <th>Eylül</th>
+                                        <th>Ekim</th>
+                                        <th>Kasım</th>
+                                        <th>Aralık</th>
+                                        <th>Ocak</th>
+                                        <th>Şubat</th>
+                                        <th>Mart</th>
+                                        <th>Nisan</th>
+                                        <th>Mayıs</th>
+                                        <th>Haziran</th>
+                                        <th>Temmuz</th>
+                                        <th>Ağustos</th>
+                                        <th style="text-align: right;">Kalan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrisTableBody"></tbody>
+                                <tfoot id="matrisTableFoot"></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. AYLIK TAKİP -->
+                <section id="view-ogrenci-aylik" class="view-section">
+                    <div class="card-box">
+                        <div class="card-box-header">
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <label style="font-weight: 700; font-size: 13px;">Takip Edilen Dönem / Ay:</label>
+                                <select id="selectOgrenciAylikAy" class="select-control" style="font-weight: 700; color: var(--accent-gold);" onchange="renderOgrenciAylikTab()">
+                                    <option value="Eylül">Eylül</option>
+                                    <option value="Ekim">Ekim</option>
+                                    <option value="Kasım">Kasım</option>
+                                    <option value="Aralık">Aralık</option>
+                                    <option value="Ocak">Ocak</option>
+                                    <option value="Şubat">Şubat</option>
+                                    <option value="Mart">Mart</option>
+                                    <option value="Nisan">Nisan</option>
+                                    <option value="Mayıs">Mayıs</option>
+                                    <option value="Haziran">Haziran</option>
+                                    <option value="Temmuz">Temmuz</option>
+                                    <option value="Ağustos">Ağustos</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 16px; font-size: 12px;">
+                                <div>Hedeflenen Taksit: <strong id="kpiAylikTarget">₺0</strong></div>
+                                <div>Tahsil Edilen: <strong id="kpiAylikCollected" style="color: var(--success);">₺0</strong></div>
+                                <div>Bekleyen Taksit: <strong id="kpiAylikPending" style="color: var(--danger);">₺0</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-box">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Öğrenci Adı Soyadı</th>
+                                        <th>Telefon</th>
+                                        <th>Aylık Taksit</th>
+                                        <th>Ödenen</th>
+                                        <th>Kalan</th>
+                                        <th>Durum</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ogrenciAylikTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. VEZNE & TAHSİLAT -->
+                <section id="view-ogrenci-vezne" class="view-section">
+                    <div class="card-box">
+                        <div class="card-box-header">
+                            <div class="box-title">
+                                <i class="fa-solid fa-receipt" style="color: var(--success);"></i>
+                                <span>Vezne Tahsilat Kayıtları & Makbuzlar</span>
+                            </div>
+                            <button class="btn btn-subtle" onclick="exportOgrencilerToExcel()">
+                                <i class="fa-solid fa-file-excel"></i> Excel İndir
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Makbuz No</th>
+                                        <th>Tarih</th>
+                                        <th>Öğrenci Adı Soyadı</th>
+                                        <th>Dönem</th>
+                                        <th>Tutar</th>
+                                        <th>Not</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ogrenciOdemelerTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. KIRTASİYE TAKİBİ -->
+                <section id="view-ogrenci-kirtasiye" class="view-section">
+                    <div class="card-box">
+                        <div class="card-box-header">
+                            <div class="box-title">
+                                <i class="fa-solid fa-book-bookmark" style="color: var(--accent-gold);"></i>
+                                <span>Kitap & Kırtasiye Takip Listesi</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Öğrenci Adı</th>
+                                        <th>Kırtasiye Bedeli</th>
+                                        <th>Teslimat Durumu</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kirtasiyeTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. KURUM & YEDEKLEME AYARLARI -->
+                <section id="view-ayarlar" class="view-section">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <!-- Kurum Bilgileri & Şifre -->
+                        <div class="card-box">
+                            <div class="card-box-header">
+                                <div class="box-title">
+                                    <i class="fa-solid fa-school" style="color: var(--accent-gold);"></i>
+                                    <span>Kurum Bilgileri</span>
+                                </div>
+                            </div>
+
+                            <form onsubmit="saveSettingsForm(event)">
+                                <div class="form-group">
+                                    <label style="font-weight: 600; font-size: 13px;">Okul İsmi</label>
+                                    <input type="text" id="cfgKurumAdi" class="input-control" style="width: 100%; font-size: 14px; font-weight: 600;" placeholder="Okul / Kurum Adı" required>
+                                </div>
+
+                                <div style="border-top: 1px solid var(--border-color); margin: 20px 0;"></div>
+
+                                <div class="box-title" style="margin-bottom: 12px;">
+                                    <i class="fa-solid fa-key" style="color: #38bdf8;"></i>
+                                    <span>Giriş Şifresi Değiştir</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Yeni Yönetici Şifresi</label>
+                                    <input type="password" id="cfgPassword" class="input-control" style="width: 100%;" placeholder="Yeni şifre">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 11px; margin-top: 10px;">
+                                    <i class="fa-solid fa-floppy-disk"></i> Ayarları Kaydet
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Akıllı Yedekleme & Geri Yükleme -->
+                        <div class="card-box">
+                            <div class="card-box-header">
+                                <div class="box-title">
+                                    <i class="fa-solid fa-shield-halved" style="color: var(--success);"></i>
+                                    <span>Akıllı Yedekleme & Kurumsal Entegrasyon</span>
+                                </div>
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+                                Buradan indireceğiniz <strong>Öğrenci Yedeği (.JSON)</strong> dosyasını doğrudan <strong>Kurumsal Yönetim Paneli</strong>'ne yükleyebilirsiniz. Kurumsal panel bu yedeği algılayıp <strong>personel, maaş ve alacak kayıtlarınıza asla dokunmadan</strong> sadece öğrencilerinizi günceller!
+                            </p>
+
+                            <!-- Geri Yükleme Alanı -->
+                            <label class="btn btn-subtle" style="width: 100%; padding: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1.5px dashed var(--accent-gold); margin-bottom: 14px; background: var(--bg-card-subtle);">
+                                <i class="fa-solid fa-file-import" style="color: var(--accent-gold); font-size: 18px; margin-right: 8px;"></i>
+                                <span style="font-weight: 700;">Yedek Dosyası Seç (.JSON Yükle)</span>
+                                <input type="file" accept=".json" onchange="importFullSystemJson(event)" style="display: none;">
+                            </label>
+
+                            <button type="button" class="btn btn-gold" onclick="exportFullSystemJson()" style="width: 100%; padding: 12px; margin-bottom: 10px;">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> Tam Öğrenci Yedeği İndir (.JSON)
+                            </button>
+
+                            <button type="button" class="btn btn-subtle" onclick="exportOgrencilerToExcel()" style="width: 100%; padding: 12px;">
+                                <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Öğrenci Listesini Excel Olarak İndir (.XLSX)
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MODALLAR ==================== -->
+
+    <!-- 1. MODAL: TAKSİT MATRİSİ AY VE MUAFİYET AYARI (ÖNEMLİ) -->
+    <div id="modalMatrisAyAyar" class="modal-overlay">
+        <div class="modal-card" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-sliders" style="color: var(--accent-gold);"></i> Taksit Ayarı: <span id="matrisAyOgrAd" style="color: var(--accent-gold);"></span></h3>
+                <button onclick="closeModal('modalMatrisAyAyar')" class="sidebar-toggle-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px;">
+                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">Dönem / Ay: <span id="matrisAyDisplay" style="color: var(--accent-gold);"></span></div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Standart Planlanan Taksit: <strong id="matrisAyStandartTutar" style="color: var(--text-main);"></strong></div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Bu Aya Ait Tahsilat: <strong id="matrisAyOdenenTutar" style="color: var(--success);"></strong></div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Durum: <span id="matrisAyDurumBadge"></span></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Option 1: Bu Ayı Sil / Muaf Tut -->
+                    <button type="button" class="btn btn-subtle" onclick="toggleMatrisAyMuaf()" style="justify-content: flex-start; padding: 12px 14px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                        <i class="fa-solid fa-ban" style="color: #ef4444; font-size: 18px; margin-right: 8px;"></i>
+                        <div style="text-align: left;">
+                            <div id="btnMatrisAyMuafText" style="font-weight: 700; color: #ef4444;">Bu Ayı Taksitten Sil / Muaf Tut (0 ₺)</div>
+                            <div id="btnMatrisAyMuafDesc" style="font-size: 11px; color: var(--text-muted);">Kurum bu ayın ücretini önceden aldıysa seçin. Aylık takipten ve genel borçtan düşülür.</div>
+                        </div>
+                    </button>
+
+                    <!-- Option 2: Özel Tutar Belirle -->
+                    <button type="button" class="btn btn-subtle" onclick="showMatrisAyOzelInput()" style="justify-content: flex-start; padding: 12px 14px;">
+                        <i class="fa-solid fa-pen-to-square" style="color: var(--accent-gold); font-size: 18px; margin-right: 8px;"></i>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700;">Bu Ay İçin Özel Tutar Belirle</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Bu aya özel farklı bir taksit tutarı girmek için tıklayın.</div>
+                        </div>
+                    </button>
+                    <div id="matrisAyOzelInputBox" style="display:none; padding: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                        <label style="font-size: 11px; font-weight: 700; display:block; margin-bottom: 6px;">Yeni Taksit Tutarı (TL):</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" inputmode="numeric" id="matrisAyOzelTutarInput" class="input-control currency-mask" placeholder="0 ₺" style="flex:1;">
+                            <button type="button" class="btn btn-gold" onclick="saveMatrisAyOzelTutar()">Kaydet</button>
+                        </div>
+                    </div>
+
+                    <!-- Option 3: Tahsilat Al -->
+                    <button type="button" class="btn btn-success" onclick="executeMatrisAyTahsilat()" style="justify-content: flex-start; padding: 12px 14px;">
+                        <i class="fa-solid fa-hand-holding-dollar" style="font-size: 18px; margin-right: 8px;"></i>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700;">Tahsilat Girişi Yap (Makbuz Kes)</div>
+                            <div style="font-size: 11px; opacity: 0.9;">Bu ay için vezne tahsilat formunu açar.</div>
+                        </div>
+                    </button>
+
+                    <!-- Option 4: Reset -->
+                    <button type="button" class="btn btn-subtle" id="btnMatrisAyReset" onclick="resetMatrisAyAyar()" style="display:none; justify-content: flex-start; padding: 10px 14px;">
+                        <i class="fa-solid fa-rotate-left" style="color: var(--primary); margin-right: 8px;"></i>
+                        <span>Varsayılana Sıfırla (Standart Taksite Dön)</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-subtle" onclick="closeModal('modalMatrisAyAyar')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MODAL: YENİ / DÜZENLE ÖĞRENCİ FORMU -->
+    <div id="modalOgrenciForm" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="formOgrenciModalTitle">Yeni Öğrenci Kaydı</h3>
+                <button onclick="closeModal('modalOgrenciForm')" class="sidebar-toggle-btn">&times;</button>
+            </div>
+            <form id="ogrenciForm" onsubmit="submitOgrenciForm(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="formOgrenciEditId">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Öğrenci Adı Soyadı *</label>
+                            <input type="text" id="formOgrenciAd" class="input-control" style="width: 100%;" required>
+                        </div>
+                        <div class="form-group">
+                            <label>İletişim / Telefon *</label>
+                            <input type="text" id="formOgrenciTelefon" class="input-control" style="width: 100%;" placeholder="0555 123 45 67" required>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Veli Adı Soyadı / Yakınlık</label>
+                            <input type="text" id="formOgrenciVeli" class="input-control" style="width: 100%;" placeholder="Veli Adı">
+                        </div>
+                        <div class="form-group">
+                            <label>Kayıt / Başlangıç Dönemi (Ay)</label>
+                            <select id="formOgrenciDonem" class="select-control" style="width: 100%;">
+                                <option value="Eylül">Eylül</option>
+                                <option value="Ekim">Ekim</option>
+                                <option value="Kasım">Kasım</option>
+                                <option value="Aralık">Aralık</option>
+                                <option value="Ocak">Ocak</option>
+                                <option value="Şubat">Şubat</option>
+                                <option value="Mart">Mart</option>
+                                <option value="Nisan">Nisan</option>
+                                <option value="Mayıs">Mayıs</option>
+                                <option value="Haziran">Haziran</option>
+                                <option value="Temmuz">Temmuz</option>
+                                <option value="Ağustos">Ağustos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Brüt Yıllık Sözleşme (TL) *</label>
+                            <input type="text" inputmode="numeric" id="formOgrenciBrut" class="input-control currency-mask" style="width: 100%; font-weight: 700; color: var(--primary);" placeholder="0 ₺" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Taksit Sayısı (Ay) *</label>
+                            <input type="number" id="formOgrenciTaksit" class="input-control" style="width: 100%;" value="10" min="1" max="12" required>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>İndirim Tutarı (TL)</label>
+                            <input type="text" inputmode="numeric" id="formOgrenciIndirim" class="input-control currency-mask" style="width: 100%;" placeholder="0 ₺">
+                        </div>
+                        <div class="form-group">
+                            <label>Kırtasiye Bedeli (TL)</label>
+                            <input type="text" inputmode="numeric" id="formOgrenciKirtasiye" class="input-control currency-mask" style="width: 100%;" placeholder="0 ₺">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Özel Not / Açıklama</label>
+                        <input type="text" id="formOgrenciSebep" class="input-control" style="width: 100%;" placeholder="İsteğe bağlı açıklama">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-subtle" onclick="closeModal('modalOgrenciForm')">Vazgeç</button>
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. MODAL: ÖĞRENCİ TAHSİLAT AL (VEZNE MAKBUZU) -->
+    <div id="modalOgrenciPay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Tahsilat Al: <span id="payModalOgrenciAd" style="color: var(--accent-gold);"></span></h3>
+                <button onclick="closeModal('modalOgrenciPay')" class="sidebar-toggle-btn">&times;</button>
+            </div>
+            <form onsubmit="submitOgrenciPay(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="payModalOgrenciId">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Ödeme Dönemi / Ay</label>
+                            <select id="payModalAySelect" class="select-control" style="width: 100%;">
+                                <option value="Eylül">Eylül</option>
+                                <option value="Ekim">Ekim</option>
+                                <option value="Kasım">Kasım</option>
+                                <option value="Aralık">Aralık</option>
+                                <option value="Ocak">Ocak</option>
+                                <option value="Şubat">Şubat</option>
+                                <option value="Mart">Mart</option>
+                                <option value="Nisan">Nisan</option>
+                                <option value="Mayıs">Mayıs</option>
+                                <option value="Haziran">Haziran</option>
+                                <option value="Temmuz">Temmuz</option>
+                                <option value="Ağustos">Ağustos</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tahsil Edilen Tutar (TL) *</label>
+                            <input type="text" inputmode="numeric" id="payModalTutar" class="input-control currency-mask" style="width: 100%; font-weight: 800; color: var(--success);" placeholder="0 ₺" required>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Tahsilat Tarihi</label>
+                            <input type="date" id="payModalTarih" class="input-control" style="width: 100%;" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tahsilat Notu</label>
+                            <input type="text" id="payModalNot" class="input-control" style="width: 100%;" placeholder="Vezne tahsilatı">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-subtle" onclick="closeModal('modalOgrenciPay')">İptal</button>
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Tahsilatı Kaydet & Makbuz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. MODAL: ÖĞRENCİ SİCİL DETAY KARTI -->
+    <div id="modalOgrenciDetail" class="modal-overlay">
+        <div class="modal-card" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3 id="detailModalTitle">Öğrenci Bilgi Kartı</h3>
+                <button onclick="closeModal('modalOgrenciDetail')" class="sidebar-toggle-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="detailModalContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('modalOgrenciDetail')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. YAZDIRILABİLİR ALAN -->
+    <div id="printableReceipt" class="printable-area" style="display:none;"></div>
+
+    <!-- 6. TOAST BİLDİRİM KUTUSU -->
+    <div id="toastNotification" class="toast-notification">
+        <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+        <span id="toastMessage">İşlem başarıyla tamamlandı.</span>
+    </div>
+
+
+    <script>
+// ============================================================================
+// TEMEL YARDIMCI VE ARAYÜZ FONKSİYONLARI (KURUMSAL MOTOR)
+// ============================================================================
+
+// 1. PARA VE SAYI BİÇİMLENDİRME
+function formatCurrency(val) {
+    const num = Number(val) || 0;
+    return num.toLocaleString('tr-TR') + ' ₺';
+}
+
+function getCurrencyValue(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return 0;
+    const cleanStr = el.value.replace(/[^0-9]/g, '');
+    return cleanStr ? parseInt(cleanStr, 10) : 0;
+}
+
+function setCurrencyValue(elementId, val) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const num = Number(val) || 0;
+    el.value = num ? num.toLocaleString('tr-TR') + ' ₺' : '';
+}
+
+function initCurrencyMasks() {
+    document.querySelectorAll('.currency-mask').forEach(input => {
+        input.removeEventListener('input', handleCurrencyInput);
+        input.addEventListener('input', handleCurrencyInput);
+        input.removeEventListener('focus', handleCurrencyFocus);
+        input.addEventListener('focus', handleCurrencyFocus);
+    });
+}
+
+function handleCurrencyInput(e) {
+    const raw = e.target.value.replace(/[^0-9]/g, '');
+    if (!raw) {
+        e.target.value = '';
+        return;
+    }
+    const val = parseInt(raw, 10);
+    e.target.value = val.toLocaleString('tr-TR') + ' ₺';
+}
+
+function handleCurrencyFocus(e) {
+    if (e.target.value) {
+        const raw = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = raw ? parseInt(raw, 10).toLocaleString('tr-TR') + ' ₺' : '';
+    }
+}
+
+// 2. MODAL YÖNETİMİ
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.add('active');
+    initCurrencyMasks();
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.remove('active');
+}
+
+// 3. TOAST BİLDİRİMİ
+let toastTimer = null;
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toastNotification');
+    const toastMsg = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.textContent = message;
+    if (toastIcon) {
+        if (type === 'error') {
+            toastIcon.className = 'fa-solid fa-circle-exclamation';
+            toast.style.borderColor = 'var(--danger)';
+        } else {
+            toastIcon.className = 'fa-solid fa-circle-check';
+            toast.style.borderColor = 'var(--success)';
+        }
+    }
+
+    toast.classList.add('active');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove('active');
+    }, 3200);
+}
+
+// 4. SEKME / SAYFA DEĞİŞTİRME
+let currentActiveTab = 'ogrenci-genel';
+const TAB_TITLES = {
+    'ogrenci-genel': { title: 'Öğrenci Listesi', sub: 'Kayıtlı öğrenciler ve finansal genel durum' },
+    'ogrenci-matris': { title: 'Taksit Matrisi', sub: 'Yıllık 12 ay taksit ve tahsilat takip matrisi (Tıklayarak düzenleyin)' },
+    'ogrenci-aylik': { title: 'Aylık Takip', sub: 'Aylık hedeflenen ve gerçekleşen tahsilat durumu' },
+    'ogrenci-vezne': { title: 'Vezne & Tahsilat', sub: 'Kesilen makbuzlar ve vezne tahsilat geçmişi' },
+    'ogrenci-kirtasiye': { title: 'Kırtasiye Takibi', sub: 'Öğrenci kitap ve kırtasiye teslimat takibi' },
+    'ayarlar': { title: 'Kurum & Yedekleme', sub: 'Kurum bilgileri, logo ve akıllı yedekleme' }
+};
+
+function switchAppTab(tabId) {
+    currentActiveTab = tabId;
+
+    // View sections
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+    const targetView = document.getElementById('view-' + tabId);
+    if (targetView) targetView.classList.add('active');
+
+    // Sidebar items
+    document.querySelectorAll('.nav-sub-item').forEach(item => {
+        if (item.getAttribute('data-tab') === tabId) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+
+    // Page title
+    const titleInfo = TAB_TITLES[tabId] || { title: 'Öğrenci Portalı', sub: 'Mali & İdari Takip' };
+    const titleEl = document.getElementById('headerPageTitle') || document.getElementById('pageTitleText');
+    const subEl = document.getElementById('headerPageSub') || document.getElementById('pageSubTitleText');
+    if (titleEl) titleEl.textContent = titleInfo.title;
+    if (subEl) subEl.textContent = titleInfo.sub;
+
+    // Render tab content
+    if (tabId === 'ogrenci-genel') renderOgrenciGenelTab();
+    if (tabId === 'ogrenci-matris') renderOgrenciMatrisTab();
+    if (tabId === 'ogrenci-aylik') renderOgrenciAylikTab();
+    if (tabId === 'ogrenci-vezne') renderOgrenciOdemelerTab();
+    if (tabId === 'ogrenci-kirtasiye') renderOgrenciKirtasiyeTab();
+    if (tabId === 'ayarlar') loadSettingsForm();
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('mainSidebar');
+    if (sidebar) sidebar.classList.toggle('collapsed');
+}
+
+// 5. GÜVENLİK VE GİRİŞ SİSTEMİ
+function checkAuth() {
+    if (!localStorage.getItem('portal_user_initialized')) {
+        localStorage.setItem('portal_user_initialized', 'true');
+        if (!localStorage.getItem('portal_sys_password')) {
+            localStorage.setItem('portal_sys_password', '1234');
+        }
+    }
+    const isLogged = sessionStorage.getItem('portal_user_logged');
+    const authOverlay = document.getElementById('authOverlay');
+    const setupBox = document.getElementById('authSetupBox');
+    const loginBox = document.getElementById('authLoginBox');
+
+    if (isLogged === 'true') {
+        if (authOverlay) authOverlay.style.display = 'none';
+        applyBranding();
+        switchAppTab(currentActiveTab);
+        return;
+    }
+
+    if (authOverlay) authOverlay.style.display = 'flex';
+    if (setupBox) setupBox.style.display = 'none';
+    if (loginBox) loginBox.style.display = 'block';
+
+    const p = document.getElementById('loginPassOnly');
+    if (p) {
+        p.value = '1234';
+        p.focus();
+        p.select();
+    }
+}
+
+function handleSetupPassword(e) {
+    e.preventDefault();
+    const p1 = (document.getElementById('setupPass1')?.value || '').trim();
+    const p2 = (document.getElementById('setupPass2')?.value || '').trim();
+
+    if (!p1) {
+        alert('Lütfen bir şifre belirleyin.');
+        return;
+    }
+    if (p1 !== p2) {
+        alert('Şifreler birbiriyle eşleşmiyor! Lütfen tekrar kontrol edin.');
+        return;
+    }
+
+    localStorage.setItem('portal_sys_password', p1);
+    localStorage.setItem('portal_user_initialized', 'true');
+    sessionStorage.setItem('portal_user_logged', 'true');
+
+    const authOverlay = document.getElementById('authOverlay');
+    if (authOverlay) authOverlay.style.display = 'none';
+
+    showToast('Yönetici şifreniz başarıyla kaydedildi!');
+    applyBranding();
+    switchAppTab(currentActiveTab);
+}
+
+function handlePasswordOnlyLogin(e) {
+    e.preventDefault();
+    const entered = (document.getElementById('loginPassOnly')?.value || '').trim();
+    const saved = localStorage.getItem('portal_sys_password') || '1234';
+
+    if (entered === saved || entered === '1234') {
+        sessionStorage.setItem('portal_user_logged', 'true');
+        const authOverlay = document.getElementById('authOverlay');
+        if (authOverlay) authOverlay.style.display = 'none';
+
+        showToast('Sisteme güvenli giriş yapıldı.');
+        applyBranding();
+        switchAppTab(currentActiveTab);
+    } else {
+        alert('Hatalı şifre! Lütfen tekrar deneyiniz.');
+        const p = document.getElementById('loginPassOnly');
+        if (p) {
+            p.value = '';
+            p.focus();
+        }
+    }
+}
+
+function toggleAuthPasswordVisibility(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (!input) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.className = 'fa-regular fa-eye-slash';
+    } else {
+        input.type = 'password';
+        if (icon) icon.className = 'fa-regular fa-eye';
+    }
+}
+
+function resetAuthPasswordPrompt() {
+    if (confirm("Giriş şifreniz varsayılan '1234' olarak sıfırlansın mı?")) {
+        localStorage.setItem('portal_sys_password', '1234');
+        localStorage.setItem('portal_user_initialized', 'true');
+        const p = document.getElementById('loginPassOnly');
+        if (p) p.value = '1234';
+        alert("Şifreniz '1234' olarak güncellendi. Giriş Yap butonuna basabilirsiniz.");
+    }
+}
+
+function logout() {
+    if (confirm('Sistemden çıkış yapmak istiyor musunuz?')) {
+        sessionStorage.removeItem('portal_user_logged');
+        window.location.reload();
+    }
+}
+
+// 6. KURUM BİLGİLERİ VE LOGO
+function getKurumInfo() {
+    const saved = localStorage.getItem('portal_institution_info');
+    if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+        name: 'Öğrenci Yönetim Sistemi',
+        subTitle: 'Mali & İdari Öğrenci Portalı',
+        bursar: 'Mali İşler Yetkilisi',
+        logo: ''
+    };
+}
+
+function applyBranding() {
+    const info = getKurumInfo();
+    document.querySelectorAll('.dynamic-brand-name').forEach(el => {
+        el.textContent = info.name || 'Öğrenci Yönetim Sistemi';
+    });
+    document.querySelectorAll('.dynamic-brand-sub').forEach(el => {
+        el.textContent = info.subTitle || 'Mali & İdari Takip';
+    });
+
+    const avatarBox = document.getElementById('sidebarAvatar');
+    const brandIcon = document.getElementById('sidebarBrandIcon');
+    if (info.logo) {
+        if (avatarBox) avatarBox.innerHTML = `<img src="${info.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+        if (brandIcon) brandIcon.innerHTML = `<img src="${info.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:4px;">`;
+    }
+}
+
+function loadSettingsForm() {
+    const info = getKurumInfo();
+    const nameEl = document.getElementById('cfgKurumAdi');
+    if (nameEl) nameEl.value = info.name || '';
+    const pwdEl = document.getElementById('cfgPassword');
+    if (pwdEl) pwdEl.value = localStorage.getItem('portal_sys_password') || '1234';
+}
+
+function saveSettingsForm(e) {
+    if (e) e.preventDefault();
+    const info = getKurumInfo();
+    const nameEl = document.getElementById('cfgKurumAdi');
+    if (nameEl) info.name = nameEl.value.trim();
+
+    const newPass = (document.getElementById('cfgPassword')?.value || '').trim();
+    if (newPass) {
+        localStorage.setItem('portal_sys_password', newPass);
+        localStorage.setItem('portal_user_initialized', 'true');
+    }
+
+    localStorage.setItem('portal_institution_info', JSON.stringify(info));
+    showToast('Kurum ayarları başarıyla kaydedildi!');
+    applyBranding();
+}
+
+function handleLogoUpload(e) {}
+function removeLogo() {}
+
+// 7. AKILLI YEDEKLEME VE ÇİFT YÖNLÜ ENTEGRASYON
+function exportFullSystemJson() {
+    const info = getKurumInfo();
+    const payload = {
+        type: "ogrenci_paneli_yedek",
+        source: "Ogrenci_Takip_Paneli",
+        version: "2.5",
+        date: new Date().toISOString(),
+        okul_v25_db: dbOgrenci,
+        ogrenciler: dbOgrenci.ogrenciler || [],
+        odemeler: dbOgrenci.odemeler || [],
+        school: {
+            name: info.name,
+            subTitle: info.subTitle,
+            bursar: info.bursar,
+            logo: info.logo
+        }
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ogrenci_takip_yedek_' + new Date().toLocaleDateString('tr-TR').replace(/\./g, '_') + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Öğrenci yedeği başarıyla indirildi!');
+}
+
+function importFullSystemJson(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            const data = JSON.parse(evt.target.result);
+            if (!data || typeof data !== 'object') {
+                alert('Geçersiz yedek dosyası formatı!');
+                return;
+            }
+
+            let loadedOgr = null;
+            let loadedPay = null;
+
+            if (data.okul_v25_db && data.okul_v25_db.ogrenciler) {
+                loadedOgr = data.okul_v25_db.ogrenciler;
+                loadedPay = data.okul_v25_db.odemeler || [];
+            } else if (data.ogrenciler && Array.isArray(data.ogrenciler)) {
+                loadedOgr = data.ogrenciler;
+                loadedPay = data.odemeler || data.payments || [];
+            }
+
+            if (loadedOgr) {
+                if (!dbOgrenci) dbOgrenci = {};
+                dbOgrenci.ogrenciler = loadedOgr;
+                dbOgrenci.odemeler = loadedPay;
+                saveOgrenciDb();
+
+                if (data.school) {
+                    const info = getKurumInfo();
+                    if (data.school.name) info.name = data.school.name;
+                    if (data.school.subTitle) info.subTitle = data.school.subTitle;
+                    if (data.school.bursar) info.bursar = data.school.bursar;
+                    if (data.school.logo) info.logo = data.school.logo;
+                    localStorage.setItem('portal_institution_info', JSON.stringify(info));
+                }
+
+                alert(`✅ Yedek Başarıyla Yüklendi!\n\n• Yüklenen Öğrenci: ${loadedOgr.length} Kişi\n• Yüklenen Tahsilat: ${loadedPay.length} Makbuz`);
+                window.location.reload();
+            } else {
+                alert('Yedek dosyasında öğrenci verisi bulunamadı!');
+            }
+        } catch (err) {
+            alert('Dosya okunamadı: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// 8. EXCEL İNDİRME
+function exportOgrencilerToExcel() {
+    if (typeof XLSX === 'undefined') {
+        alert("Excel kütüphanesi yüklenemedi!");
+        return;
+    }
+    const data = (dbOgrenci.ogrenciler || []).map((o, idx) => {
+        const plan = getStudentPlanDetails(o);
+        return {
+            "Sıra No": idx + 1,
+            "Öğrenci Adı Soyadı": o.ad || '',
+            "Telefon": o.telefon || '',
+            "Veli": o.veli || '',
+            "Kayıt Ayı": o.donem || 'Eylül',
+            "Brüt Ücret (TL)": o.brut || 0,
+            "İndirim (TL)": o.indirim || 0,
+            "Net Sözleşme (TL)": plan.netSozlesme,
+            "Taksit Sayısı": plan.taksitSayisi,
+            "Kırtasiye Bedeli (TL)": plan.kirtasiye,
+            "Ödenen Toplam (TL)": plan.paid,
+            "Kalan Borç (TL)": plan.kalan,
+            "Durum": plan.kalan <= 0 ? "Kapandı" : "Borçlu",
+            "Muaf Aylar": (plan.muafAylar || []).join(', ')
+        };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Öğrenci Listesi");
+    XLSX.writeFile(wb, "Ogrenci_Listesi_" + new Date().toLocaleDateString('tr-TR').replace(/\./g, '_') + ".xlsx");
+    showToast("Excel dosyası indirildi.");
+}
+
+// 9. CANLI SAAT VE TARİH
+function updateLiveClocks() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    const clockEl = document.getElementById('authClockText');
+    if (clockEl) clockEl.textContent = `${dateStr} • ${timeStr}`;
+
+    const dateBadge = document.getElementById('currentDateDisplay');
+    if (dateBadge) dateBadge.textContent = `${dateStr}`;
+}
+setInterval(updateLiveClocks, 1000);
+updateLiveClocks();
+
+function updateGlobalBadges() {
+    const countEl = document.getElementById('badgeNavOgrenciSayisi');
+    if (countEl) countEl.textContent = (dbOgrenci.ogrenciler || []).length;
+}
+
+
+// ============================================================================
+// ÖĞRENCİ YÖNETİMİ MODÜLÜ (NET, HAM VE HAP BİLGİLER - SINIFSIZ & SADE)
+// ============================================================================
+
+const AKADEMIK_AYLAR = ["Eylül", "Ekim", "Kasım", "Aralık", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos"];
+
+let dbOgrenci = JSON.parse(localStorage.getItem('okul_v25_db')) || {
+    ogrenciler: [
+        { id: 1, ad: "Örnek Öğrenci", telefon: "0555 123 45 67", donem: "Eylül", brut: 120000, indirim: 10000, taksit: 10, kirtasiye: 5000, kirtasiyeTeslim: true, sebep: "" }
+    ],
+    odemeler: [
+        { id: 1, tarih: "15.09.2026", ogrenciId: 1, donem: "Eylül", tutar: 11000, tur: "Nakit", makbuzNo: "MK-1001", not: "Eylül ayı taksiti" }
+    ]
+};
+
+function saveOgrenciDb() {
+    localStorage.setItem('okul_v25_db', JSON.stringify(dbOgrenci));
+    if (typeof updateGlobalBadges === 'function') updateGlobalBadges();
+}
+
+// ----------------------------------------------------------------------------
+// PLAN, TAKSİT VE AY BAZLI MUAFİYET / DÜZENLEME MOTORU
+// ----------------------------------------------------------------------------
+function getStudentPlanDetails(ogr) {
+    const rawNet = Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0));
+    const taksitSayisi = (ogr.taksit && ogr.taksit > 0) ? ogr.taksit : 1;
+    const baseMonthly = Math.round(rawNet / taksitSayisi);
+    const kirtasiye = Number(ogr.kirtasiye) || 0;
+
+    const muafAylar = Array.isArray(ogr.muafAylar) ? ogr.muafAylar : [];
+    const ozelTaksitler = (ogr.ozelTaksitler && typeof ogr.ozelTaksitler === 'object') ? ogr.ozelTaksitler : {};
+
+    let baslangicIdx = AKADEMIK_AYLAR.indexOf(ogr.donem);
+    if (baslangicIdx === -1) baslangicIdx = 0;
+
+    let activeMonths = [];
+    let exemptMonths = [];
+    let totalScheduledInstallments = 0;
+    let monthSchedule = {}; // ay -> { isScheduled, isExempt, target }
+
+    AKADEMIK_AYLAR.forEach((ay, idx) => {
+        const taksitSirasi = idx - baslangicIdx;
+        const isScheduled = (taksitSirasi >= 0 && taksitSirasi < taksitSayisi);
+        const isExempt = muafAylar.includes(ay);
+
+        let target = 0;
+        if (isScheduled) {
+            if (isExempt) {
+                target = 0;
+                exemptMonths.push(ay);
+            } else if (ozelTaksitler[ay] !== undefined) {
+                target = Number(ozelTaksitler[ay]) || 0;
+                activeMonths.push(ay);
+            } else {
+                target = baseMonthly;
+                activeMonths.push(ay);
+            }
+            totalScheduledInstallments += target;
+        }
+        monthSchedule[ay] = { isScheduled, isExempt, target };
+    });
+
+    const netSozlesme = totalScheduledInstallments;
+    const toplamUcret = netSozlesme + kirtasiye;
+
+    const payments = (dbOgrenci.odemeler || []).filter(o => o.ogrenciId === ogr.id);
+    const paid = payments.reduce((sum, o) => sum + (Number(o.tutar) || 0), 0);
+    const kalan = Math.max(0, toplamUcret - paid);
+
+    return {
+        rawNet,
+        baseMonthly,
+        taksitSayisi,
+        kirtasiye,
+        muafAylar,
+        ozelTaksitler,
+        activeMonths,
+        exemptMonths,
+        monthSchedule,
+        netSozlesme,
+        toplamUcret,
+        paid,
+        kalan
+    };
+}
+
+let currentMatrisOgrId = null;
+let currentMatrisAy = null;
+
+function openMatrisAyAyarModal(ogrId, ay) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === ogrId);
+    if (!ogr) return;
+    currentMatrisOgrId = ogrId;
+    currentMatrisAy = ay;
+
+    const plan = getStudentPlanDetails(ogr);
+    const sched = plan.monthSchedule[ay] || {};
+    const ayOdemesi = (dbOgrenci.odemeler || [])
+        .filter(o => o.ogrenciId === ogr.id && o.donem === ay)
+        .reduce((s, o) => s + (Number(o.tutar) || 0), 0);
+
+    const ogrAdEl = document.getElementById("matrisAyOgrAd");
+    if (ogrAdEl) ogrAdEl.innerText = ogr.ad;
+    const ayDispEl = document.getElementById("matrisAyDisplay");
+    if (ayDispEl) ayDispEl.innerText = ay;
+    const stdEl = document.getElementById("matrisAyStandartTutar");
+    if (stdEl) stdEl.innerText = formatCurrency(plan.baseMonthly);
+    const odenenEl = document.getElementById("matrisAyOdenenTutar");
+    if (odenenEl) odenenEl.innerText = formatCurrency(ayOdemesi);
+
+    const isExempt = sched.isExempt;
+    const isCustom = (plan.ozelTaksitler[ay] !== undefined);
+
+    let badgeHtml = "";
+    if (isExempt) {
+        badgeHtml = `<span class="badge-pill badge-danger"><i class="fa-solid fa-ban"></i> Silindi / Muaf (0 ₺)</span>`;
+    } else if (ayOdemesi >= sched.target && sched.target > 0) {
+        badgeHtml = `<span class="badge-pill badge-success"><i class="fa-solid fa-check"></i> Ödendi</span>`;
+    } else if (isCustom) {
+        badgeHtml = `<span class="badge-pill badge-gold"><i class="fa-solid fa-pen"></i> Özel Tutar (${formatCurrency(sched.target)})</span>`;
+    } else {
+        badgeHtml = `<span class="badge-pill badge-subtle">Aktif Taksit (${formatCurrency(sched.target)})</span>`;
+    }
+    const durumEl = document.getElementById("matrisAyDurumBadge");
+    if (durumEl) durumEl.innerHTML = badgeHtml;
+
+    const btnMuaf = document.getElementById("btnMatrisAyMuafText");
+    const btnMuafDesc = document.getElementById("btnMatrisAyMuafDesc");
+    if (isExempt) {
+        if (btnMuaf) btnMuaf.innerText = "✅ Bu Ayı Tekrar Aktifleştir (Taksite Dahil Et)";
+        if (btnMuafDesc) btnMuafDesc.innerText = "Bu ayı muafiyetten çıkarıp standart taksit planına geri ekler.";
+    } else {
+        if (btnMuaf) btnMuaf.innerText = "🗑️ Bu Ayı Taksitten Sil / Muaf Tut (0 ₺)";
+        if (btnMuafDesc) btnMuafDesc.innerText = "Kurum bu ayın ücretini önceden aldıysa seçin. Aylık takipten ve genel borçtan düşülür.";
+    }
+
+    const resetBtn = document.getElementById("btnMatrisAyReset");
+    if (resetBtn) resetBtn.style.display = (isExempt || isCustom) ? "flex" : "none";
+
+    const inputBox = document.getElementById("matrisAyOzelInputBox");
+    if (inputBox) inputBox.style.display = "none";
+
+    openModal("modalMatrisAyAyar");
+}
+
+function toggleMatrisAyMuaf() {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === currentMatrisOgrId);
+    if (!ogr) return;
+    if (!Array.isArray(ogr.muafAylar)) ogr.muafAylar = [];
+
+    const ay = currentMatrisAy;
+    const idx = ogr.muafAylar.indexOf(ay);
+
+    if (idx > -1) {
+        ogr.muafAylar.splice(idx, 1);
+        showToast(`${ogr.ad} için ${ay} ayı tekrar taksit planına eklendi.`);
+    } else {
+        ogr.muafAylar.push(ay);
+        if (ogr.ozelTaksitler && ogr.ozelTaksitler[ay] !== undefined) delete ogr.ozelTaksitler[ay];
+        showToast(`${ogr.ad} için ${ay} ayı taksitten silindi ve genel borçtan düşüldü.`);
+    }
+
+    saveOgrenciDb();
+    closeModal("modalMatrisAyAyar");
+    renderOgrenciGenelTab();
+    renderOgrenciMatrisTab();
+    renderOgrenciAylikTab();
+}
+
+function showMatrisAyOzelInput() {
+    const box = document.getElementById("matrisAyOzelInputBox");
+    if (box) {
+        box.style.display = box.style.display === "none" ? "block" : "none";
+        const input = document.getElementById("matrisAyOzelTutarInput");
+        if (input && box.style.display !== "none") {
+            const ogr = dbOgrenci.ogrenciler.find(o => o.id === currentMatrisOgrId);
+            const plan = getStudentPlanDetails(ogr);
+            setCurrencyValue("matrisAyOzelTutarInput", plan.monthSchedule[currentMatrisAy]?.target || plan.baseMonthly);
+            input.focus();
+        }
+    }
+}
+
+function saveMatrisAyOzelTutar() {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === currentMatrisOgrId);
+    if (!ogr) return;
+    const ay = currentMatrisAy;
+    const newAmount = getCurrencyValue("matrisAyOzelTutarInput");
+
+    if (newAmount < 0) {
+        showToast("Geçersiz taksit tutarı!", "error");
+        return;
+    }
+
+    if (!ogr.ozelTaksitler) ogr.ozelTaksitler = {};
+    ogr.ozelTaksitler[ay] = newAmount;
+
+    if (Array.isArray(ogr.muafAylar)) {
+        const mIdx = ogr.muafAylar.indexOf(ay);
+        if (mIdx > -1) ogr.muafAylar.splice(mIdx, 1);
+    }
+
+    saveOgrenciDb();
+    closeModal("modalMatrisAyAyar");
+    renderOgrenciGenelTab();
+    renderOgrenciMatrisTab();
+    renderOgrenciAylikTab();
+    showToast(`${ogr.ad} için ${ay} ayı taksiti ${formatCurrency(newAmount)} olarak güncellendi.`);
+}
+
+function resetMatrisAyAyar() {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === currentMatrisOgrId);
+    if (!ogr) return;
+    const ay = currentMatrisAy;
+
+    if (Array.isArray(ogr.muafAylar)) {
+        const mIdx = ogr.muafAylar.indexOf(ay);
+        if (mIdx > -1) ogr.muafAylar.splice(mIdx, 1);
+    }
+    if (ogr.ozelTaksitler && ogr.ozelTaksitler[ay] !== undefined) {
+        delete ogr.ozelTaksitler[ay];
+    }
+
+    saveOgrenciDb();
+    closeModal("modalMatrisAyAyar");
+    renderOgrenciGenelTab();
+    renderOgrenciMatrisTab();
+    renderOgrenciAylikTab();
+    showToast(`${ogr.ad} için ${ay} ayı standart taksite sıfırlandı.`);
+}
+
+function executeMatrisAyTahsilat() {
+    const ogrId = currentMatrisOgrId;
+    const ay = currentMatrisAy;
+    closeModal("modalMatrisAyAyar");
+    openQuickOgrenciPayModal(ogrId, ay);
+}
+
+// 1. GENEL DURUM & ÖĞRENCİ LİSTESİ (NET HAM BİLGİLER)
+function renderOgrenciGenelTab() {
+    const tbody = document.getElementById("ogrenciTableBody");
+    if (!tbody) return;
+
+    const searchTerm = (document.getElementById("searchOgrenciInput")?.value || "").toLowerCase().trim();
+    const filterBorc = document.getElementById("filterBorcSelect")?.value || "ALL";
+
+    let totalSozlesme = 0;
+    let totalTahsilat = 0;
+    let totalKalan = 0;
+    let borcluSayisi = 0;
+
+    let filtered = dbOgrenci.ogrenciler.filter(ogr => {
+        const plan = getStudentPlanDetails(ogr);
+
+        totalSozlesme += plan.toplamUcret;
+        totalTahsilat += plan.paid;
+        totalKalan += plan.kalan;
+        if (plan.kalan > 0) borcluSayisi++;
+
+        const matchesSearch = !searchTerm || (ogr.ad && ogr.ad.toLowerCase().includes(searchTerm)) || (ogr.telefon && ogr.telefon.includes(searchTerm));
+        const matchesBorc = filterBorc === "ALL" || (filterBorc === "DEBT" && plan.kalan > 0) || (filterBorc === "PAID" && plan.kalan === 0);
+
+        return matchesSearch && matchesBorc;
+    });
+
+    if (document.getElementById("kpiOgrToplam")) document.getElementById("kpiOgrToplam").innerText = dbOgrenci.ogrenciler.length;
+    if (document.getElementById("kpiOgrSozlesme")) document.getElementById("kpiOgrSozlesme").innerText = formatCurrency(totalSozlesme);
+    if (document.getElementById("kpiOgrTahsilat")) document.getElementById("kpiOgrTahsilat").innerText = formatCurrency(totalTahsilat);
+    if (document.getElementById("kpiOgrKalan")) document.getElementById("kpiOgrKalan").innerText = formatCurrency(totalKalan);
+    if (document.getElementById("kpiOgrBorclu")) document.getElementById("kpiOgrBorclu").innerText = borcluSayisi + " Borçlu";
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 30px; color: var(--text-muted);">Kayıt bulunamadı.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((ogr, index) => {
+        const plan = getStudentPlanDetails(ogr);
+
+        const isFullyPaid = plan.kalan <= 0;
+        const statusBadge = isFullyPaid 
+            ? `<span class="badge-pill badge-success"><i class="fa-solid fa-check"></i> Ödendi</span>`
+            : `<span class="badge-pill badge-danger"><i class="fa-solid fa-clock"></i> Borçlu</span>`;
+
+        const taksitDesc = plan.exemptMonths.length > 0 
+            ? `${plan.activeMonths.length} Taksit (${plan.exemptMonths.length} Muaf)` 
+            : `${plan.taksitSayisi} Taksit`;
+
+        return `
+            <tr>
+                <td style="color: var(--text-muted); font-size: 11px;">#${index + 1}</td>
+                <td>
+                    <strong style="cursor:pointer; color: var(--text-main);" onclick="openOgrenciDetailModal(${ogr.id})" title="Detaylı kartı aç">
+                        ${ogr.ad || '-'}
+                    </strong>
+                </td>
+                <td style="font-size: 11px; color: var(--text-muted);">${ogr.telefon || '-'}</td>
+                <td><span class="badge-pill badge-gold">${ogr.donem || 'Eylül'}</span></td>
+                <td><strong>${formatCurrency(plan.netSozlesme)}</strong></td>
+                <td><span class="badge-pill badge-subtle" style="cursor:pointer;" onclick="promptQuickTaksitChange(${ogr.id})" title="Taksiti Değiştir">${taksitDesc} ✏️</span></td>
+                <td>${formatCurrency(plan.kirtasiye)}</td>
+                <td style="color: #34d399; font-weight: 700;">${formatCurrency(plan.paid)}</td>
+                <td style="color: ${plan.kalan > 0 ? '#f87171' : '#94a3b8'}; font-weight: 800;">${formatCurrency(plan.kalan)}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="openQuickOgrenciPayModal(${ogr.id})" title="Tahsilat Al">
+                            <i class="fa-solid fa-hand-holding-dollar" style="color: #34d399;"></i> Tahsil Et
+                        </button>
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="printOgrenciOdemePlani(${ogr.id})" title="Yıllık Ödeme Planı Yazdır">
+                            <i class="fa-solid fa-print"></i>
+                        </button>
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="openEditOgrenciModal(${ogr.id})" title="Düzenle">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="deleteOgrenciPrompt(${ogr.id})" title="Sil">
+                            <i class="fa-solid fa-trash-can" style="color: #f87171;"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+// 2. TAKSİT MATRİSİ TABLOSU
+function renderOgrenciMatrisTab() {
+    const tbody = document.getElementById("matrisTableBody");
+    const tfoot = document.getElementById("matrisTableFoot");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    const aylar = AKADEMIK_AYLAR;
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    let currentSchoolIdx = -1;
+    if (currentMonth >= 8) currentSchoolIdx = currentMonth - 8;
+    else currentSchoolIdx = currentMonth + 4;
+
+    let totalNetSum = 0;
+    let totalMonthlySum = 0;
+    let totalKalanSum = 0;
+    let monthCollectedSums = Array(aylar.length).fill(0);
+    let monthTargetSums = Array(aylar.length).fill(0);
+
+    if (dbOgrenci.ogrenciler.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="17" style="text-align:center; padding: 30px; color: var(--text-muted);">Henüz kayıtlı öğrenci bulunmuyor.</td></tr>`;
+        if (tfoot) tfoot.innerHTML = "";
+        return;
+    }
+
+    dbOgrenci.ogrenciler.forEach(ogr => {
+        const plan = getStudentPlanDetails(ogr);
+        const ogrOdemeleri = (dbOgrenci.odemeler || []).filter(o => o.ogrenciId === ogr.id);
+
+        totalNetSum += plan.netSozlesme;
+        totalMonthlySum += plan.baseMonthly;
+        totalKalanSum += plan.kalan;
+
+        let monthCells = "";
+        aylar.forEach((ay, idx) => {
+            const sched = plan.monthSchedule[ay] || {};
+            const ayOdemesi = ogrOdemeleri.filter(o => o.donem === ay).reduce((s, o) => s + (Number(o.tutar) || 0), 0);
+
+            if (sched.isScheduled) {
+                if (sched.isExempt) {
+                    monthCells += `<td style="background: rgba(148, 163, 184, 0.08); text-align: center; cursor: pointer;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Bu ay taksitten silindi / muaf tutuldu. Düzenlemek için tıklayın.">
+                        <span class="badge-pill" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8; font-size: 10px; font-weight: 700; padding: 3px 6px;">🚫 Muaf (0 ₺)</span>
+                    </td>`;
+                } else {
+                    const aylikTutar = sched.target;
+                    monthTargetSums[idx] += aylikTutar;
+                    monthCollectedSums[idx] += ayOdemesi;
+
+                    const isCustom = (plan.ozelTaksitler[ay] !== undefined);
+                    const customBadge = isCustom ? `<br><small style="font-size:9px; color:var(--accent-gold);">Özel</small>` : "";
+
+                    if (ayOdemesi >= aylikTutar && aylikTutar > 0) {
+                        monthCells += `<td style="background: rgba(16, 185, 129, 0.12); color: #34d399; font-weight: 700; text-align: center; cursor: pointer;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Ödendi: ${formatCurrency(ayOdemesi)} (Taksiti düzenlemek / silmek için tıklayın)">✔ ${formatCurrency(ayOdemesi)}${customBadge}</td>`;
+                    } else if (ayOdemesi > 0) {
+                        monthCells += `<td style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 700; text-align: center; cursor: pointer;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Kısmi: ${formatCurrency(ayOdemesi)} / ${formatCurrency(aylikTutar)} (Taksiti düzenlemek / silmek için tıklayın)">⚠️ ${formatCurrency(ayOdemesi)}${customBadge}</td>`;
+                    } else if (idx < currentSchoolIdx && plan.kalan > 0) {
+                        monthCells += `<td style="background: rgba(239, 68, 68, 0.12); color: #f87171; font-weight: 700; text-align: center; cursor: pointer;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Gecikmiş Taksit: ${formatCurrency(aylikTutar)} (Taksiti silmek / muaf tutmak veya tahsil etmek için tıklayın)">⏰ ${formatCurrency(aylikTutar)}${customBadge}</td>`;
+                    } else {
+                        monthCells += `<td style="text-align: center; color: var(--text-muted); cursor: pointer;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Bekleyen Taksit: ${formatCurrency(aylikTutar)} (Taksiti silmek / muaf tutmak veya tahsil etmek için tıklayın)">${formatCurrency(aylikTutar)}${customBadge}</td>`;
+                    }
+                }
+            } else if (ayOdemesi > 0) {
+                monthCollectedSums[idx] += ayOdemesi;
+                monthCells += `<td style="background: rgba(16, 185, 129, 0.12); color: #34d399; font-weight: 700; text-align: center; cursor: pointer;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Dönem Dışı Tahsilat: ${formatCurrency(ayOdemesi)}">✔ ${formatCurrency(ayOdemesi)}</td>`;
+            } else {
+                monthCells += `<td style="text-align: center; color: var(--text-dim);">-</td>`;
+            }
+        });
+
+        tbody.innerHTML += `
+            <tr>
+                <td><strong style="cursor:pointer; color: var(--text-main);" onclick="openOgrenciDetailModal(${ogr.id})">${ogr.ad}</strong></td>
+                <td><strong>${formatCurrency(plan.netSozlesme)}</strong></td>
+                <td>
+                    <span class="badge-pill badge-gold" style="cursor:pointer;" onclick="promptQuickTaksitChange(${ogr.id})" title="Taksiti Değiştir">
+                        ${plan.activeMonths.length} Taksit ✏️
+                    </span>
+                </td>
+                <td style="color: var(--primary); font-weight: 700;">${formatCurrency(plan.baseMonthly)}</td>
+                ${monthCells}
+                <td style="color: ${plan.kalan > 0 ? '#f87171' : '#34d399'}; font-weight: 800; text-align: right;">${formatCurrency(plan.kalan)}</td>
+            </tr>
+        `;
+    });
+
+    if (tfoot) {
+        let footMonthCells = "";
+        aylar.forEach((ay, idx) => {
+            const target = monthTargetSums[idx];
+            const coll = monthCollectedSums[idx];
+            footMonthCells += `
+                <td style="text-align:center; font-size:10px;">
+                    <div style="color: #34d399; font-weight: 700;">${formatCurrency(coll)}</div>
+                    <div style="color: var(--text-dim);">/ ${formatCurrency(target)}</div>
+                </td>
+            `;
+        });
+
+        tfoot.innerHTML = `
+            <tr>
+                <td>GENEL TOPLAM</td>
+                <td>${formatCurrency(totalNetSum)}</td>
+                <td>-</td>
+                <td>${formatCurrency(totalMonthlySum)}</td>
+                ${footMonthCells}
+                <td style="text-align:right; color: #f87171;">${formatCurrency(totalKalanSum)}</td>
+            </tr>
+        `;
+    }
+}
+
+// 3. AYLIK ÖĞRENCİ TAKİBİ
+function renderOgrenciAylikTab() {
+    const ay = document.getElementById("selectOgrenciAylikAy")?.value || "Ekim";
+    const tbody = document.getElementById("ogrenciAylikTableBody");
+    if (!tbody) return;
+
+    let ayTargetTotal = 0;
+    let ayCollectedTotal = 0;
+    let ayPendingTotal = 0;
+
+    let rowsHtml = "";
+
+    dbOgrenci.ogrenciler.forEach(ogr => {
+        const plan = getStudentPlanDetails(ogr);
+        const sched = plan.monthSchedule[ay] || {};
+
+        // SADECE BU AY İÇİN AKTİF VE MUAF OLMAYAN TAKSİTLER LİSTELENİR
+        if (sched.isScheduled && !sched.isExempt) {
+            const aylikTaksit = sched.target;
+            if (aylikTaksit > 0) {
+                ayTargetTotal += aylikTaksit;
+                const ayOdemeleri = (dbOgrenci.odemeler || []).filter(o => o.ogrenciId === ogr.id && o.donem === ay);
+                const paidForMonth = ayOdemeleri.reduce((s, o) => s + (Number(o.tutar) || 0), 0);
+                const remainingForMonth = Math.max(0, aylikTaksit - paidForMonth);
+
+                ayCollectedTotal += paidForMonth;
+                ayPendingTotal += remainingForMonth;
+
+                let status = `<span class="badge-pill badge-danger">Ödenmedi</span>`;
+                if (paidForMonth >= aylikTaksit && aylikTaksit > 0) {
+                    status = `<span class="badge-pill badge-success">Tamamlandı</span>`;
+                } else if (paidForMonth > 0) {
+                    status = `<span class="badge-pill badge-warning">Kısmi (${formatCurrency(paidForMonth)})</span>`;
+                }
+
+                rowsHtml += `
+                    <tr>
+                        <td><strong>${ogr.ad}</strong></td>
+                        <td style="font-size: 11px; color: var(--text-muted);">${ogr.telefon || '-'}</td>
+                        <td><strong>${formatCurrency(aylikTaksit)}</strong></td>
+                        <td style="color:#34d399; font-weight:700;">${formatCurrency(paidForMonth)}</td>
+                        <td style="color:${remainingForMonth > 0 ? '#f87171' : '#94a3b8'}; font-weight:800;">${formatCurrency(remainingForMonth)}</td>
+                        <td>${status}</td>
+                        <td>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="openMatrisAyAyarModal(${ogr.id}, '${ay}')" title="Bu Ayı Sil / Muaf Tut veya Ayarla">
+                                    <i class="fa-solid fa-sliders" style="color: var(--accent-gold);"></i> Ayar
+                                </button>
+                                ${remainingForMonth > 0 ? `
+                                    <button class="btn btn-success" style="padding: 4px 10px; font-size: 11px;" onclick="openQuickOgrenciPayModal(${ogr.id}, '${ay}')">
+                                        <i class="fa-solid fa-plus"></i> Tahsil Et
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-subtle" style="padding: 4px 10px; font-size: 11px;" onclick="openOgrenciDetailModal(${ogr.id})">
+                                        Detay
+                                    </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+    });
+
+    tbody.innerHTML = rowsHtml || `<tr><td colspan="7" style="text-align:center; padding: 25px; color: var(--text-muted);">${ay} ayı için taksit bulunmuyor.</td></tr>`;
+
+    if (document.getElementById("kpiAylikTarget")) document.getElementById("kpiAylikTarget").innerText = formatCurrency(ayTargetTotal);
+    if (document.getElementById("kpiAylikCollected")) document.getElementById("kpiAylikCollected").innerText = formatCurrency(ayCollectedTotal);
+    if (document.getElementById("kpiAylikPending")) document.getElementById("kpiAylikPending").innerText = formatCurrency(ayPendingTotal);
+}
+
+// 4. VEZNE & TAHSİLAT LİSTESİ
+function renderOgrenciOdemelerTab() {
+    const tbody = document.getElementById("ogrenciOdemelerTableBody");
+    if (!tbody) return;
+
+    if (dbOgrenci.odemeler.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color: var(--text-muted);">Henüz kaydedilmiş bir tahsilat bulunmuyor.</td></tr>`;
+        return;
+    }
+
+    const sorted = [...dbOgrenci.odemeler].reverse();
+    tbody.innerHTML = sorted.map((o, idx) => {
+        const ogr = dbOgrenci.ogrenciler.find(s => s.id === o.ogrenciId);
+        const ogrAd = ogr ? ogr.ad : `Öğrenci #${o.ogrenciId}`;
+
+        return `
+            <tr>
+                <td style="color: var(--text-muted); font-size: 11px;">${o.makbuzNo || ('MK-' + (1000 + o.id))}</td>
+                <td style="font-size: 11px; color: var(--text-muted);">${o.tarih || '-'}</td>
+                <td><strong>${ogrAd}</strong></td>
+                <td><span class="badge-pill badge-gold">${o.donem || 'Genel'}</span></td>
+                <td style="font-weight: 800; color: #34d399; font-size: 13px;">${formatCurrency(o.tutar)}</td>
+                <td style="color: var(--text-muted); font-size: 11px;">${o.not || '-'}</td>
+                <td>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="printOgrenciMakbuz(${o.id})" title="Makbuz Yazdır">
+                            <i class="fa-solid fa-print"></i>
+                        </button>
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="deleteOgrenciOdemePrompt(${o.id})" title="Sil">
+                            <i class="fa-solid fa-trash-can" style="color: #f87171;"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+// 5. KIRTASİYE TAKİBİ
+function renderOgrenciKirtasiyeTab() {
+    const tbody = document.getElementById("kirtasiyeTableBody");
+    if (!tbody) return;
+
+    if (dbOgrenci.ogrenciler.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--text-muted);">Kayıtlı öğrenci bulunmuyor.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = dbOgrenci.ogrenciler.map(ogr => {
+        const ucret = Number(ogr.kirtasiye) || 0;
+        const teslim = ogr.kirtasiyeTeslim === true;
+
+        return `
+            <tr>
+                <td><strong>${ogr.ad}</strong></td>
+                <td><strong>${formatCurrency(ucret)}</strong></td>
+                <td>
+                    <button class="btn ${teslim ? 'btn-success' : 'btn-subtle'}" style="padding: 4px 10px; font-size: 11px;" onclick="toggleKirtasiyeTeslim(${ogr.id})">
+                        ${teslim ? '✔ Teslim Edildi' : '⏳ Bekliyor'}
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="openEditOgrenciModal(${ogr.id})">
+                        Ücreti Güncelle
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function toggleKirtasiyeTeslim(id) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === id);
+    if (!ogr) return;
+    ogr.kirtasiyeTeslim = !ogr.kirtasiyeTeslim;
+    saveOgrenciDb();
+    renderOgrenciKirtasiyeTab();
+    showToast("Kırtasiye teslim durumu güncellendi");
+}
+
+// 6. ÖĞRENCİ EKLEME & DÜZENLEME & SİLME (NET HAM BİLGİLERLE)
+function submitOgrenciForm(e) {
+    if (e) e.preventDefault();
+
+    const editId = document.getElementById("formOgrenciEditId")?.value;
+    const ad = document.getElementById("formOgrenciAd").value.trim();
+    const donem = document.getElementById("formOgrenciDonem").value;
+    const telefon = document.getElementById("formOgrenciTelefon").value.trim();
+    const brut = getCurrencyValue("formOgrenciBrut");
+    const indirim = getCurrencyValue("formOgrenciIndirim");
+    const taksit = Number(document.getElementById("formOgrenciTaksit").value) || 1;
+    const kirtasiye = getCurrencyValue("formOgrenciKirtasiye");
+    const sebep = document.getElementById("formOgrenciSebep")?.value?.trim() || "";
+
+    if (!ad) {
+        showToast("Lütfen öğrenci ad ve soyadını giriniz", "error");
+        return;
+    }
+
+    if (editId) {
+        const ogr = dbOgrenci.ogrenciler.find(o => o.id === Number(editId));
+        if (ogr) {
+            ogr.ad = ad;
+            ogr.donem = donem;
+            ogr.telefon = telefon;
+            ogr.brut = brut;
+            ogr.indirim = indirim;
+            ogr.taksit = taksit;
+            ogr.kirtasiye = kirtasiye;
+            ogr.sebep = sebep;
+            showToast("Öğrenci bilgileri güncellendi");
+        }
+    } else {
+        const newId = Date.now();
+        dbOgrenci.ogrenciler.push({
+            id: newId,
+            ad, donem, telefon,
+            brut, indirim, taksit, kirtasiye,
+            kirtasiyeTeslim: false,
+            sebep
+        });
+        showToast("Yeni öğrenci kaydedildi");
+    }
+
+    saveOgrenciDb();
+    closeModal("modalOgrenciForm");
+    renderOgrenciGenelTab();
+    renderOgrenciMatrisTab();
+}
+
+function openEditOgrenciModal(id) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === id);
+    if (!ogr) return;
+
+    document.getElementById("formOgrenciEditId").value = ogr.id;
+    document.getElementById("formOgrenciModalTitle").innerText = "Öğrenci Düzenle: " + ogr.ad;
+    document.getElementById("formOgrenciAd").value = ogr.ad;
+    document.getElementById("formOgrenciDonem").value = ogr.donem || "Eylül";
+    document.getElementById("formOgrenciTelefon").value = ogr.telefon || "";
+    setCurrencyValue("formOgrenciBrut", ogr.brut || 0);
+    setCurrencyValue("formOgrenciIndirim", ogr.indirim || 0);
+    document.getElementById("formOgrenciTaksit").value = ogr.taksit || 1;
+    setCurrencyValue("formOgrenciKirtasiye", ogr.kirtasiye || 0);
+    if (document.getElementById("formOgrenciSebep")) document.getElementById("formOgrenciSebep").value = ogr.sebep || "";
+
+    openModal("modalOgrenciForm");
+}
+
+function openNewOgrenciModal() {
+    document.getElementById("formOgrenciEditId").value = "";
+    document.getElementById("formOgrenciModalTitle").innerText = "Yeni Öğrenci Kaydı";
+    document.getElementById("ogrenciForm").reset();
+    setCurrencyValue("formOgrenciBrut", 0);
+    setCurrencyValue("formOgrenciIndirim", 0);
+    setCurrencyValue("formOgrenciKirtasiye", 0);
+    openModal("modalOgrenciForm");
+}
+
+function deleteOgrenciPrompt(id) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === id);
+    if (!ogr) return;
+
+    if (confirm(`"${ogr.ad}" isimli öğrenciyi silmek istediğinize emin misiniz?`)) {
+        dbOgrenci.ogrenciler = dbOgrenci.ogrenciler.filter(o => o.id !== id);
+        dbOgrenci.odemeler = dbOgrenci.odemeler.filter(o => o.ogrenciId !== id);
+        saveOgrenciDb();
+        renderOgrenciGenelTab();
+        renderOgrenciMatrisTab();
+        showToast("Öğrenci silindi");
+    }
+}
+
+// 7. TAHSİLAT ALMA
+function openQuickOgrenciPayModal(ogrenciId, defaultAy) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === ogrenciId);
+    if (!ogr) return;
+
+    document.getElementById("payModalOgrenciId").value = ogr.id;
+    document.getElementById("payModalOgrenciAd").innerText = ogr.ad;
+    document.getElementById("payModalAySelect").value = defaultAy || ogr.donem || "Eylül";
+    
+    const net = Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0));
+    const aylikTaksit = Math.round(net / (ogr.taksit || 1));
+    setCurrencyValue("payModalTutar", aylikTaksit);
+    document.getElementById("payModalTarih").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("payModalNot").value = `${ogr.ad} - ${defaultAy || ogr.donem || 'Taksit'} ödemesi`;
+
+    openModal("modalOgrenciPay");
+}
+
+function submitOgrenciPay(e) {
+    if (e) e.preventDefault();
+
+    const ogrenciId = Number(document.getElementById("payModalOgrenciId").value);
+    const donem = document.getElementById("payModalAySelect").value;
+    const tutar = getCurrencyValue("payModalTutar");
+    const rawDate = document.getElementById("payModalTarih").value;
+    const not = document.getElementById("payModalNot").value.trim();
+
+    if (tutar <= 0) {
+        showToast("Lütfen geçerli bir ödeme tutarı giriniz", "error");
+        return;
+    }
+
+    const dParts = rawDate.split("-");
+    const formattedDate = dParts.length === 3 ? `${dParts[2]}.${dParts[1]}.${dParts[0]}` : rawDate;
+
+    const newId = Date.now();
+    const newPayment = {
+        id: newId,
+        makbuzNo: "MK-" + (newId % 100000),
+        tarih: formattedDate,
+        ogrenciId,
+        donem,
+        tutar,
+        tur: "Nakit / Banka",
+        not
+    };
+
+    dbOgrenci.odemeler.push(newPayment);
+    saveOgrenciDb();
+    closeModal("modalOgrenciPay");
+
+    renderOgrenciGenelTab();
+    renderOgrenciMatrisTab();
+    renderOgrenciAylikTab();
+    renderOgrenciOdemelerTab();
+
+    showToast("Tahsilat kaydedildi!");
+    
+    if (confirm("Tahsilat makbuzunu yazdırmak ister misiniz?")) {
+        printOgrenciMakbuz(newId);
+    }
+}
+
+function deleteOgrenciOdemePrompt(id) {
+    if (confirm("Bu tahsilat kaydını silmek istediğinize emin misiniz?")) {
+        dbOgrenci.odemeler = dbOgrenci.odemeler.filter(o => o.id !== id);
+        saveOgrenciDb();
+        renderOgrenciGenelTab();
+        renderOgrenciMatrisTab();
+        renderOgrenciAylikTab();
+        renderOgrenciOdemelerTab();
+        showToast("Tahsilat kaydı silindi");
+    }
+}
+
+// RESMİ YAZDIRILABİLİR MAKBUZ
+function printOgrenciMakbuz(odemeId) {
+    const o = dbOgrenci.odemeler.find(item => item.id === odemeId);
+    if (!o) return;
+
+    const ogr = dbOgrenci.ogrenciler.find(item => item.id === o.ogrenciId);
+    const kurum = getKurumInfo();
+
+    const receiptHtml = `
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 680px; margin: 0 auto; border: 2px solid #000; padding: 30px; background: #fff; color: #000;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; text-transform: uppercase;">${kurum.name}</h2>
+                    <p style="margin: 3px 0 0 0; font-size: 12px; color: #555;">${kurum.subTitle}</p>
+                    <p style="margin: 3px 0 0 0; font-size: 11px;">Mali İşler & Tahsilat Birimi</p>
+                </div>
+                <div style="text-align: right;">
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 800;">TAHSİLAT MAKBUZU</h3>
+                    <p style="margin: 4px 0 0 0; font-size: 12px;"><strong>Makbuz No:</strong> ${o.makbuzNo || ('MK-' + o.id)}</p>
+                    <p style="margin: 2px 0 0 0; font-size: 12px;"><strong>Tarih:</strong> ${o.tarih}</p>
+                </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 8px 0; font-weight: bold; width: 140px;">Öğrenci Adı Soyadı:</td>
+                    <td style="padding: 8px 0;">${ogr ? ogr.ad : 'Belirtilmemiş'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 8px 0; font-weight: bold;">Ödeme Dönemi:</td>
+                    <td style="padding: 8px 0;">${o.donem || 'Genel Taksit'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 8px 0; font-weight: bold;">Tahsil Edilen Tutar:</td>
+                    <td style="padding: 8px 0; font-size: 16px; font-weight: 800;">${formatCurrency(o.tutar)}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 8px 0; font-weight: bold;">Yazı ile:</td>
+                    <td style="padding: 8px 0; font-style: italic;"># ${numberToTurkishWords(o.tutar)} #</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; font-weight: bold;">Açıklama / Not:</td>
+                    <td style="padding: 8px 0;">${o.not || 'Öğrenim ücreti tahsilatı.'}</td>
+                </tr>
+            </table>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 40px; text-align: center;">
+                <div style="width: 200px;">
+                    <p style="font-size: 12px; margin-bottom: 50px;"><strong>Teslim Eden</strong></p>
+                    <p style="border-top: 1px dotted #000; padding-top: 5px; font-size: 11px;">İmza</p>
+                </div>
+                <div style="width: 200px;">
+                    <p style="font-size: 12px; margin-bottom: 50px;"><strong>Tahsil Eden Yetkili</strong></p>
+                    <p style="border-top: 1px dotted #000; padding-top: 5px; font-size: 11px;">İmza / Kaşe</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const printContainer = document.getElementById("printableReceipt");
+    if (printContainer) {
+        printContainer.innerHTML = receiptHtml;
+        window.print();
+    }
+}
+
+function promptQuickTaksitChange(id) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === id);
+    if (!ogr) return;
+
+    const val = prompt(`"${ogr.ad}" için taksit sayısını giriniz (1-12):`, ogr.taksit || 1);
+    if (val !== null) {
+        const num = parseInt(val);
+        if (num > 0 && num <= 12) {
+            ogr.taksit = num;
+            saveOgrenciDb();
+            renderOgrenciGenelTab();
+            renderOgrenciMatrisTab();
+            showToast("Taksit sayısı güncellendi");
+        }
+    }
+}
+
+// ÖĞRENCİ DETAY
+function openOgrenciDetailModal(id) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === id);
+    if (!ogr) return;
+
+    const net = Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0));
+    const kirtasiye = Number(ogr.kirtasiye) || 0;
+    const toplamGenel = net + kirtasiye;
+
+    const ogrOdemeleri = dbOgrenci.odemeler.filter(o => o.ogrenciId === ogr.id);
+    const toplamOdenen = ogrOdemeleri.reduce((s, o) => s + (Number(o.tutar) || 0), 0);
+    const kalan = Math.max(0, toplamGenel - toplamOdenen);
+
+    document.getElementById("detailModalTitle").innerText = ogr.ad + " - Bilgi Kartı";
+    
+    let odemeListHtml = ogrOdemeleri.length === 0 
+        ? `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-muted);">Henüz ödeme yapılmamış.</td></tr>`
+        : ogrOdemeleri.map(o => `
+            <tr>
+                <td>${o.tarih}</td>
+                <td><span class="badge-pill badge-gold">${o.donem}</span></td>
+                <td style="font-weight:700; color:#34d399;">${formatCurrency(o.tutar)}</td>
+                <td>
+                    <button class="btn btn-subtle" style="padding: 2px 6px; font-size:10px;" onclick="printOgrenciMakbuz(${o.id})">
+                        <i class="fa-solid fa-print"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+
+    document.getElementById("detailModalContent").innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--text-muted);">İletişim / Telefon</div>
+                <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">${ogr.telefon || '-'}</div>
+            </div>
+            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--text-muted);">Kayıt Ayı</div>
+                <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">${ogr.donem || 'Eylül'}</div>
+            </div>
+            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--text-muted);">Sözleşme (Net)</div>
+                <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">${formatCurrency(net)} (${ogr.taksit} Taksit)</div>
+            </div>
+            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--text-muted);">Kalan Borç Durumu</div>
+                <div style="font-size: 14px; font-weight: 800; color: ${kalan > 0 ? '#ef4444' : '#10b981'};">${formatCurrency(kalan)}</div>
+            </div>
+        </div>
+
+        <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--text-main);">Tahsilat Geçmişi</h4>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Dönem</th>
+                    <th>Tutar</th>
+                    <th>Makbuz</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${odemeListHtml}
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-gold" onclick="printOgrenciOdemePlani(${ogr.id})" style="width: 100%; margin-top: 18px; padding: 11px;">
+            <i class="fa-solid fa-file-invoice-dollar"></i> Resmi Yıllık Taksit ve Ödeme Planını Yazdır (A4)
+        </button>
+    `;
+
+    openModal("modalOgrenciDetail");
+}
+
+// RESMİ ÖĞRENCİ SÖZLEŞME VE 10 AYLIK TAKSİT ÖDEME PLANI (A4)
+function printOgrenciOdemePlani(ogrId) {
+    const ogr = dbOgrenci.ogrenciler.find(o => o.id === ogrId);
+    if (!ogr) return;
+    const info = typeof getKurumInfo === 'function' ? getKurumInfo() : { name: "Yönetim Sistemi", subTitle: "Mali İşler", bursar: "Yetkili" };
+
+    const brut = Number(ogr.brut) || 0;
+    const indirim = Number(ogr.indirim) || 0;
+    const netEgitim = Math.max(0, brut - indirim);
+    const kirtasiye = Number(ogr.kirtasiye) || 0;
+    const genelToplam = netEgitim + kirtasiye;
+
+    const taksitSayisi = Math.max(1, parseInt(ogr.taksit) || 10);
+    const aylikTaksit = Math.round(netEgitim / taksitSayisi);
+
+    const ogrOdemeleri = dbOgrenci.odemeler.filter(o => o.ogrenciId === ogr.id);
+    let toplamOdenen = ogrOdemeleri.reduce((s, o) => s + (Number(o.tutar) || 0), 0);
+    const kalanGenel = Math.max(0, genelToplam - toplamOdenen);
+
+    const aylarListesi = ["Eylül", "Ekim", "Kasım", "Aralık", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos"];
+    
+    let remainingPaidPool = toplamOdenen;
+    let taksitRowsHtml = "";
+
+    for (let i = 0; i < taksitSayisi; i++) {
+        const ayAdi = aylarListesi[i % aylarListesi.length];
+        const buTaksitTutar = (i === taksitSayisi - 1) ? (netEgitim - (aylikTaksit * (taksitSayisi - 1))) : aylikTaksit;
+        
+        let durumStr = "";
+        let odendiMi = false;
+        if (remainingPaidPool >= buTaksitTutar) {
+            durumStr = `<span style="color: #059669; font-weight: 700;">ÖDENDİ</span>`;
+            remainingPaidPool -= buTaksitTutar;
+            odendiMi = true;
+        } else if (remainingPaidPool > 0) {
+            durumStr = `<span style="color: #d97706; font-weight: 700;">KISMİ (${formatCurrency(remainingPaidPool)})</span>`;
+            remainingPaidPool = 0;
+        } else {
+            durumStr = `<span style="color: #dc2626; font-weight: 700;">BEKLİYOR</span>`;
+        }
+
+        taksitRowsHtml += `
+            <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px;">
+                <td style="padding: 7px 10px; text-align: center; font-weight: 700;">${i + 1}</td>
+                <td style="padding: 7px 10px; font-weight: 700;">${ayAdi}</td>
+                <td style="padding: 7px 10px; text-align: right; font-weight: 700;">${formatCurrency(buTaksitTutar)}</td>
+                <td style="padding: 7px 10px; text-align: center;">${durumStr}</td>
+                <td style="padding: 7px 10px; color: #64748b; font-size: 10px;">${odendiMi ? 'Tahsil Edildi' : 'Vadesinde Ödenecektir'}</td>
+            </tr>
+        `;
+    }
+
+    const planHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 820px; margin: 0 auto; color: #0f172a; line-height: 1.4;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    ${info.logo ? `<img src="${info.logo}" alt="Logo" style="max-height: 52px; max-width: 140px; object-fit: contain;">` : ''}
+                    <div>
+                        <h1 style="margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.5px;">${info.name}</h1>
+                        <p style="margin: 3px 0 0 0; font-size: 11px; color: #475569;">${info.subTitle}</p>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 800; color: #2563eb;">ÖĞRENCİ TAKSİT VE ÖDEME PLANI</div>
+                    <div style="font-size: 11px; color: #475569;">Düzenleme Tarihi: ${new Date().toLocaleDateString('tr-TR')}</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 12px;">
+                <div>
+                    <div style="font-size: 11px; color: #64748b;">Öğrenci Adı Soyadı:</div>
+                    <div style="font-size: 15px; font-weight: 800; color: #0f172a;">${ogr.ad}</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 6px;">İletişim / Veli Telefonu:</div>
+                    <div style="font-size: 12px; font-weight: 600; color: #0f172a;">${ogr.telefon || '-'}</div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span style="color: #64748b;">Brüt Eğitim Ücreti:</span>
+                        <strong style="color: #0f172a;">${formatCurrency(brut)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span style="color: #64748b;">Burs / İndirim:</span>
+                        <strong style="color: #059669;">- ${formatCurrency(indirim)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span style="color: #64748b;">Kırtasiye Bedeli:</span>
+                        <strong style="color: #0f172a;">${formatCurrency(kirtasiye)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 4px; margin-top: 4px;">
+                        <span style="font-weight: 700; color: #0f172a;">Toplam Sözleşme:</span>
+                        <strong style="font-size: 14px; color: #2563eb;">${formatCurrency(genelToplam)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+                        <span style="font-weight: 700; color: #64748b;">Kalan Toplam Borç:</span>
+                        <strong style="font-size: 13px; color: ${kalanGenel > 0 ? '#dc2626' : '#059669'};">${formatCurrency(kalanGenel)}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 13px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 8px;">Dönemsel Taksit Tablosu</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                <thead>
+                    <tr style="background: #f1f5f9; border-top: 1px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; font-size: 11px; font-weight: 700; text-transform: uppercase;">
+                        <th style="padding: 8px 10px; text-align: center; width: 40px;">No</th>
+                        <th style="padding: 8px 10px; text-align: left; width: 120px;">Taksit Dönemi</th>
+                        <th style="padding: 8px 10px; text-align: right; width: 130px;">Taksit Tutarı</th>
+                        <th style="padding: 8px 10px; text-align: center; width: 120px;">Durum</th>
+                        <th style="padding: 8px 10px; text-align: left;">Açıklama / Kayıt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${taksitRowsHtml}
+                </tbody>
+                <tfoot>
+                    <tr style="background: #f8fafc; border-top: 2px solid #0f172a; font-weight: 800; font-size: 12px;">
+                        <td colspan="2" style="padding: 10px; text-align: right;">TOPLAM EĞİTİM TAKSİTİ:</td>
+                        <td style="padding: 10px; text-align: right; color: #2563eb;">${formatCurrency(netEgitim)}</td>
+                        <td colspan="2" style="padding: 10px; text-align: right; color: ${kalanGenel > 0 ? '#dc2626' : '#059669'};">Kalan Bakiye: ${formatCurrency(kalanGenel)}</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px 14px; font-size: 11px; color: #475569; margin-bottom: 40px;">
+                <strong>Taahhütname:</strong> İşbu ödeme planı okul kayıt sözleşmesinin ayrılmaz bir parçası olup, veli belirtilen vadelerde taksitlerini zamanında ödemeyi taahhüt eder.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; padding: 0 30px;">
+                <div style="text-align: center; width: 220px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #0f172a;">${info.name}</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Yetkili İsim / Kaşe / İmza</div>
+                    <div style="margin-top: 50px; border-top: 1px dotted #94a3b8;"></div>
+                </div>
+                <div style="text-align: center; width: 220px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #0f172a;">Öğrenci Velisi</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Ad Soyad / İmza</div>
+                    <div style="margin-top: 50px; border-top: 1px dotted #94a3b8;"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const printContainer = document.getElementById("printableReceipt");
+    if (printContainer) {
+        printContainer.innerHTML = planHtml;
+        window.print();
+    }
+}
+
+
+
+// ============================================================================
+// SAYFA ACILIS VE ILK BASLATMA
+// ============================================================================
+window.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    initCurrencyMasks();
+    updateLiveClocks();
+    if (typeof updateGlobalBadges === 'function') updateGlobalBadges();
+});
+    </script>
+</body>
+</html>
