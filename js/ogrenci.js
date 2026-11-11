@@ -6,12 +6,105 @@ const AKADEMIK_AYLAR = ["Eylül", "Ekim", "Kasım", "Aralık", "Ocak", "Şubat",
 
 let dbOgrenci = JSON.parse(localStorage.getItem('okul_v25_db')) || {
     ogrenciler: [
-        { id: 1, ad: "Örnek Öğrenci", telefon: "0555 123 45 67", donem: "Eylül", brut: 120000, indirim: 10000, taksit: 10, kirtasiye: 5000, kirtasiyeTeslim: true, sebep: "" }
+        { id: 1, ad: "Örnek Öğrenci", telefon: "0555 123 45 67", donem: "Eylül", brut: 120000, indirim: 10000, taksit: 10, kirtasiye: 5000, kirtasiyeTeslim: true, sebep: "", okul: "okul1" }
     ],
     odemeler: [
         { id: 1, tarih: "15.09.2026", ogrenciId: 1, donem: "Eylül", tutar: 11000, tur: "Nakit", makbuzNo: "MK-1001", not: "Eylül ayı taksiti" }
     ]
 };
+
+// ============================================================================
+// OKUL 1 / OKUL 2 YÖNETİMİ VE SEÇİM MOTORU
+// ============================================================================
+let currentOkul = localStorage.getItem('portal_selected_okul') || 'okul1'; // 'okul1' | 'okul2'
+
+// Mevcut öğrencilerin okul alanını güvenceye al
+if (dbOgrenci && Array.isArray(dbOgrenci.ogrenciler)) {
+    dbOgrenci.ogrenciler.forEach(o => {
+        if (!o.okul) o.okul = 'okul1';
+    });
+    // Okul 2 için en az bir örnek öğrenci yoksa başlangıç olarak 1 kayıt ekleyelim
+    const hasOkul2 = dbOgrenci.ogrenciler.some(o => o.okul === 'okul2');
+    if (!hasOkul2) {
+        const o2Id = 201;
+        dbOgrenci.ogrenciler.push({
+            id: o2Id,
+            ad: "Örnek Öğrenci (Okul 2)",
+            telefon: "0532 999 88 77",
+            donem: "Eylül",
+            brut: 130000,
+            indirim: 10000,
+            taksit: 10,
+            kirtasiye: 5000,
+            kirtasiyeTeslim: false,
+            sebep: "Okul 2 Kaydı",
+            okul: "okul2"
+        });
+        dbOgrenci.odemeler.push({
+            id: o2Id,
+            tarih: "20.09.2026",
+            ogrenciId: o2Id,
+            donem: "Eylül",
+            tutar: 12000,
+            tur: "Banka Havale",
+            makbuzNo: "MK-2001",
+            not: "Okul 2 - Eylül Taksiti"
+        });
+        localStorage.setItem('okul_v25_db', JSON.stringify(dbOgrenci));
+    }
+}
+
+function getOkulOgrenciler() {
+    return (dbOgrenci.ogrenciler || []).filter(o => (o.okul || 'okul1') === currentOkul);
+}
+
+function getOkulOdemeler() {
+    return (dbOgrenci.odemeler || []).filter(o => {
+        const ogr = dbOgrenci.ogrenciler.find(s => s.id === o.ogrenciId);
+        return ogr && (ogr.okul || 'okul1') === currentOkul;
+    });
+}
+
+function setActiveOkul(okul) {
+    if (okul !== 'okul1' && okul !== 'okul2') okul = 'okul1';
+    currentOkul = okul;
+    localStorage.setItem('portal_selected_okul', okul);
+
+    // Butonların aktiflik durumunu güncelle
+    document.querySelectorAll('.btn-okul-toggle, .sidebar-okul-btn').forEach(btn => {
+        if (btn.classList.contains(okul + '-btn')) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    updateOkulStatsDisplay();
+
+    // Aktif sekme öğrenci sekmesiyse yeniden render et
+    if (typeof currentActiveTab !== 'undefined') {
+        if (currentActiveTab === 'ogrenci-genel') renderOgrenciGenelTab();
+        else if (currentActiveTab === 'ogrenci-matris') renderOgrenciMatrisTab();
+        else if (currentActiveTab === 'ogrenci-aylik') renderOgrenciAylikTab();
+        else if (currentActiveTab === 'ogrenci-vezne') renderOgrenciOdemelerTab();
+        else if (currentActiveTab === 'ogrenci-kirtasiye') renderOgrenciKirtasiyeTab();
+        else renderOgrenciGenelTab();
+    } else {
+        renderOgrenciGenelTab();
+    }
+
+    if (typeof updateGlobalBadges === 'function') updateGlobalBadges();
+    showToast(`Aktif Okul: ${okul === 'okul1' ? 'Okul 1' : 'Okul 2'}`);
+}
+
+function updateOkulStatsDisplay() {
+    const list = getOkulOgrenciler();
+    const count = list.length;
+    const label = currentOkul === 'okul1' ? 'Okul 1' : 'Okul 2';
+    document.querySelectorAll('.okul-stats-text').forEach(el => {
+        el.innerText = `${label}: ${count} Kayıtlı Öğrenci`;
+    });
+}
 
 function saveOgrenciDb() {
     localStorage.setItem('okul_v25_db', JSON.stringify(dbOgrenci));
@@ -249,7 +342,9 @@ function renderOgrenciGenelTab() {
     let totalKalan = 0;
     let borcluSayisi = 0;
 
-    let filtered = dbOgrenci.ogrenciler.filter(ogr => {
+    const okulList = getOkulOgrenciler();
+
+    let filtered = okulList.filter(ogr => {
         const plan = getStudentPlanDetails(ogr);
 
         totalSozlesme += plan.toplamUcret;
@@ -263,11 +358,13 @@ function renderOgrenciGenelTab() {
         return matchesSearch && matchesBorc;
     });
 
-    if (document.getElementById("kpiOgrToplam")) document.getElementById("kpiOgrToplam").innerText = dbOgrenci.ogrenciler.length;
+    if (document.getElementById("kpiOgrToplam")) document.getElementById("kpiOgrToplam").innerText = okulList.length;
     if (document.getElementById("kpiOgrSozlesme")) document.getElementById("kpiOgrSozlesme").innerText = formatCurrency(totalSozlesme);
     if (document.getElementById("kpiOgrTahsilat")) document.getElementById("kpiOgrTahsilat").innerText = formatCurrency(totalTahsilat);
     if (document.getElementById("kpiOgrKalan")) document.getElementById("kpiOgrKalan").innerText = formatCurrency(totalKalan);
     if (document.getElementById("kpiOgrBorclu")) document.getElementById("kpiOgrBorclu").innerText = borcluSayisi + " Borçlu";
+
+    updateOkulStatsDisplay();
 
     if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 30px; color: var(--text-muted);">Kayıt bulunamadı.</td></tr>`;
@@ -344,13 +441,15 @@ function renderOgrenciMatrisTab() {
     let monthCollectedSums = Array(aylar.length).fill(0);
     let monthTargetSums = Array(aylar.length).fill(0);
 
-    if (dbOgrenci.ogrenciler.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="17" style="text-align:center; padding: 30px; color: var(--text-muted);">Henüz kayıtlı öğrenci bulunmuyor.</td></tr>`;
+    const okulList = getOkulOgrenciler();
+
+    if (okulList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="17" style="text-align:center; padding: 30px; color: var(--text-muted);">${currentOkul === 'okul2' ? 'Okul 2' : 'Okul 1'} için henüz kayıtlı öğrenci bulunmuyor.</td></tr>`;
         if (tfoot) tfoot.innerHTML = "";
         return;
     }
 
-    dbOgrenci.ogrenciler.forEach(ogr => {
+    okulList.forEach(ogr => {
         const plan = getStudentPlanDetails(ogr);
         const ogrOdemeleri = (dbOgrenci.odemeler || []).filter(o => o.ogrenciId === ogr.id);
 
@@ -448,7 +547,9 @@ function renderOgrenciAylikTab() {
 
     let rowsHtml = "";
 
-    dbOgrenci.ogrenciler.forEach(ogr => {
+    const okulList = getOkulOgrenciler();
+
+    okulList.forEach(ogr => {
         const plan = getStudentPlanDetails(ogr);
         const sched = plan.monthSchedule[ay] || {};
 
@@ -513,12 +614,14 @@ function renderOgrenciOdemelerTab() {
     const tbody = document.getElementById("ogrenciOdemelerTableBody");
     if (!tbody) return;
 
-    if (dbOgrenci.odemeler.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color: var(--text-muted);">Henüz kaydedilmiş bir tahsilat bulunmuyor.</td></tr>`;
+    const okulOdemeler = getOkulOdemeler();
+
+    if (okulOdemeler.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color: var(--text-muted);">${currentOkul === 'okul2' ? 'Okul 2' : 'Okul 1'} için henüz kaydedilmiş bir tahsilat bulunmuyor.</td></tr>`;
         return;
     }
 
-    const sorted = [...dbOgrenci.odemeler].reverse();
+    const sorted = [...okulOdemeler].reverse();
     tbody.innerHTML = sorted.map((o, idx) => {
         const ogr = dbOgrenci.ogrenciler.find(s => s.id === o.ogrenciId);
         const ogrAd = ogr ? ogr.ad : `Öğrenci #${o.ogrenciId}`;
@@ -551,12 +654,14 @@ function renderOgrenciKirtasiyeTab() {
     const tbody = document.getElementById("kirtasiyeTableBody");
     if (!tbody) return;
 
-    if (dbOgrenci.ogrenciler.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--text-muted);">Kayıtlı öğrenci bulunmuyor.</td></tr>`;
+    const okulList = getOkulOgrenciler();
+
+    if (okulList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--text-muted);">${currentOkul === 'okul2' ? 'Okul 2' : 'Okul 1'} için kayıtlı öğrenci bulunmuyor.</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = dbOgrenci.ogrenciler.map(ogr => {
+    tbody.innerHTML = okulList.map(ogr => {
         const ucret = Number(ogr.kirtasiye) || 0;
         const teslim = ogr.kirtasiyeTeslim === true;
 
@@ -601,6 +706,7 @@ function submitOgrenciForm(e) {
     const taksit = Number(document.getElementById("formOgrenciTaksit").value) || 1;
     const kirtasiye = getCurrencyValue("formOgrenciKirtasiye");
     const sebep = document.getElementById("formOgrenciSebep")?.value?.trim() || "";
+    const okul = document.getElementById("formOgrenciOkul")?.value || currentOkul || "okul1";
 
     if (!ad) {
         showToast("Lütfen öğrenci ad ve soyadını giriniz", "error");
@@ -618,6 +724,7 @@ function submitOgrenciForm(e) {
             ogr.taksit = taksit;
             ogr.kirtasiye = kirtasiye;
             ogr.sebep = sebep;
+            ogr.okul = okul;
             showToast("Öğrenci bilgileri güncellendi");
         }
     } else {
@@ -627,9 +734,10 @@ function submitOgrenciForm(e) {
             ad, donem, telefon,
             brut, indirim, taksit, kirtasiye,
             kirtasiyeTeslim: false,
-            sebep
+            sebep,
+            okul
         });
-        showToast("Yeni öğrenci kaydedildi");
+        showToast(`Yeni öğrenci kaydedildi (${okul === 'okul2' ? 'Okul 2' : 'Okul 1'})`);
     }
 
     saveOgrenciDb();
@@ -652,6 +760,7 @@ function openEditOgrenciModal(id) {
     document.getElementById("formOgrenciTaksit").value = ogr.taksit || 1;
     setCurrencyValue("formOgrenciKirtasiye", ogr.kirtasiye || 0);
     if (document.getElementById("formOgrenciSebep")) document.getElementById("formOgrenciSebep").value = ogr.sebep || "";
+    if (document.getElementById("formOgrenciOkul")) document.getElementById("formOgrenciOkul").value = ogr.okul || "okul1";
 
     openModal("modalOgrenciForm");
 }
@@ -663,6 +772,7 @@ function openNewOgrenciModal() {
     setCurrencyValue("formOgrenciBrut", 0);
     setCurrencyValue("formOgrenciIndirim", 0);
     setCurrencyValue("formOgrenciKirtasiye", 0);
+    if (document.getElementById("formOgrenciOkul")) document.getElementById("formOgrenciOkul").value = currentOkul || "okul1";
     openModal("modalOgrenciForm");
 }
 
@@ -871,6 +981,10 @@ function openOgrenciDetailModal(id) {
     document.getElementById("detailModalContent").innerHTML = `
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
             <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--text-muted);">Okul / Şube</div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--primary);">${ogr.okul === 'okul2' ? '🏫 Okul 2' : '🏫 Okul 1'}</div>
+            </div>
+            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div style="font-size: 11px; color: var(--text-muted);">İletişim / Telefon</div>
                 <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">${ogr.telefon || '-'}</div>
             </div>
@@ -882,9 +996,9 @@ function openOgrenciDetailModal(id) {
                 <div style="font-size: 11px; color: var(--text-muted);">Sözleşme (Net)</div>
                 <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">${formatCurrency(net)} (${ogr.taksit} Taksit)</div>
             </div>
-            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); grid-column: span 2;">
                 <div style="font-size: 11px; color: var(--text-muted);">Kalan Borç Durumu</div>
-                <div style="font-size: 14px; font-weight: 800; color: ${kalan > 0 ? '#ef4444' : '#10b981'};">${formatCurrency(kalan)}</div>
+                <div style="font-size: 15px; font-weight: 800; color: ${kalan > 0 ? '#ef4444' : '#10b981'};">${formatCurrency(kalan)}</div>
             </div>
         </div>
 

@@ -139,13 +139,19 @@ function startAuthLiveClock() {
 }
 
 function checkAuth() {
+    if (window.location.search.includes('test_login')) {
+        sessionStorage.setItem('portal_session_active', 'true');
+    }
     startAuthLiveClock();
+    loadSavedLoginScene();
     const isLogged = sessionStorage.getItem('portal_session_active') === 'true';
     const authOverlay = document.getElementById("authOverlay");
     const isInitialized = localStorage.getItem('portal_user_initialized') === 'true';
 
     if (isLogged) {
         authOverlay.classList.add("hidden");
+        const activeTab = new URLSearchParams(window.location.search).get('tab') || localStorage.getItem('portal_active_tab') || 'alacak-kayitlari';
+        switchAppTab(activeTab);
     } else {
         authOverlay.classList.remove("hidden");
 
@@ -166,6 +172,36 @@ function checkAuth() {
             }, 100);
         }
     }
+}
+
+// DerPro Manzara Değiştirici Motoru
+const LOGIN_SCENES = [
+    { id: 'kizkulesi', name: 'Kız Kulesi', icon: '🏛️', file: 'assets/login_bg_istanbul_kizkulesi.jpg' },
+    { id: 'bosphorus', name: 'Boğaziçi', icon: '🌉', file: 'assets/login_bg_istanbul_bosphorus.jpg' },
+    { id: 'suleymaniye', name: 'Süleymaniye', icon: '🕌', file: 'assets/login_bg_istanbul_suleymaniye.jpg' },
+    { id: 'galata', name: 'Galata', icon: '🗼', file: 'assets/login_bg_istanbul_galata.jpg' },
+    { id: 'nature', name: 'Doğa & Dinginlik', icon: '🌿', file: 'assets/login_bg_nature.jpg' }
+];
+
+function setLoginScene(sceneId) {
+    const scene = LOGIN_SCENES.find(s => s.id === sceneId) || LOGIN_SCENES[0];
+    localStorage.setItem('portal_login_scene', scene.id);
+    const bgLayer = document.getElementById('loginBgLayer');
+    if (bgLayer) {
+        bgLayer.style.backgroundImage = `url('${scene.file}')`;
+    }
+    LOGIN_SCENES.forEach(s => {
+        const btn = document.getElementById(`sceneBtn_${s.id}`);
+        if (btn) {
+            if (s.id === scene.id) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    });
+}
+
+function loadSavedLoginScene() {
+    const saved = localStorage.getItem('portal_login_scene') || 'kizkulesi';
+    setLoginScene(saved);
 }
 
 // İlk Kurulum: Şifre Oluşturma
@@ -286,6 +322,11 @@ const TAB_TITLES = {
     'personel-kira': { group: 'personel', title: 'Bina & Mülk Kira Takibi', sub: 'Ofis ve okul mülk kiralarının aylık ödeme durumu' },
     'personel-odemeler': { group: 'personel', title: 'Maaş & Kira Ödeme Geçmişi', sub: 'Personele ve mülk sahiplerine yapılan tüm tediye ödemeleri' },
 
+    // Borç & Emanet Takibi
+    'borc-listesi': { group: 'borc', title: 'Alınan Borçlar ve Emanet Takibi', sub: 'Elden ve resmi tüm borçlarınızı; TL, Dolar, Euro ve Altın cinsinden takip edin' },
+    'borc-odemeler': { group: 'borc', title: 'Borç Geri Ödeme Geçmişi', sub: 'Yapılan tüm borç kapama, elden ödeme ve dekontlu tediye hareketleri' },
+    'borc-ozet': { group: 'borc', title: 'Net Borç & Bakiye Özeti (Bilanço)', sub: 'Döviz, altın ve TL bazında kişi ve varlık portföy dökümü' },
+
     // Ayarlar
     'ayarlar': { group: '', title: 'Sistem Ayarları & Yedekleme', sub: 'Kurum bilgileri, şifre değişikliği ve veritabanı tam yedekleme' }
 };
@@ -303,7 +344,7 @@ function switchAppTab(tabId) {
     }
 
     // Sidebar items aktiflik
-    document.querySelectorAll(".nav-item").forEach(btn => {
+    document.querySelectorAll(".nav-item, .nav-sub-item").forEach(btn => {
         if (btn.getAttribute("data-tab") === tabId) {
             btn.classList.add("active");
         } else {
@@ -341,6 +382,9 @@ function switchAppTab(tabId) {
     else if (tabId === 'personel-zam') renderPersonelZamTab();
     else if (tabId === 'personel-kira') renderPersonelKiraTab();
     else if (tabId === 'personel-odemeler') renderPersonelOdemelerTab();
+    else if (tabId === 'borc-listesi') renderBorcListesiTab();
+    else if (tabId === 'borc-odemeler') renderBorcOdemelerTab();
+    else if (tabId === 'borc-ozet') renderBorcOzetTab();
     else if (tabId === 'ayarlar') loadSettingsTab();
 
     updateGlobalBadges();
@@ -348,7 +392,8 @@ function switchAppTab(tabId) {
 
 // 4. ROZETLERİ GÜNCELLE
 function updateGlobalBadges() {
-    const ogrCount = dbOgrenci.ogrenciler ? dbOgrenci.ogrenciler.length : 0;
+    const activeOkulCode = (typeof currentOkul !== 'undefined') ? currentOkul : 'okul1';
+    const ogrCount = dbOgrenci.ogrenciler ? dbOgrenci.ogrenciler.filter(o => (o.okul || 'okul1') === activeOkulCode).length : 0;
     const persCount = dbPersonel ? dbPersonel.length : 0;
     const alacakCount = (typeof dbAlacak !== 'undefined' && dbAlacak.alacaklar) ? dbAlacak.alacaklar.length : 0;
 
@@ -361,14 +406,23 @@ function updateGlobalBadges() {
     const bAlacak = document.getElementById("badgeNavAlacakSayisi");
     if (bAlacak) bAlacak.innerText = alacakCount;
 
+    const borcCount = (typeof dbBorclar !== 'undefined' && Array.isArray(dbBorclar)) ? 
+        dbBorclar.filter(b => typeof getBorcSummary === 'function' ? getBorcSummary(b.id).durum !== 'ODENDI' : true).length : 0;
+    const bBorc = document.getElementById("badgeNavBorcSayisi");
+    if (bBorc) bBorc.innerText = borcCount;
+
     const hOgr = document.getElementById("headerPillOgrenci");
-    if (hOgr) hOgr.innerHTML = `<i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> <span>${ogrCount} Öğrenci</span>`;
+    if (hOgr) hOgr.innerHTML = `<i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> <span>${ogrCount} Öğrenci (${activeOkulCode === 'okul2' ? 'Okul 2' : 'Okul 1'})</span>`;
+    if (typeof updateOkulStatsDisplay === 'function') updateOkulStatsDisplay();
 
     const hPers = document.getElementById("headerPillPersonel");
     if (hPers) hPers.innerHTML = `<i class="fa-solid fa-users-gear" style="color: var(--success);"></i> <span>${persCount} Personel</span>`;
 
     const hAlacak = document.getElementById("headerPillAlacak");
     if (hAlacak) hAlacak.innerHTML = `<i class="fa-solid fa-hand-holding-dollar" style="color: var(--accent-gold);"></i> <span>${alacakCount} Alacak</span>`;
+
+    const hBorc = document.getElementById("headerPillBorc");
+    if (hBorc) hBorc.innerHTML = `<i class="fa-solid fa-scale-unbalanced-flip" style="color: #f59e0b;"></i> <span>${borcCount} Borç</span>`;
 
     calculateNotifications();
 }
@@ -463,12 +517,20 @@ function exportModuleJson(moduleType) {
             module: "alacak"
         };
         fileName = `Alacak_Cari_Yedek_${dateStr}.json`;
+    } else if (moduleType === 'borc') {
+        backupData = {
+            borclar: dbBorclar || [],
+            borc_odemeler: dbBorcOdemeler || [],
+            exportDate: new Date().toISOString(),
+            module: "borc"
+        };
+        fileName = `Borc_Emanet_Yedek_${dateStr}.json`;
     } else {
         // Tam Sistem Yedeği
         backupData = {
             exportedAt: new Date().toISOString(),
             system: "Kurumsal_Yonetim_Sistemi",
-            version: "4.0-alacak-entegre",
+            version: "5.0-borc-entegre",
             kurumInfo,
             master_pwd: localStorage.getItem('portal_master_pwd') || '1234',
             alacak_db: dbAlacak,
@@ -476,7 +538,9 @@ function exportModuleJson(moduleType) {
             app_personnel: dbPersonel,
             app_changes: dbPersonelChanges,
             app_payments: dbPersonelPayments,
-            app_social_labels: JSON.parse(localStorage.getItem('app_social_labels')) || {}
+            app_social_labels: JSON.parse(localStorage.getItem('app_social_labels')) || {},
+            app_borclar: dbBorclar,
+            app_borc_odemeler: dbBorcOdemeler
         };
         fileName = `Kurumsal_Sistem_Tam_Yedek_${dateStr}.json`;
     }
@@ -608,7 +672,26 @@ function importFullSystemJson(event) {
                 updatedModules.push("Alacak & Cari Takip (" + data.alacaklar.length + " Alacak Kaydı)");
             }
 
-            // 4. KURUM VE ŞİFRE (Varsa)
+            // 4. BORÇ & EMANET VERİSİ ALGILAMA
+            if (data.app_borclar && Array.isArray(data.app_borclar)) {
+                dbBorclar = data.app_borclar;
+                localStorage.setItem('app_borclar', JSON.stringify(dbBorclar));
+                if (data.app_borc_odemeler && Array.isArray(data.app_borc_odemeler)) {
+                    dbBorcOdemeler = data.app_borc_odemeler;
+                    localStorage.setItem('app_borc_odemeler', JSON.stringify(dbBorcOdemeler));
+                }
+                updatedModules.push("Borç & Emanet Takibi (" + dbBorclar.length + " Borç Kaydı)");
+            } else if (data.borclar && Array.isArray(data.borclar)) {
+                dbBorclar = data.borclar;
+                localStorage.setItem('app_borclar', JSON.stringify(dbBorclar));
+                if (data.odemeler || data.borc_odemeler) {
+                    dbBorcOdemeler = data.odemeler || data.borc_odemeler;
+                    localStorage.setItem('app_borc_odemeler', JSON.stringify(dbBorcOdemeler));
+                }
+                updatedModules.push("Borç & Emanet Takibi (" + dbBorclar.length + " Borç Kaydı)");
+            }
+
+            // 5. KURUM VE ŞİFRE (Varsa)
             if (data.kurumInfo) {
                 kurumInfo = data.kurumInfo;
                 localStorage.setItem('portal_kurum', JSON.stringify(kurumInfo));
@@ -773,12 +856,14 @@ function exportCarilerToExcel() {
 }
 
 function exportOgrencilerToExcel() {
-    const list = (typeof dbOgrenci !== 'undefined' && dbOgrenci.ogrenciler) ? dbOgrenci.ogrenciler : [];
+    const activeOkulCode = (typeof currentOkul !== 'undefined') ? currentOkul : 'okul1';
+    const list = (typeof dbOgrenci !== 'undefined' && dbOgrenci.ogrenciler) ? 
+        dbOgrenci.ogrenciler.filter(o => (o.okul || 'okul1') === activeOkulCode) : [];
     if (list.length === 0) {
         showToast("İndirilecek öğrenci kaydı bulunmuyor.", "error");
         return;
     }
-    const headers = ["Öğrenci No", "Adı Soyadı", "İletişim / Veli Telefonu", "Kayıt Dönemi", "Net Sözleşme (TL)", "Taksit Sayısı", "Aylık Taksit (TL)", "Kırtasiye (TL)", "Ödenen Tutar (TL)", "Kalan Borç (TL)", "Durum"];
+    const headers = ["Okul", "Öğrenci No", "Adı Soyadı", "İletişim / Veli Telefonu", "Kayıt Dönemi", "Net Sözleşme (TL)", "Taksit Sayısı", "Aylık Taksit (TL)", "Kırtasiye (TL)", "Ödenen Tutar (TL)", "Kalan Borç (TL)", "Durum"];
     const rows = list.map(o => {
         const brut = Number(o.brut) || 0;
         const indirim = Number(o.indirim) || 0;
@@ -794,6 +879,7 @@ function exportOgrencilerToExcel() {
         const durum = kalan <= 0 ? "Borcu Kapandı" : "Devam Ediyor";
 
         return [
+            o.okul === 'okul2' ? "Okul 2" : "Okul 1",
             o.no || o.id,
             o.ad || "",
             o.telefon || "",
@@ -807,7 +893,7 @@ function exportOgrencilerToExcel() {
             durum
         ];
     });
-    exportToExcelFile("Ogrenci_Kayit_Listesi", headers, rows);
+    exportToExcelFile(`Ogrenci_Kayit_Listesi_${activeOkulCode === 'okul2' ? 'Okul_2' : 'Okul_1'}`, headers, rows);
 }
 
 function exportPersonelToExcel() {
@@ -943,16 +1029,27 @@ function numberToTurkishWords(num) {
 // ============================================================================
 // 8. ÇOKLU TEMA MOTORU (SOFT LIGHT, DARK SLATE, NORDIC NAVY, EMERALD)
 // ============================================================================
+const ALL_APP_THEMES = ['light', 'dark', 'gray', 'bordo', 'monokai', 'nordic', 'emerald'];
 let currentAppTheme = localStorage.getItem('portal_theme') || 'light';
 
 function setAppTheme(themeName) {
-    if (!['light', 'dark', 'nordic', 'emerald'].includes(themeName)) themeName = 'light';
+    if (!ALL_APP_THEMES.includes(themeName)) themeName = 'light';
+    // Eski temalar için takma ad (alias) eşleştirmesi
+    if (themeName === 'nordic') themeName = 'dark';
+    if (themeName === 'emerald') themeName = 'light';
+
     currentAppTheme = themeName;
     document.documentElement.setAttribute('data-theme', themeName);
     localStorage.setItem('portal_theme', themeName);
 
-    // Header dropdown items & settings cards
-    ['light', 'dark', 'nordic', 'emerald'].forEach(t => {
+    // Sol menü footer tema dropdown'ını senkronize et
+    const sidebarSelect = document.getElementById('sidebarThemeSelect');
+    if (sidebarSelect) {
+        sidebarSelect.value = themeName;
+    }
+
+    // Header dropdown öğeleri ve ayarlar kartlarını senkronize et
+    ALL_APP_THEMES.forEach(t => {
         const dropItem = document.getElementById(`themeItem${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (dropItem) {
             if (t === themeName) dropItem.classList.add('active');
@@ -966,20 +1063,32 @@ function setAppTheme(themeName) {
     });
 
     const themeTitles = {
-        light: "Açık Tema (Soft Light)",
-        dark: "Koyu Tema (Dark Slate)",
-        nordic: "Gece Mavisi (Nordic Navy)",
-        emerald: "Zümrüt Yeşili (Emerald)"
+        light: "☀️ Açık (Zümrüt & Soft Slate)",
+        dark: "🌙 Koyu (Deep Slate & Sapphire)",
+        gray: "🌫️ Gri (Charcoal & Steel)",
+        bordo: "🍷 Bordo (Burgundy Rose)",
+        monokai: "⚡ Monokai (Developer Terminal)"
     };
     showToast(`Tema uygulandı: ${themeTitles[themeName] || themeName}`);
     closeDropdowns();
 }
 
 function loadSavedTheme() {
-    const saved = localStorage.getItem('portal_theme') || 'light';
+    const urlTheme = new URLSearchParams(window.location.search).get('theme');
+    let saved = urlTheme || localStorage.getItem('portal_theme') || 'light';
+    if (!ALL_APP_THEMES.includes(saved)) saved = 'light';
+    if (saved === 'nordic') saved = 'dark';
+    if (saved === 'emerald') saved = 'light';
+
     document.documentElement.setAttribute('data-theme', saved);
     currentAppTheme = saved;
-    ['light', 'dark', 'nordic', 'emerald'].forEach(t => {
+
+    const sidebarSelect = document.getElementById('sidebarThemeSelect');
+    if (sidebarSelect) {
+        sidebarSelect.value = saved;
+    }
+
+    ALL_APP_THEMES.forEach(t => {
         const dropItem = document.getElementById(`themeItem${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (dropItem) {
             if (t === saved) dropItem.classList.add('active');
@@ -1081,10 +1190,11 @@ function calculateNotifications() {
                     icon: 'fa-graduation-cap',
                     iconBg: 'rgba(37, 99, 235, 0.15)',
                     iconColor: 'var(--primary)',
-                    title: ogr.ad,
+                    title: `${ogr.ad} (${ogr.okul === 'okul2' ? 'Okul 2' : 'Okul 1'})`,
                     desc: `Telefon: ${ogr.telefon || '-'} - Kalan Borç`,
                     amount: formatCurrency(borc),
                     action: () => {
+                        if (typeof setActiveOkul === 'function') setActiveOkul(ogr.okul || 'okul1');
                         switchAppTab('ogrenci-genel');
                         if (typeof openOgrenciDetailModal === 'function') openOgrenciDetailModal(ogr.id);
                         closeDropdowns();
@@ -1118,6 +1228,31 @@ function calculateNotifications() {
                     amount: formatCurrency(rem),
                     action: () => { switchAppTab('personel-aylik'); closeDropdowns(); }
                 });
+            }
+        });
+    }
+
+    // 4. Vadesi Geçmiş / Yaklaşan Borçlar
+    if (typeof dbBorclar !== 'undefined' && Array.isArray(dbBorclar)) {
+        dbBorclar.forEach(b => {
+            if (typeof getBorcSummary === 'function') {
+                const sum = getBorcSummary(b.id);
+                if (sum.kalan > 0 && b.vadeTarihi) {
+                    if (b.vadeTarihi <= today) {
+                        notifs.push({
+                            type: 'borc',
+                            badge: 'Borç Vadesi Doldu',
+                            badgeColor: 'badge-danger',
+                            icon: 'fa-scale-unbalanced-flip',
+                            iconBg: 'rgba(239, 68, 68, 0.15)',
+                            iconColor: 'var(--danger)',
+                            title: `${b.kisi} (${b.alinisTipi === 'ELDEN' ? 'Elden' : 'Resmi'})`,
+                            desc: `Vade: ${b.vadeTarihi} - Kalan: ${formatBorcMiktar(sum.kalan, b.birim)}`,
+                            amount: formatBorcMiktar(sum.kalan, b.birim),
+                            action: () => { switchAppTab('borc-listesi'); closeDropdowns(); }
+                        });
+                    }
+                }
             }
         });
     }
@@ -1264,11 +1399,16 @@ function handleCommandPaletteSearch() {
         { name: "Maaş Zam İşlemleri", sub: "Personele zam yapma ve geçmişi", badge: "Personel Modülü", icon: "fa-arrow-trend-up", color: "var(--success)", run: () => switchAppTab('personel-zam') },
         { name: "Bina & Mülk Kira Takibi", sub: "Ofis ve okul mülk kiraları", badge: "Personel Modülü", icon: "fa-house", color: "var(--success)", run: () => switchAppTab('personel-kira') },
         { name: "Maaş & Kira Ödeme Geçmişi", sub: "Personele yapılan tüm tediyeler", badge: "Personel Modülü", icon: "fa-money-bill-transfer", color: "var(--success)", run: () => switchAppTab('personel-odemeler') },
+        { name: "Borç & Emanet Listesi", sub: "Elden ve resmi tüm borçlar (TL, USD, EUR, Altın)", badge: "Borç Modülü", icon: "fa-scale-unbalanced-flip", color: "#f59e0b", run: () => switchAppTab('borc-listesi') },
+        { name: "Borç Ödeme Geçmişi", sub: "Geri ödenen tüm borç hareketleri", badge: "Borç Modülü", icon: "fa-clock-rotate-left", color: "#f59e0b", run: () => switchAppTab('borc-odemeler') },
+        { name: "Borç & Bakiye Özeti", sub: "Döviz ve altın bazında net borç bilançosu", badge: "Borç Modülü", icon: "fa-coins", color: "#f59e0b", run: () => switchAppTab('borc-ozet') },
         { name: "Sistem Ayarları & Yedekleme", sub: "Kurum bilgileri, temalar ve yedek geçmişi", badge: "Sistem", icon: "fa-gear", color: "#64748b", run: () => switchAppTab('ayarlar') },
         { name: "Yeni Öğrenci Ekle", sub: "Sisteme yeni bir öğrenci kaydı oluştur", badge: "Hızlı Eylem", icon: "fa-user-plus", color: "var(--primary)", run: () => { switchAppTab('ogrenci-genel'); if (typeof openNewOgrenciModal === 'function') openNewOgrenciModal(); } },
         { name: "Yeni Personel Ekle", sub: "Sisteme yeni personel veya mülk kaydı ekle", badge: "Hızlı Eylem", icon: "fa-user-plus", color: "var(--success)", run: () => { switchAppTab('personel-kadro'); if (typeof openNewPersonelModal === 'function') openNewPersonelModal(); } },
         { name: "Yeni Alacak Kaydı Ekle", sub: "Yeni cari alacak ve referans oluştur", badge: "Hızlı Eylem", icon: "fa-plus-circle", color: "var(--accent-gold)", run: () => { switchAppTab('alacak-kayitlari'); if (typeof openNewAlacakModal === 'function') openNewAlacakModal(); } },
         { name: "Yeni Tahsilat Girişi", sub: "Müşteriden yapılan tahsilatı kaydet", badge: "Hızlı Eylem", icon: "fa-hand-holding-dollar", color: "var(--success)", run: () => { switchAppTab('alacak-tahsilatlar'); if (typeof openNewTahsilatModal === 'function') openNewTahsilatModal(); } },
+        { name: "Yeni Borç / Emanet Ekle", sub: "Sisteme yeni borç kaydı gir", badge: "Hızlı Eylem", icon: "fa-plus-circle", color: "#f59e0b", run: () => { switchAppTab('borc-listesi'); if (typeof openNewBorcModal === 'function') openNewBorcModal(); } },
+        { name: "Borç Geri Ödemesi Yap", sub: "Alınan borca kısmi veya tam ödeme düş", badge: "Hızlı Eylem", icon: "fa-credit-card", color: "#10b981", run: () => { switchAppTab('borc-listesi'); if (typeof openNewBorcOdemeModal === 'function') openNewBorcOdemeModal(); } },
         { name: "Tüm Sistemi Yedekle (JSON)", sub: "Veritabanını bilgisayara tek dosya indir", badge: "Yedek", icon: "fa-download", color: "var(--accent-gold)", run: () => exportFullSystemJson() },
         { name: "Güvenli Çıkış Yap", sub: "Oturumu kapat ve güvenli yedek al", badge: "Güvenlik", icon: "fa-arrow-right-from-bracket", color: "var(--danger)", run: () => handleLogout() }
     ];
@@ -1427,7 +1567,8 @@ function createAutoBackupSnapshot(reason = "Otomatik Sistem Snapshot") {
             stats: {
                 ogrenciCount: (typeof dbOgrenci !== 'undefined' && dbOgrenci.ogrenciler) ? dbOgrenci.ogrenciler.length : 0,
                 personelCount: (typeof dbPersonel !== 'undefined') ? dbPersonel.length : 0,
-                alacakCount: (typeof dbAlacak !== 'undefined' && dbAlacak.alacaklar) ? dbAlacak.alacaklar.length : 0
+                alacakCount: (typeof dbAlacak !== 'undefined' && dbAlacak.alacaklar) ? dbAlacak.alacaklar.length : 0,
+                borcCount: (typeof dbBorclar !== 'undefined' && Array.isArray(dbBorclar)) ? dbBorclar.length : 0
             },
             data: {
                 alacak_db: localStorage.getItem('alacak_db'),
@@ -1436,7 +1577,9 @@ function createAutoBackupSnapshot(reason = "Otomatik Sistem Snapshot") {
                 app_personnel: localStorage.getItem('app_personnel'),
                 app_payments: localStorage.getItem('app_payments'),
                 app_changes: localStorage.getItem('app_changes'),
-                portal_kurum: localStorage.getItem('portal_kurum')
+                portal_kurum: localStorage.getItem('portal_kurum'),
+                app_borclar: localStorage.getItem('app_borclar'),
+                app_borc_odemeler: localStorage.getItem('app_borc_odemeler')
             }
         };
 
@@ -1485,7 +1628,8 @@ function renderAutoBackupHistoryList() {
                     <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
                         <span>🎓 ${snap.stats?.ogrenciCount || 0} Öğrenci</span> • 
                         <span>👔 ${snap.stats?.personelCount || 0} Personel</span> • 
-                        <span>💰 ${snap.stats?.alacakCount || 0} Alacak</span>
+                        <span>💰 ${snap.stats?.alacakCount || 0} Alacak</span> • 
+                        <span>⚖️ ${snap.stats?.borcCount || 0} Borç</span>
                     </div>
                 </div>
             </div>
@@ -1521,6 +1665,8 @@ function restoreAutoBackupSnapshot(snapId) {
         if (snap.data.app_payments) localStorage.setItem('app_payments', snap.data.app_payments);
         if (snap.data.app_changes) localStorage.setItem('app_changes', snap.data.app_changes);
         if (snap.data.portal_kurum) localStorage.setItem('portal_kurum', snap.data.portal_kurum);
+        if (snap.data.app_borclar) localStorage.setItem('app_borclar', snap.data.app_borclar);
+        if (snap.data.app_borc_odemeler) localStorage.setItem('app_borc_odemeler', snap.data.app_borc_odemeler);
 
         showToast("Sistem başarıyla yedekten geri yüklendi! Yenileniyor...");
         setTimeout(() => window.location.reload(), 900);
@@ -1551,7 +1697,9 @@ function downloadAutoBackupSnapshot(snapId) {
             app_personnel: snap.data.app_personnel ? JSON.parse(snap.data.app_personnel) : null,
             app_payments: snap.data.app_payments ? JSON.parse(snap.data.app_payments) : null,
             app_changes: snap.data.app_changes ? JSON.parse(snap.data.app_changes) : null,
-            portal_kurum: snap.data.portal_kurum ? JSON.parse(snap.data.portal_kurum) : null
+            portal_kurum: snap.data.portal_kurum ? JSON.parse(snap.data.portal_kurum) : null,
+            app_borclar: snap.data.app_borclar ? JSON.parse(snap.data.app_borclar) : null,
+            app_borc_odemeler: snap.data.app_borc_odemeler ? JSON.parse(snap.data.app_borc_odemeler) : null
         }
     };
 
@@ -1580,7 +1728,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Kayıtlı akordiyon durumlarını yükle
-    ['alacak', 'ogrenci', 'personel'].forEach(grp => {
+    ['alacak', 'ogrenci', 'personel', 'borc'].forEach(grp => {
         const state = localStorage.getItem("acc_" + grp);
         if (state === "closed") {
             const body = document.getElementById("nav-sub-" + grp);

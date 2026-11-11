@@ -1,14 +1,16 @@
-﻿{
-  "appName": "Kurumsal YÃ¶netim Sistemi",
-  "version": "1.2.0",
-  "releaseDate": "2026-11-04",
-  "title": "Renkli GÃ¶rsel MaaÅŸ Raporu & WhatsApp Entegrasyonu",
-  "author": "dgn â€¢ systems",
+{
+  "appName": "Kurumsal Yönetim Sistemi",
+  "version": "1.4.0",
+  "releaseDate": "2026-11-10",
+  "title": "DerPro Estetik & Çoklu Tema Motoru (Sıfır Göz Karmaşası & Üst Düzey Kurumsal Arayüz)",
+  "author": "dgn • systems",
   "notes": [
-    "WhatsApp iÃ§in yÃ¼ksek Ã§Ã¶zÃ¼nÃ¼rlÃ¼klÃ¼, renkli ve net maaÅŸ & gider tablosu gÃ¶rsel kartÄ± eklendi.",
-    "Rapor ekranÄ±na canlÄ± renkli grafik tablo kartÄ± Ã¶nizlemesi ve sekme sistemi getirildi.",
-    "Tek tÄ±kla tablo resmini panoya kopyalama ve doÄŸrudan WhatsApp'a yapÄ±ÅŸtÄ±rma entegrasyonu tamamlandÄ±.",
-    "Rapor gÃ¶rselini tek tÄ±kla HD PNG olarak bilgisayara indirme Ã¶zelliÄŸi eklendi."
+    "DerPro referans sistemi incelenerek arayüz tepeden tırnağa profesyonel muhasebe standardına uyarlandı.",
+    "Tüm kaba kutular ve göz yoran çerçeveler kaldırılarak DerPro'nun ferah, sade ve dinamik tasarım dili uygulandı.",
+    "Yeni tipografi: 'Poppins' ana arayüz fontu, 'Playfair Display' / 'Cormorant Garamond' kurumsal başlıklar ve 'tabular-nums' sayısal hizalama.",
+    "5 Özgün DerPro Teması entegre edildi: Açık Zümrüt & Soft Slate, Koyu Sapphire, Gri Charcoal, Bordo Burgundy, Monokai Pro.",
+    "Sol menü footer alanına tek tıkla canlı tema değiştiren hızlı seçici dropdown eklendi.",
+    "Sade ve kompakt KPI kartları, 48px DerPro başlık barı ve nefes alan dinamik veri tabloları."
   ],
   "minAppVersion": "1.0.0",
   "downloadUrl": ""
