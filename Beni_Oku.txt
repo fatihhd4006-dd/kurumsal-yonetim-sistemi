@@ -1,0 +1,19 @@
+============================================================
+      KURUMSAL YÖNETİM SİSTEMİ - TAŞINABİLİR SÜRÜM (v1.5.0)
+============================================================
+
+Bu sürüm herhangi bir kuruluma veya yönetici iznine ihtiyaç duymaz.
+Windows Akıllı Uygulama Denetimi (Smart App Control) engeline takılmaz.
+
+NASIL ÇALIŞTIRILIR?
+1. "Sistemi_Baslat.bat" dosyasına çift tıklayın (Önce varsa yeni
+   sürümü otomatik denetler/günceller, ardından pencere modunda açar).
+2. İnternet yoksa hiç bekletmeden mevcut yerel sürümü başlatır.
+
+OTOMATİK GÜNCELLEME VE VERİ GÜVENLİĞİ:
+- Tüm kayıtlarınız, yedekleriniz ve ayarlarınız "Veri_Profili" ve
+  "Otomatik_Yedekler" klasörlerinde saklanır.
+- Otomatik güncelleme sırasında bu klasörlere ASLA dokunulmaz.
+- Uygulama açıkken de "Kurum & Ayarlar > Güncellemeleri Denetle"
+  butonundan yeni sürüm olup olmadığını anlık kontrol edebilirsiniz.
+============================================================

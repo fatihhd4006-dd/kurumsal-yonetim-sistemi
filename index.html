@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kurumsal Yönetim Sistemi</title>
-    <!-- Google Fonts & DerPro Typography (Poppins, Cormorant Garamond, Playfair Display) -->
+    <!-- Google Fonts & Kurumsal Typography (Poppins, Cormorant Garamond, Playfair Display) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -15,55 +15,83 @@
 </head>
 <body>
 
-    <!-- 1. GİRİŞ EKRANI (DERPRO SPLIT AESTHETIC WITH SCENIC BACKDROP) -->
+    <!-- 1. GİRİŞ EKRANI (İSTANBUL MANZARALARI & DGN SIGNATURE SUITE) -->
     <div id="authOverlay" class="auth-overlay">
         
-        <!-- Dinamik Manzara Katmanı ve DerPro Vignette -->
-        <div id="loginBgLayer" class="login-bg-layer" style="background-image: url('assets/login_bg_istanbul_kizkulesi.jpg');"></div>
+        <!-- Dinamik İstanbul Manzarası Katmanı ve Sinematik Vignette -->
+        <div id="loginBgLayer" class="login-bg-layer"></div>
         <div class="login-bg-vignette"></div>
 
-        <!-- Üst Bilgi Barı: Kurum ve Canlı Saat -->
+        <!-- Üst Bilgi Barı: Kurum ve Canlı Saat & Selamlama -->
         <header class="auth-top-bar">
             <div class="auth-top-brand">
-                <i class="fa-solid fa-building-columns"></i>
-                <span class="dynamic-brand-name">Yönetim Sistemi</span>
+                <div class="auth-brand-emblem-small">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <span class="dynamic-brand-name" style="font-weight: 800; letter-spacing: -0.01em;">Yönetim Sistemi</span>
+                    <span style="font-size: 11px; opacity: 0.7; margin-left: 6px; font-weight: 500;">&bull; Yönetici Portalı</span>
+                </div>
             </div>
-            <div id="authLiveClock" class="auth-top-clock">
-                <i class="fa-regular fa-clock"></i>
-                <span id="authClockText">Yükleniyor...</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="authGreetingPill" class="auth-greeting-pill">
+                    <span id="authGreetingText">☀️ İyi Günler, Hoş Geldiniz</span>
+                </div>
+                <div id="authLiveClock" class="auth-top-clock">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="authClockText">Yükleniyor...</span>
+                </div>
             </div>
         </header>
 
-        <!-- DerPro 2-Sütunlu Sahne Düzeni (Login Shell) -->
+        <!-- DGN 2-Sütunlu İmza Düzeni (Signature Login Shell) -->
         <div class="login-shell">
             
-            <!-- Sol Sütun: Poetik DerPro Başlık ve Manifesto (Hero Copy) -->
+            <!-- Sol Sütun: DGN İmza Başlık, Mimari Tipografi ve Güvenlik Rozetleri (Temaya Göre Dinamik) -->
             <aside class="login-hero-copy">
-                <p class="login-hero-eyebrow">KURUMSAL YÖNETİM SİSTEMİ &bull; MALİ &amp; İDARİ PORTAL</p>
+                <div class="login-signature-eyebrow" id="loginHeroEyebrow">
+                    <span class="signature-dot"></span>
+                    <span id="loginHeroEyebrowText">TARİHİ PRESTİJ &bull; BOĞAZIN ASALETİ</span>
+                </div>
                 <h1 class="login-hero-title">
-                    <span>Nizam, İntizam</span>
-                    <span>ve Şeffaf Yönetim.</span>
+                    <span id="loginHeroTitleMain">Köklü Birikim,</span>
+                    <span class="hero-title-accent" id="loginHeroTitleAccent">Zarif Yönetim.</span>
                 </h1>
-                <p class="login-hero-lead">
-                    Her kalemi yerli yerinde, güvenli ve dingin bir muhasebe nizamı.
+                <p class="login-hero-lead" id="loginHeroLead">
+                    Saray mimarisinin zarafetiyle mali disiplini buluşturan kurumsal yapı. Her kayıt şeffaf, her bilanço tam vaktinde hazır.
                 </p>
-                <div class="login-hero-tagline">
-                    ✓ Çevrimdışı Kasa &bull; 5 Kurumsal Renk Teması &bull; Sıfır Göz Karmaşası
+
+                <!-- 3 Canlı Güvenlik & Özellik Rozeti (Temaya Göre Dinamik) -->
+                <div class="login-feature-badges" id="loginHeroBadges">
+                    <div class="login-feature-badge">
+                        <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+                        <span>Kurumsal Prestij &amp; İtibar Koruması</span>
+                    </div>
+                    <div class="login-feature-badge">
+                        <i class="fa-solid fa-scale-balanced" style="color: #10b981;"></i>
+                        <span>Kırtasiye, Aidat &amp; Cari Dengesi</span>
+                    </div>
+                    <div class="login-feature-badge">
+                        <i class="fa-solid fa-credit-card" style="color: #3b82f6;"></i>
+                        <span>Nakit &bull; Banka &bull; POS Tahsilat</span>
+                    </div>
                 </div>
             </aside>
 
-            <!-- Sağ Sütun: DerPro Minimal Buzlu Cam Kart (Login Card Minimal) -->
+            <!-- Sağ Sütun: DGN Özel Buzlu Cam Kart (Signature Glass Card) -->
             <div class="login-card-minimal">
                 
                 <!-- DURUM A: İLK KURULUM - ŞİFRE OLUŞTURMA -->
                 <div id="authSetupBox" style="display: none; width: 100%;">
                     <div class="login-brand-header">
-                        <div class="login-logo-icon">
-                            <i class="fa-solid fa-user-plus"></i>
+                        <div class="login-signature-monogram">
+                            <i class="fa-solid fa-key" style="color: var(--accent-gold);"></i>
                         </div>
                         <h2 class="login-brand-title">İlk Kurulum</h2>
-                        <div class="login-secure-label">Yönetici Şifresi Belirleyin</div>
-                        <div class="login-free-badge">Sistem Başlatıcı</div>
+                        <div class="login-secure-label">Yönetici Giriş Şifresi Belirleyin</div>
+                        <div class="login-free-badge">
+                            <i class="fa-solid fa-shield-check"></i> Sistem Başlatıcı
+                        </div>
                     </div>
 
                     <form onsubmit="handleSetupPassword(event)" class="login-form-minimal">
@@ -79,12 +107,15 @@
                 <!-- DURUM B: SONRAKİ GİRİŞLER - ŞİFRE İLE GİRİŞ -->
                 <div id="authLoginBox" style="width: 100%;">
                     <div class="login-brand-header">
-                        <div class="login-logo-icon">
+                        <div class="login-signature-monogram" id="authMonogramCrest">
                             <i class="fa-solid fa-building-columns"></i>
                         </div>
                         <h2 class="login-brand-title dynamic-brand-name">Yönetim Sistemi</h2>
-                        <div class="login-secure-label">Güvenli Giriş &bull; Sistem Hazır</div>
-                        <div class="login-free-badge">v1.4.0 &bull; Çevrimdışı Kasa</div>
+                        <div class="login-secure-label" id="authLoginSubGreeting">Yetkili Oturumu &bull; Sistem Hazır</div>
+                        <div class="login-free-badge">
+                            <span class="live-dot-green"></span>
+                            <span>v1.5.0 &bull; Çevrimdışı Kasa</span>
+                        </div>
                     </div>
 
                     <form onsubmit="handlePasswordOnlyLogin(event)" class="login-form-minimal">
@@ -96,7 +127,7 @@
                         </div>
                         <button type="submit" class="login-btn-clean">
                             <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Giriş Yap</span>
+                            <span>Güvenli Giriş Yap</span>
                         </button>
                     </form>
 
@@ -111,28 +142,38 @@
 
         </div>
 
-        <!-- Alt Manzara Seçici (DerPro Scene Navigator) -->
-        <nav class="login-scene-navigator" aria-label="Manzara Seçimi">
-            <button type="button" id="sceneBtn_kizkulesi" class="login-scene-pill active" onclick="setLoginScene('kizkulesi')" title="Kız Kulesi Manzarası">
-                <span>🏛️</span><span>Kız Kulesi</span>
+        <!-- Alt Dinamik Sahne & Atmosfer Seçici -->
+        <nav class="login-scene-navigator" aria-label="Giriş Atmosferi Seçimi">
+            <span style="font-size: 11px; font-weight: 700; color: rgba(255, 255, 255, 0.55); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 4px;">İstanbul:</span>
+            <button type="button" id="sceneBtn_dolmabahce" class="login-scene-pill active" onclick="setLoginScene('dolmabahce')" title="Dolmabahçe Sarayı &amp; Sahil Hattı">
+                <span>🏰</span><span>Dolmabahçe</span>
             </button>
-            <button type="button" id="sceneBtn_bosphorus" class="login-scene-pill" onclick="setLoginScene('bosphorus')" title="Boğaziçi Manzarası">
-                <span>🌉</span><span>Boğaziçi</span>
-            </button>
-            <button type="button" id="sceneBtn_suleymaniye" class="login-scene-pill" onclick="setLoginScene('suleymaniye')" title="Süleymaniye Manzarası">
-                <span>🕌</span><span>Süleymaniye</span>
-            </button>
-            <button type="button" id="sceneBtn_galata" class="login-scene-pill" onclick="setLoginScene('galata')" title="Galata Manzarası">
+            <button type="button" id="sceneBtn_galata" class="login-scene-pill" onclick="setLoginScene('galata')" title="Tarihi Galata Kulesi &amp; Alacakaranlık">
                 <span>🗼</span><span>Galata</span>
             </button>
-            <button type="button" id="sceneBtn_nature" class="login-scene-pill" onclick="setLoginScene('nature')" title="Doğa &amp; Dinginlik Manzarası">
-                <span>🌿</span><span>Doğa</span>
+            <button type="button" id="sceneBtn_ortakoy" class="login-scene-pill" onclick="setLoginScene('ortakoy')" title="Ortaköy Camii &amp; Boğaz Köprüsü">
+                <span>🕌</span><span>Ortaköy</span>
+            </button>
+            <button type="button" id="sceneBtn_kizkulesi" class="login-scene-pill" onclick="setLoginScene('kizkulesi')" title="Kız Kulesi &amp; Boğaz Gün Batımı">
+                <span>🏛️</span><span>Kız Kulesi</span>
+            </button>
+            <button type="button" id="sceneBtn_bosphorus" class="login-scene-pill" onclick="setLoginScene('bosphorus')" title="Boğaziçi Köprüsü &amp; Gece Işıkları">
+                <span>🌉</span><span>Boğaziçi</span>
+            </button>
+            <button type="button" id="sceneBtn_suleymaniye" class="login-scene-pill" onclick="setLoginScene('suleymaniye')" title="Süleymaniye Silüeti &amp; Haliç">
+                <span>🌅</span><span>Süleymaniye</span>
+            </button>
+            <button type="button" id="sceneBtn_rumeli" class="login-scene-pill" onclick="setLoginScene('rumeli')" title="Rumeli Hisarı &amp; Boğaz Hattı">
+                <span>🛡️</span><span>Rumeli Hisarı</span>
+            </button>
+            <button type="button" id="sceneBtn_sarayburnu" class="login-scene-pill" onclick="setLoginScene('sarayburnu')" title="Tarihi Yarımada &amp; Sarayburnu">
+                <span>🚢</span><span>Sarayburnu</span>
             </button>
         </nav>
 
         <!-- Kurumsal Hallmark / Signature -->
         <div class="login-bottom-signature">
-            dgn &bull; systems
+            DGN EXECUTIVE ARCHITECTURE &bull; v1.5.0 &bull; ÖZEL İMZA TASARIMI
         </div>
 
     </div>
@@ -211,10 +252,10 @@
                             <div style="padding: 4px 6px 4px 6px; margin-bottom: 4px;">
                                 <div style="display: flex; gap: 4px;">
                                     <button type="button" class="sidebar-okul-btn okul1-btn active" onclick="setActiveOkul('okul1')" title="1. Okul Öğrencileri">
-                                        🏫 Okul 1
+                                        🏫 <span class="lbl-okul1-name">Okul 1</span>
                                     </button>
                                     <button type="button" class="sidebar-okul-btn okul2-btn" onclick="setActiveOkul('okul2')" title="2. Okul Öğrencileri">
-                                        🏫 Okul 2
+                                        🏫 <span class="lbl-okul2-name">Okul 2</span>
                                     </button>
                                 </div>
                             </div>
@@ -237,6 +278,10 @@
                             <button class="nav-sub-item" data-tab="ogrenci-kirtasiye" onclick="switchAppTab('ogrenci-kirtasiye')" title="Kırtasiye Takibi">
                                 <i class="fa-solid fa-book-bookmark"></i>
                                 <span>Kırtasiye Takibi</span>
+                            </button>
+                            <button class="nav-sub-item" data-tab="ogrenci-gunluk-rapor" onclick="switchAppTab('ogrenci-gunluk-rapor')" title="Günlük Tahsilat Raporu">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                <span>Günlük Tahsilat Raporu</span>
                             </button>
                         </div>
                     </div>
@@ -310,6 +355,7 @@
                         <button class="nav-sub-item" data-tab="ayarlar" onclick="switchAppTab('ayarlar')" title="Kurum & Ayarlar" style="width: 100%;">
                             <i class="fa-solid fa-gear"></i>
                             <span style="font-weight: 600;">Kurum & Ayarlar</span>
+                            <span class="nav-badge" id="badgeUpdateAvailable" style="display: none; background: var(--primary); color: #fff; margin-left: auto; font-size: 10px;">Yeni</span>
                         </button>
                     </div>
                 </div>
@@ -317,7 +363,7 @@
 
             <!-- Sidebar Bottom -->
             <div class="sidebar-footer">
-                <!-- DerPro Hızlı Tema Seçici -->
+                <!-- Hızlı Kurumsal Tema Seçici -->
                 <div class="sidebar-theme-wrapper">
                     <select class="sidebar-theme-select" id="sidebarThemeSelect" onchange="setAppTheme(this.value)" title="Tema Değiştir">
                         <option value="light">☀️ Açık (Zümrüt & Slate)</option>
@@ -446,6 +492,36 @@
                     </button>
                 </div>
             </header>
+
+            <!-- CANLI PİYASA & BORSA KAYAN EKRANI (GLOBAL STOCK & FX TICKER) -->
+            <div class="global-borsa-ticker-bar" id="globalBorsaTickerBar">
+                <div class="borsa-ticker-badge">
+                    <span class="borsa-live-dot"></span>
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>CANLI BORSA</span>
+                </div>
+                
+                <div class="borsa-ticker-viewport">
+                    <div class="borsa-ticker-track" id="globalBorsaTrack">
+                        <!-- JS ile canlı döviz & altın kurları doldurulur -->
+                    </div>
+                </div>
+                
+                <div class="borsa-ticker-controls">
+                    <button type="button" class="borsa-ctrl-btn" onclick="fetchLiveExchangeRates(false)" title="Canlı Kurları Yenile">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span class="btn-text">Yenile</span>
+                    </button>
+                    <button type="button" class="borsa-ctrl-btn" onclick="openHizliCeviriciModal()" title="Hızlı Kur &amp; Döviz Çevirici">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span class="btn-text">Çevirici</span>
+                    </button>
+                    <button type="button" class="borsa-ctrl-btn" onclick="openKurAyarlariModal()" title="Piyasa Kurlarını Ayarla">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span class="btn-text">Ayarla</span>
+                    </button>
+                </div>
+            </div>
 
             <!-- VİEWPORT İÇERİKLERİ -->
             <main class="viewport-content">
@@ -672,12 +748,12 @@
                             <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-school" style="color: var(--primary);"></i> Aktif Okul:
                             </span>
-                            <div style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;">
+                            <div style="display: inline-flex; background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; gap: 4px;">
                                 <button type="button" class="btn-okul-toggle okul1-btn active" onclick="setActiveOkul('okul1')" title="1. Okul">
-                                    <i class="fa-solid fa-school"></i> Okul 1
+                                    <i class="fa-solid fa-school"></i> <span class="lbl-okul1-name">Okul 1</span>
                                 </button>
                                 <button type="button" class="btn-okul-toggle okul2-btn" onclick="setActiveOkul('okul2')" title="2. Okul">
-                                    <i class="fa-solid fa-graduation-cap"></i> Okul 2
+                                    <i class="fa-solid fa-graduation-cap"></i> <span class="lbl-okul2-name">Okul 2</span>
                                 </button>
                             </div>
                         </div>
@@ -759,12 +835,12 @@
                             <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-school" style="color: var(--primary);"></i> Aktif Okul:
                             </span>
-                            <div style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;">
+                            <div style="display: inline-flex; background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; gap: 4px;">
                                 <button type="button" class="btn-okul-toggle okul1-btn active" onclick="setActiveOkul('okul1')" title="1. Okul">
-                                    <i class="fa-solid fa-school"></i> Okul 1
+                                    <i class="fa-solid fa-school"></i> <span class="lbl-okul1-name">Okul 1</span>
                                 </button>
                                 <button type="button" class="btn-okul-toggle okul2-btn" onclick="setActiveOkul('okul2')" title="2. Okul">
-                                    <i class="fa-solid fa-graduation-cap"></i> Okul 2
+                                    <i class="fa-solid fa-graduation-cap"></i> <span class="lbl-okul2-name">Okul 2</span>
                                 </button>
                             </div>
                         </div>
@@ -821,12 +897,12 @@
                             <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-school" style="color: var(--primary);"></i> Aktif Okul:
                             </span>
-                            <div style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;">
+                            <div style="display: inline-flex; background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; gap: 4px;">
                                 <button type="button" class="btn-okul-toggle okul1-btn active" onclick="setActiveOkul('okul1')" title="1. Okul">
-                                    <i class="fa-solid fa-school"></i> Okul 1
+                                    <i class="fa-solid fa-school"></i> <span class="lbl-okul1-name">Okul 1</span>
                                 </button>
                                 <button type="button" class="btn-okul-toggle okul2-btn" onclick="setActiveOkul('okul2')" title="2. Okul">
-                                    <i class="fa-solid fa-graduation-cap"></i> Okul 2
+                                    <i class="fa-solid fa-graduation-cap"></i> <span class="lbl-okul2-name">Okul 2</span>
                                 </button>
                             </div>
                         </div>
@@ -881,20 +957,20 @@
                     </div>
                 </section>
 
-                <!-- ÖĞRENCİ VEZNE & TAHSİLAT -->
+                <!-- ÖĞRENCİ VEZNE & TAHSİLAT (GÜNLÜK RAPOR ENTEGRELİ) -->
                 <section id="view-ogrenci-vezne" class="view-section">
                     <!-- OKUL 1 / OKUL 2 SEÇİM ÇUBUĞU -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 10px 16px; margin-bottom: 18px; box-shadow: var(--shadow-card);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 10px 16px; margin-bottom: 14px; box-shadow: var(--shadow-card);">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-school" style="color: var(--primary);"></i> Aktif Okul:
                             </span>
-                            <div style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;">
+                            <div style="display: inline-flex; background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; gap: 4px;">
                                 <button type="button" class="btn-okul-toggle okul1-btn active" onclick="setActiveOkul('okul1')" title="1. Okul">
-                                    <i class="fa-solid fa-school"></i> Okul 1
+                                    <i class="fa-solid fa-school"></i> <span class="lbl-okul1-name">Okul 1</span>
                                 </button>
                                 <button type="button" class="btn-okul-toggle okul2-btn" onclick="setActiveOkul('okul2')" title="2. Okul">
-                                    <i class="fa-solid fa-graduation-cap"></i> Okul 2
+                                    <i class="fa-solid fa-graduation-cap"></i> <span class="lbl-okul2-name">Okul 2</span>
                                 </button>
                             </div>
                         </div>
@@ -902,11 +978,57 @@
                             <i class="fa-solid fa-user-graduate"></i> <span class="okul-stats-text">Okul 1: 0 Öğrenci</span>
                         </div>
                     </div>
+
+                    <!-- GÜNLÜK TAHSİLAT ÖZETİ & KASA RAPORU (VEZNE İÇİ) -->
+                    <div class="kpi-row" style="margin-bottom: 14px;">
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">SEÇİLİ GÜN TOPLAM TAHSİLAT</span><i class="fa-solid fa-vault" style="color: var(--primary);"></i></div>
+                            <div class="kpi-number" id="kpiVezneGunlukToplam" style="color: var(--primary);">₺0</div>
+                            <div class="kpi-footer" id="kpiVezneGunlukIslem">0 İşlem Kayıtlı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">GÜNLÜK NAKİT KASA</span><i class="fa-solid fa-money-bill-wave" style="color: #10b981;"></i></div>
+                            <div class="kpi-number" id="kpiVezneGunlukNakit" style="color: #10b981;">₺0</div>
+                            <div class="kpi-footer" id="kpiVezneGunlukNakitOran">%0 Nakit</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">GÜNLÜK BANKA / HAVALE</span><i class="fa-solid fa-building-columns" style="color: #3b82f6;"></i></div>
+                            <div class="kpi-number" id="kpiVezneGunlukBanka" style="color: #3b82f6;">₺0</div>
+                            <div class="kpi-footer" id="kpiVezneGunlukBankaOran">%0 Banka</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header"><span class="kpi-title">GÜNLÜK POS / KART</span><i class="fa-solid fa-credit-card" style="color: #f59e0b;"></i></div>
+                            <div class="kpi-number" id="kpiVezneGunlukPos" style="color: #f59e0b;">₺0</div>
+                            <div class="kpi-footer" id="kpiVezneGunlukPosOran">%0 POS</div>
+                        </div>
+                    </div>
+
                     <div class="card-box">
-                        <div class="card-box-header">
+                        <div class="card-box-header" style="gap: 10px;">
                             <div class="box-title">
                                 <i class="fa-solid fa-receipt" style="color: var(--success);"></i>
-                                <span>Vezne Tahsilat Kayıtları & Makbuzlar</span>
+                                <span>Vezne Tahsilatları &amp; Günlük Rapor</span>
+                            </div>
+                            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <input type="text" id="searchVezneInput" class="input-control" placeholder="Öğrenci, makbuz veya not ara..." oninput="renderOgrenciOdemelerTab()" style="width: 190px;">
+                                <input type="date" id="vezneRaporTarih" class="input-control" onchange="renderOgrenciOdemelerTab()" style="font-weight: 600;" title="Günlük Rapor Tarihi">
+                                <button type="button" class="btn btn-subtle" onclick="setVezneTarihBugun()" title="Bugünün tarihini seç">Bugün</button>
+                                <select id="vezneGorunumModu" class="select-control" onchange="renderOgrenciOdemelerTab()" style="font-weight: 600;">
+                                    <option value="DAY">📅 Sadece Seçili Günü Göster</option>
+                                    <option value="ALL" selected>📋 Tüm Geçmiş Tahsilatlar</option>
+                                </select>
+                                <select id="vezneYontemFiltre" class="select-control" onchange="renderOgrenciOdemelerTab()" style="font-weight: 600;">
+                                    <option value="ALL">Tüm Yöntemler</option>
+                                    <option value="Nakit">💵 Nakit</option>
+                                    <option value="Banka">🏦 Banka</option>
+                                    <option value="POS">💳 POS</option>
+                                </select>
+                                <button type="button" class="btn btn-subtle" onclick="exportVezneGunlukExcel()" title="Seçili Günün Raporunu Excel İndir">
+                                    <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Günlük Excel
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="printVezneGunlukRapor()" title="Seçili Günün Kasa &amp; Tahsilat Raporunu A4 Yazdır">
+                                    <i class="fa-solid fa-print"></i> Günlük Rapor (A4)
+                                </button>
                             </div>
                         </div>
 
@@ -918,9 +1040,10 @@
                                         <th>Tarih</th>
                                         <th>Öğrenci Adı Soyadı</th>
                                         <th>Dönem</th>
-                                        <th>Tutar</th>
+                                        <th style="text-align: center;">Ödeme Yöntemi</th>
+                                        <th style="text-align: right;">Tutar</th>
                                         <th>Not</th>
-                                        <th>İşlem</th>
+                                        <th style="text-align: right;">Makbuz / İşlem</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ogrenciOdemelerTableBody"></tbody>
@@ -937,12 +1060,12 @@
                             <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-school" style="color: var(--primary);"></i> Aktif Okul:
                             </span>
-                            <div style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;">
+                            <div style="display: inline-flex; background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; gap: 4px;">
                                 <button type="button" class="btn-okul-toggle okul1-btn active" onclick="setActiveOkul('okul1')" title="1. Okul">
-                                    <i class="fa-solid fa-school"></i> Okul 1
+                                    <i class="fa-solid fa-school"></i> <span class="lbl-okul1-name">Okul 1</span>
                                 </button>
                                 <button type="button" class="btn-okul-toggle okul2-btn" onclick="setActiveOkul('okul2')" title="2. Okul">
-                                    <i class="fa-solid fa-graduation-cap"></i> Okul 2
+                                    <i class="fa-solid fa-graduation-cap"></i> <span class="lbl-okul2-name">Okul 2</span>
                                 </button>
                             </div>
                         </div>
@@ -950,11 +1073,74 @@
                             <i class="fa-solid fa-user-graduate"></i> <span class="okul-stats-text">Okul 1: 0 Öğrenci</span>
                         </div>
                     </div>
+
+                    <!-- KIRTASİYE KPI ÖZET KARTLARI -->
+                    <div class="kpi-row" style="margin-bottom: 20px;">
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">TOPLAM KIRTASİYE TAHAKKUKU</span>
+                                <i class="fa-solid fa-book-bookmark" style="color: var(--primary);"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiKirtasiyeToplamTahakkuk">₺0</div>
+                            <div class="kpi-footer" id="kpiKirtasiyeToplamOgrenci">0 Öğrenci Kayıtlı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">TAHSİL EDİLEN KIRTASİYE</span>
+                                <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiKirtasiyeTahsilEdilen" style="color: #10b981;">₺0</div>
+                            <div class="kpi-footer" id="kpiKirtasiyeTahsilatOrani">%0 Tahsil Edildi</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">KALAN KIRTASİYE ALACAĞI</span>
+                                <i class="fa-solid fa-hand-holding-dollar" style="color: #ef4444;"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiKirtasiyeKalanAlacak" style="color: #ef4444;">₺0</div>
+                            <div class="kpi-footer" id="kpiKirtasiyeBorcluSayisi">0 Öğrencinin Borcu Var</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">KİTAP & SET TESLİMATI</span>
+                                <i class="fa-solid fa-boxes-packing" style="color: #3b82f6;"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiKirtasiyeTeslimatSayisi" style="color: #3b82f6;">0 / 0</div>
+                            <div class="kpi-footer" id="kpiKirtasiyeTeslimatOrani">%0 Teslim Edildi</div>
+                        </div>
+                    </div>
+
+                    <!-- KIRTASİYE LİSTESİ VE TABLO KUTUSU -->
                     <div class="card-box">
                         <div class="card-box-header">
-                            <div class="box-title">
-                                <i class="fa-solid fa-book-bookmark"></i>
-                                <span>Kitap & Kırtasiye Takip Listesi</span>
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <div class="box-title" style="margin-right: 6px;">
+                                    <i class="fa-solid fa-book-bookmark"></i>
+                                    <span>Kitap & Kırtasiye Takip ve Tahsilat Listesi</span>
+                                </div>
+                                <input type="text" id="searchKirtasiyeInput" class="input-control" placeholder="Öğrenci adı veya tel ara..." oninput="renderOgrenciKirtasiyeTab()" style="width: 210px;">
+                                <select id="filterKirtasiyeDurum" class="select-control" onchange="renderOgrenciKirtasiyeTab()">
+                                    <option value="ALL">Tüm Durumlar</option>
+                                    <option value="BORCLU">Kalan Borcu Olanlar</option>
+                                    <option value="ODENDI">Tamamı Ödenenler</option>
+                                    <option value="BEKLIYOR">Hiç Ödeme Yapmayanlar</option>
+                                    <option value="TESLIM_EDILMEDI">Kitabı Bekleyenler</option>
+                                    <option value="TESLIM_EDILDI">Kitabı Teslim Edilenler</option>
+                                </select>
+                                <select id="filterKirtasiyeYontem" class="select-control" onchange="renderOgrenciKirtasiyeTab()">
+                                    <option value="ALL">Tüm Yöntemler</option>
+                                    <option value="Nakit">💵 Nakit (Kasa)</option>
+                                    <option value="Banka">🏦 Banka (Havale)</option>
+                                    <option value="POS">💳 POS (Kredi Kartı)</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" class="btn btn-subtle" onclick="exportKirtasiyeToExcel()" title="Kırtasiye Listesini Excel Olarak İndir">
+                                    <i class="fa-solid fa-file-excel"></i> Excel İndir
+                                </button>
+                                <button type="button" class="btn btn-subtle" onclick="topluKirtasiyeTeslimatPrompt()" title="Listelenen Öğrencilerin Kitaplarını Toplu Teslim Et">
+                                    <i class="fa-solid fa-boxes-stacked"></i> Toplu Teslimat
+                                </button>
                             </div>
                         </div>
 
@@ -962,13 +1148,156 @@
                             <table class="data-table">
                                 <thead>
                                     <tr>
+                                        <th style="width: 38px; text-align: center;">#</th>
                                         <th>Öğrenci Adı</th>
-                                        <th>Kırtasiye Bedeli</th>
-                                        <th>Teslimat Durumu</th>
-                                        <th>İşlem</th>
+                                        <th>Telefon</th>
+                                        <th style="text-align: right;">Kırtasiye Bedeli</th>
+                                        <th style="text-align: right;">Tahsil Edilen</th>
+                                        <th style="text-align: right;">Kalan Bakiye</th>
+                                        <th style="text-align: center;">Ödeme Yöntemi</th>
+                                        <th style="text-align: center;">Tahsilat Durumu</th>
+                                        <th style="text-align: center;">Kitap Teslimatı</th>
+                                        <th style="text-align: right; width: 185px;">İşlemler</th>
                                     </tr>
                                 </thead>
                                 <tbody id="kirtasiyeTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GÜNLÜK TAHSİLAT RAPORU -->
+                <section id="view-ogrenci-gunluk-rapor" class="view-section">
+                    <!-- Üst Filtre & Aksiyon Barı -->
+                    <div class="card-box" style="margin-bottom: 16px; padding: 14px 18px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">
+                                        <i class="fa-regular fa-calendar" style="color: var(--primary);"></i> Tarih:
+                                    </label>
+                                    <input type="date" id="gunlukRaporTarih" class="input-control" onchange="renderGunlukTahsilatRaporu()" style="padding: 6px 10px; font-weight: 600;">
+                                    <button type="button" class="btn btn-subtle" onclick="setGunlukRaporBugun()" style="padding: 6px 12px; font-size: 11.5px;" title="Bugünün Raporunu Getir">
+                                        Bugün
+                                    </button>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Kampüs:</label>
+                                    <select id="gunlukRaporOkulFiltre" class="select-control" onchange="renderGunlukTahsilatRaporu()" style="padding: 6px 10px; font-weight: 600;">
+                                        <option value="ALL">Tüm Kampüsler</option>
+                                        <option value="okul1">🏫 1. Okul</option>
+                                        <option value="okul2">🎓 2. Okul</option>
+                                    </select>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Ödeme Yöntemi:</label>
+                                    <select id="gunlukRaporYontemFiltre" class="select-control" onchange="renderGunlukTahsilatRaporu()" style="padding: 6px 10px; font-weight: 600;">
+                                        <option value="ALL">Tümü (Nakit + Banka + POS)</option>
+                                        <option value="Nakit">💵 Sadece Nakit</option>
+                                        <option value="Banka">🏦 Sadece Banka / Havale</option>
+                                        <option value="POS">💳 Sadece POS / Kart</option>
+                                    </select>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Tür:</label>
+                                    <select id="gunlukRaporKategoriFiltre" class="select-control" onchange="renderGunlukTahsilatRaporu()" style="padding: 6px 10px; font-weight: 600;">
+                                        <option value="ALL">Tüm Tahsilatlar</option>
+                                        <option value="TAKSIT">📚 Taksit &amp; Aidat</option>
+                                        <option value="KIRTASIYE">📦 Kırtasiye &amp; Kitap</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button type="button" class="btn btn-subtle" onclick="exportGunlukRaporExcel()" title="Seçilen Günün Tahsilat Listesini Excel Olarak İndir">
+                                    <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Excel İndir
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="printGunlukTahsilatRaporu()" title="Resmi Günlük Kasa &amp; Tahsilat Çıktısı Al (A4)">
+                                    <i class="fa-solid fa-print"></i> Raporu Yazdır (A4)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI ÖZET KARTLARI (GÜNLÜK CİRO VE DAĞILIM) -->
+                    <div class="kpi-row" style="margin-bottom: 20px;">
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">GÜNLÜK TOPLAM TAHSİLAT</span>
+                                <i class="fa-solid fa-vault" style="color: var(--primary);"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiGunlukToplamTahsilat" style="color: var(--primary);">₺0</div>
+                            <div class="kpi-footer" id="kpiGunlukIslemSayisi">0 İşlem Kayıtlı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">NAKİT KASA TAHSİLATI</span>
+                                <i class="fa-solid fa-money-bill-wave" style="color: #10b981;"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiGunlukNakit" style="color: #10b981;">₺0</div>
+                            <div class="kpi-footer" id="kpiGunlukNakitOran">%0 Nakit Oranı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">BANKA &amp; HAVALE / EFT</span>
+                                <i class="fa-solid fa-building-columns" style="color: #3b82f6;"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiGunlukBanka" style="color: #3b82f6;">₺0</div>
+                            <div class="kpi-footer" id="kpiGunlukBankaOran">%0 Banka Oranı</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title">POS &amp; KREDİ KARTI</span>
+                                <i class="fa-solid fa-credit-card" style="color: #f59e0b;"></i>
+                            </div>
+                            <div class="kpi-number" id="kpiGunlukPos" style="color: #f59e0b;">₺0</div>
+                            <div class="kpi-footer" id="kpiGunlukPosOran">%0 POS Oranı</div>
+                        </div>
+                    </div>
+
+                    <!-- DETAYLI GÜNLÜK TAHSİLAT LİSTESİ -->
+                    <div class="card-box">
+                        <div class="card-box-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                            <div class="box-title">
+                                <i class="fa-solid fa-list-check" style="color: var(--primary);"></i>
+                                <span id="lblGunlukRaporBaslik">Günün Tahsilat Hareketleri</span>
+                            </div>
+                            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;" id="lblGunlukRaporTarihMetin">
+                                Tarih: Bugün
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="gunlukTahsilatTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 45px; text-align: center;">#</th>
+                                        <th style="width: 100px;">Makbuz No</th>
+                                        <th>Öğrenci Adı Soyadı</th>
+                                        <th style="text-align: center; width: 95px;">Kampüs</th>
+                                        <th>Tahsilat Kalemi</th>
+                                        <th style="text-align: center; width: 120px;">Ödeme Yöntemi</th>
+                                        <th style="text-align: right; width: 130px;">Tutar</th>
+                                        <th>Açıklama / Not</th>
+                                        <th style="text-align: center; width: 85px;">İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gunlukTahsilatTableBody">
+                                    <tr>
+                                        <td colspan="9" style="text-align: center; padding: 30px; color: var(--text-muted);">
+                                            Seçilen tarihte henüz tahsilat kaydı bulunmuyor.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: var(--bg-card-subtle); font-weight: 800;">
+                                        <td colspan="6" style="text-align: right; padding: 11px 14px;">GÜNLÜK GENEL TOPLAM:</td>
+                                        <td id="lblGunlukRaporDipToplam" style="text-align: right; color: var(--primary); font-size: 13.5px; padding: 11px 14px;">₺0,00</td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -1499,213 +1828,244 @@
                     </div>
                 </section>
 
-                <!-- ==================== AYARLAR SEKMESİ ==================== -->
+                <!-- ==================== AYARLAR SEKMESİ (SADE & 4 TEMEL ALAN) ==================== -->
                 <section id="view-ayarlar" class="view-section">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    
+                    <!-- Arka plan sayaç referansları (Hatasız çalışma için gizli) -->
+                    <div style="display: none;">
+                        <span id="lblStatOgrenciSayisi"></span>
+                        <span id="lblStatPersonelSayisi"></span>
+                        <span id="lblStatAlacakSayisi"></span>
+                        <span id="lblStatStorageSize"></span>
+                        <input type="text" id="cfgTelefon">
+                        <input type="email" id="cfgEposta">
+                        <input type="text" id="cfgVergiNo">
+                        <input type="text" id="cfgAdres">
+                        <input type="text" id="cfgKasaSorumlusu">
+                        <input type="text" id="cfgBanka1">
+                        <input type="text" id="cfgBanka2">
+                        <input type="text" id="cfgPosTerminal">
+                    </div>
+
+                    <div class="settings-grid-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 20px;">
                         
-                        <!-- Kurum Bilgileri & Şifre -->
+                        <!-- 1. KART: GÖRÜNÜM & TEMA SEÇİMİ (TEMA) -->
+                        <div class="card-box">
+                            <div class="card-box-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="box-title">
+                                    <i class="fa-solid fa-palette" style="color: var(--primary);"></i>
+                                    <span>Görünüm &amp; Kurumsal Tema</span>
+                                </div>
+                                <span class="badge-pill badge-primary" style="font-size: 11px;">Anında Uygulanır</span>
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
+                                Gözünüzü yormayan, dingin ve kurumsal renk paletlerinden dilediğinizi seçebilirsiniz.
+                            </p>
+                            <div class="theme-picker-grid">
+                                <button type="button" class="theme-picker-card" id="themeCard_light" onclick="setAppTheme('light')">
+                                    <span class="theme-picker-dot" style="background: #10b981;"></span>
+                                    <div class="theme-picker-info">
+                                        <div class="theme-picker-title">☀️ Açık Zümrüt</div>
+                                        <div class="theme-picker-sub">Soft Slate &amp; Zümrüt Vurgu</div>
+                                    </div>
+                                    <span class="theme-active-tag">Aktif</span>
+                                </button>
+                                <button type="button" class="theme-picker-card" id="themeCard_dark" onclick="setAppTheme('dark')">
+                                    <span class="theme-picker-dot" style="background: #3b82f6;"></span>
+                                    <div class="theme-picker-info">
+                                        <div class="theme-picker-title">🌙 Koyu Safir</div>
+                                        <div class="theme-picker-sub">Deep Slate &amp; Mavi Derinlik</div>
+                                    </div>
+                                    <span class="theme-active-tag">Aktif</span>
+                                </button>
+                                <button type="button" class="theme-picker-card" id="themeCard_gray" onclick="setAppTheme('gray')">
+                                    <span class="theme-picker-dot" style="background: #94a3b8;"></span>
+                                    <div class="theme-picker-info">
+                                        <div class="theme-picker-title">🌫️ Gri Çelik</div>
+                                        <div class="theme-picker-sub">Charcoal &amp; Nötr Dinginlik</div>
+                                    </div>
+                                    <span class="theme-active-tag">Aktif</span>
+                                </button>
+                                <button type="button" class="theme-picker-card" id="themeCard_bordo" onclick="setAppTheme('bordo')">
+                                    <span class="theme-picker-dot" style="background: #e11d48;"></span>
+                                    <div class="theme-picker-info">
+                                        <div class="theme-picker-title">🍷 Bordo Gül</div>
+                                        <div class="theme-picker-sub">Burgundy &amp; Sıcak Zarafet</div>
+                                    </div>
+                                    <span class="theme-active-tag">Aktif</span>
+                                </button>
+                                <button type="button" class="theme-picker-card" id="themeCard_monokai" onclick="setAppTheme('monokai')">
+                                    <span class="theme-picker-dot" style="background: #f92672;"></span>
+                                    <div class="theme-picker-info">
+                                        <div class="theme-picker-title">⚡ Monokai</div>
+                                        <div class="theme-picker-sub">Terminal Kontrastı</div>
+                                    </div>
+                                    <span class="theme-active-tag">Aktif</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2. KART: KURUM, KAMPÜSLER & ÖZELLEŞTİRME (ÖZELLEŞTİRME) -->
                         <div class="card-box">
                             <div class="card-box-header">
                                 <div class="box-title">
-                                    <i class="fa-solid fa-school"></i>
-                                    <span>Kurum Bilgileri</span>
+                                    <i class="fa-solid fa-sliders" style="color: var(--accent-gold);"></i>
+                                    <span>Kurum &amp; Özelleştirme Tanımları</span>
                                 </div>
                             </div>
 
                             <form onsubmit="saveSettingsForm(event)">
-                                <div class="form-group">
-                                    <label style="font-weight: 600; font-size: 13px;">Okul İsmi</label>
-                                    <input type="text" id="cfgKurumAdi" class="input-control" style="width: 100%; font-size: 14px; font-weight: 600;" placeholder="Okul / Kurum Adı" required>
+                                <div class="form-group" style="margin-bottom: 11px;">
+                                    <label style="font-weight: 700; font-size: 12px;">Kurum / Çatı İsmi *</label>
+                                    <input type="text" id="cfgKurumAdi" class="input-control" style="width: 100%; font-weight: 700;" placeholder="Örn: Yönetim Sistemi" required>
                                 </div>
-                                <div style="border-top: 1px solid var(--border-color); margin: 20px 0;"></div>
+                                <div class="form-grid-2" style="margin-bottom: 11px;">
+                                    <div class="form-group">
+                                        <label style="font-weight: 700; font-size: 11.5px; color: var(--primary);">
+                                            <i class="fa-solid fa-school"></i> 1. Okul / Kampüs İsmi
+                                        </label>
+                                        <input type="text" id="cfgOkul1Adi" class="input-control" style="width: 100%; font-weight: 600;" placeholder="Okul 1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-weight: 700; font-size: 11.5px; color: #3b82f6;">
+                                            <i class="fa-solid fa-graduation-cap"></i> 2. Okul / Kampüs İsmi
+                                        </label>
+                                        <input type="text" id="cfgOkul2Adi" class="input-control" style="width: 100%; font-weight: 600;" placeholder="Okul 2">
+                                    </div>
+                                </div>
+                                <div class="form-grid-2" style="margin-bottom: 11px;">
+                                    <div class="form-group">
+                                        <label style="font-weight: 600; font-size: 11.5px;">Kurumsal Slogan / Alt Başlık</label>
+                                        <input type="text" id="cfgAltBaslik" class="input-control" style="width: 100%;" placeholder="Mali ve İdari İşler Portalı">
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-weight: 600; font-size: 11.5px;">Yetkili Adı / Veznedar</label>
+                                        <input type="text" id="cfgYetkili" class="input-control" style="width: 100%;" placeholder="Yetkili">
+                                    </div>
+                                </div>
+                                <div class="form-grid-2" style="margin-bottom: 14px;">
+                                    <div class="form-group">
+                                        <label style="font-weight: 600; font-size: 11.5px;">Varsayılan Tahsilat Yöntemi</label>
+                                        <select id="cfgDefaultYontem" class="select-control" style="width: 100%; font-weight: 600;">
+                                            <option value="Nakit">💵 Nakit (Elden Kasa)</option>
+                                            <option value="Banka">🏦 Banka (Havale / EFT)</option>
+                                            <option value="POS">💳 POS (Kredi Kartı)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-weight: 600; font-size: 11.5px;">Varsayılan Kırtasiye Bedeli (₺)</label>
+                                        <input type="text" inputmode="numeric" id="cfgDefaultKirtasiye" class="input-control currency-mask" style="width: 100%; font-weight: 700; color: #10b981;" placeholder="5.000 ₺">
+                                    </div>
+                                </div>
 
-                                <div class="box-title" style="margin-bottom: 12px;">
-                                    <i class="fa-solid fa-key" style="color: #38bdf8;"></i>
-                                    <span>Giriş Şifresi Değiştir</span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Yeni Yönetici Şifresi</label>
-                                    <input type="password" id="cfgPassword" class="input-control" style="width: 100%;" required>
+                                <!-- Kurumsal Logo Yükleme -->
+                                <div style="border-top: 1px solid var(--border-color); padding-top: 11px; margin-bottom: 14px;">
+                                    <label style="font-weight: 700; font-size: 11.5px; display: block; margin-bottom: 6px;">Kurum Logosu (Makbuz &amp; Rapor Çıktıları)</label>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div id="previewLogoWrapper" style="width: 44px; height: 44px; border: 1.5px dashed var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--bg-card-subtle); overflow: hidden;">
+                                            <i class="fa-solid fa-image" style="color: var(--text-muted); font-size: 18px;" id="lblNoLogoIcon"></i>
+                                            <img id="imgLogoPreview" src="" alt="Logo" style="display: none; width: 100%; height: 100%; object-fit: contain;">
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <label class="btn btn-subtle" style="padding: 6px 10px; font-size: 11px; cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                                                <i class="fa-solid fa-upload"></i> Logo Yükle
+                                                <input type="file" id="inputLogoFile" accept="image/*" onchange="handleLogoUpload(event)" style="display: none;">
+                                            </label>
+                                            <button type="button" class="btn btn-subtle" onclick="removeInstitutionLogo()" id="btnRemoveLogo" style="padding: 6px 9px; font-size: 11px; display: none;">
+                                                <i class="fa-solid fa-trash-can" style="color: #ef4444;"></i> Kaldır
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 11px; margin-top: 10px;">
-                                    <i class="fa-solid fa-floppy-disk"></i> Ayarları Kaydet
+                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; font-weight: 700;">
+                                    <i class="fa-solid fa-floppy-disk"></i> Özelleştirme Bilgilerini Kaydet
                                 </button>
                             </form>
                         </div>
 
-                        <!-- Akıllı Yedekleme & Geri Yükleme (Tam veya Modül Bazlı) -->
+                        <!-- 3. KART: SİSTEM GÜNCELLEME & SÜRÜM YÖNETİMİ (GÜNCELLEME) -->
+                        <div class="card-box">
+                            <div class="card-box-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="box-title">
+                                    <i class="fa-solid fa-arrows-rotate" style="color: #3b82f6;"></i>
+                                    <span>Sistem Güncelleme Merkezi</span>
+                                </div>
+                                <span class="badge-pill badge-primary" id="badgeAppVersion" style="font-size: 11px; padding: 4px 10px;">Sürüm v1.5.0</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 14px;">
+                                <div style="font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;" id="lblCurrentVersionText">
+                                    Mevcut Sürüm: v1.5.0 (12.11.2026)
+                                </div>
+                                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0 0 8px 0;">
+                                    Güncellemeler <strong>Sistemi_Baslat.bat</strong> açılışında otomatik denetlenir ve <strong>Veri_Profili</strong> verilerinize dokunulmadan yüklenir.
+                                </p>
+                                <div style="font-size: 11px; color: var(--text-dim);" id="lblUpdateCheckTime">
+                                    Son Kontrol: <em>Henüz yapılmadı</em>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <button type="button" class="btn btn-primary" onclick="checkSystemUpdates(true)" id="btnCheckUpdates" style="height: 38px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <i class="fa-solid fa-arrows-rotate"></i>
+                                    <span>Güncellemeleri Denetle</span>
+                                </button>
+                                <label class="btn btn-subtle" style="height: 36px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; margin: 0; font-size: 11.5px;" title="İnternetsiz bilgisayarlarda WhatsApp veya flash ile aldığınız güncelleme paketini (.json/.pkg) yükleyin">
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                    <span style="font-weight: 600;">Paket Dosyası ile Çevrimdışı Güncelle (.JSON)</span>
+                                    <input type="file" accept=".json,.pkg" onchange="applyUpdatePackage(event)" style="display: none;">
+                                </label>
+                                <button type="button" class="btn btn-subtle" onclick="exportFullSystemJson()" style="font-size: 11px; height: 32px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                    <span>Güncelleme Öncesi Güvenlik Yedeği İndir</span>
+                                </button>
+                            </div>
+
+                            <!-- Güncelleme Durum Bildirimi (Inline Alert Kutusu) -->
+                            <div id="updateStatusAlert" style="display: none; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px;"></div>
+                        </div>
+
+                        <!-- 4. KART: AKILLI YEDEKLEME & GERİ YÜKLEME (YEDEKLEME) -->
                         <div class="card-box">
                             <div class="card-box-header">
                                 <div class="box-title">
                                     <i class="fa-solid fa-shield-halved" style="color: var(--success);"></i>
-                                    <span>Akıllı Yedekleme & Geri Yükleme</span>
+                                    <span>Akıllı Yedekleme &amp; Geri Yükleme</span>
                                 </div>
                             </div>
                             <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
-                                İster <strong>tüm sistemin yedeğini</strong>, ister eski bağımsız programlardan aldığınız <strong>tekil modül yedeğini (yalnızca Öğrenci veya yalnızca Personel/Maaş)</strong> buradan yükleyebilirsiniz. Yüklenen dosya otomatik algılanır; <strong>yalnızca o modül güncellenir, diğer verileriniz asla silinmez veya bozulmaz!</strong>
+                                İster tüm sistemin tam yedeğini indirin, ister yedek dosyanızı geri yükleyin. Yüklenen dosya otomatik algılanır ve mevcut verileriniz güvenle senkronize edilir.
                             </p>
 
                             <!-- Geri Yükleme Alanı (Akıllı) -->
                             <label class="btn btn-subtle" style="width: 100%; padding: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1.5px dashed var(--accent-gold); margin-bottom: 14px; background: var(--bg-card-subtle);">
                                 <i class="fa-solid fa-file-import"></i>
-                                <span style="font-weight: 700;">Yedek Dosyası Seç (.JSON Yükle)</span>
+                                <span style="font-weight: 700; margin-left: 6px;">Yedek Dosyası Seç (.JSON Geri Yükle)</span>
                                 <input type="file" accept=".json" onchange="importFullSystemJson(event)" style="display: none;">
                             </label>
 
                             <!-- Yedek İndirme Seçenekleri -->
                             <div style="border-top: 1px solid var(--border-color); padding-top: 12px;">
                                 <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">BİLGİSAYARA YEDEK İNDİR (DIŞA AKTAR):</div>
-                                <button onclick="exportFullSystemJson()" class="btn btn-primary" style="width: 100%; padding: 10px; margin-bottom: 8px;">
+                                <button onclick="exportFullSystemJson()" class="btn btn-primary" style="width: 100%; padding: 9px; margin-bottom: 8px; font-weight: 700;">
                                     <i class="fa-solid fa-download"></i> Tüm Sistemi Tek Dosya İndir (JSON)
                                 </button>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
                                     <button type="button" class="btn btn-subtle" style="font-size: 11px; padding: 7px 4px;" onclick="exportModuleJson('ogrenci')" title="Sadece Öğrenci Verilerini İndir">
-                                        <i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> Sadece Öğrenci
+                                        <i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> Öğrenci
                                     </button>
-                                    <button type="button" class="btn btn-subtle" style="font-size: 11px; padding: 7px 4px;" onclick="exportModuleJson('personel')" title="Sadece Personel & Maaş Verilerini İndir">
-                                        <i class="fa-solid fa-users-gear" style="color: var(--success);"></i> Sadece Personel
+                                    <button type="button" class="btn btn-subtle" style="font-size: 11px; padding: 7px 4px;" onclick="exportModuleJson('personel')" title="Sadece Personel &amp; Maaş Verilerini İndir">
+                                        <i class="fa-solid fa-users-gear" style="color: var(--success);"></i> Personel
                                     </button>
-                                    <button type="button" class="btn btn-subtle" style="font-size: 11px; padding: 7px 4px;" onclick="exportModuleJson('alacak')" title="Sadece Alacak & Cari Verilerini İndir">
-                                        <i class="fa-solid fa-hand-holding-dollar"></i> Sadece Alacak
+                                    <button type="button" class="btn btn-subtle" style="font-size: 11px; padding: 7px 4px;" onclick="exportModuleJson('alacak')" title="Sadece Alacak &amp; Cari Verilerini İndir">
+                                        <i class="fa-solid fa-hand-holding-dollar" style="color: var(--accent-gold);"></i> Alacak
+                                    </button>
+                                    <button type="button" class="btn btn-subtle" style="font-size: 11px; padding: 7px 4px;" onclick="exportModuleJson('borc')" title="Sadece Borç ve Ödeme Verilerini İndir">
+                                        <i class="fa-solid fa-scale-unbalanced-flip" style="color: #f59e0b;"></i> Borç
                                     </button>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Alacak & Cari Tür Tanımlamaları -->
-                        <div class="card-box" style="grid-column: span 2;">
-                            <div class="card-box-header">
-                                <div class="box-title">
-                                    <i class="fa-solid fa-tags"></i>
-                                    <span>Alacak & Cari Tür Tanımlamaları</span>
-                                </div>
-                                <button type="button" class="btn btn-primary" onclick="openAlacakTurleriModal()">
-                                    <i class="fa-solid fa-sliders"></i> Tür Yönetimini Aç
-                                </button>
-                            </div>
-                            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0;">
-                                Sistemdeki alacak ve tahsilatlarda kullanılan türleri (İFT, THH, KRM, BK, SAH, KAMP, TAK vb.) buradan düzenleyebilir, yeni türler tanımlayabilir veya ihtiyaç duymadıklarınızı silebilirsiniz. Bir türü güncellediğinizde geçmiş kayıtlar bozulmadan otomatik olarak yeni türe bağlanır.
-                            </p>
-                        </div>
-
-                        <!-- Görünüm Temaları Seçimi -->
-                        <div class="card-box" style="grid-column: span 2;">
-                            <div class="card-box-header">
-                                <div class="box-title">
-                                    <i class="fa-solid fa-palette" style="color: var(--primary);"></i>
-                                    <span>Görünüm Temaları (Göz Dinlendirici Tasarımlar)</span>
-                                </div>
-                            </div>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-                                Çalışma ortamınıza ve tercihinize göre 5 farklı kurumsal tema arasından seçim yapabilirsiniz. Tema tercihiniz otomatik olarak hatırlanır.
-                            </p>
-                            <div class="theme-selector-grid">
-                                <div class="theme-card-option" id="themeCard-light" onclick="setAppTheme('light')">
-                                    <div class="theme-preview-dots">
-                                        <span class="theme-preview-dot" style="background: #f8fafc;"></span>
-                                        <span class="theme-preview-dot" style="background: #047857;"></span>
-                                        <span class="theme-preview-dot" style="background: #0f172a;"></span>
-                                    </div>
-                                    <div class="theme-card-title">Açık Zümrüt</div>
-                                    <div class="theme-card-sub">Soft Slate & Emerald</div>
-                                </div>
-                                <div class="theme-card-option" id="themeCard-dark" onclick="setAppTheme('dark')">
-                                    <div class="theme-preview-dots">
-                                        <span class="theme-preview-dot" style="background: #090d16;"></span>
-                                        <span class="theme-preview-dot" style="background: #3b82f6;"></span>
-                                        <span class="theme-preview-dot" style="background: #111827;"></span>
-                                    </div>
-                                    <div class="theme-card-title">Koyu Sapphire</div>
-                                    <div class="theme-card-sub">Deep Slate & Mavi</div>
-                                </div>
-                                <div class="theme-card-option" id="themeCard-gray" onclick="setAppTheme('gray')">
-                                    <div class="theme-preview-dots">
-                                        <span class="theme-preview-dot" style="background: #20242c;"></span>
-                                        <span class="theme-preview-dot" style="background: #94a3b8;"></span>
-                                        <span class="theme-preview-dot" style="background: #363c4b;"></span>
-                                    </div>
-                                    <div class="theme-card-title">Gri Charcoal</div>
-                                    <div class="theme-card-sub">Çelik & Nötr Arduvaz</div>
-                                </div>
-                                <div class="theme-card-option" id="themeCard-bordo" onclick="setAppTheme('bordo')">
-                                    <div class="theme-preview-dots">
-                                        <span class="theme-preview-dot" style="background: #180a0f;"></span>
-                                        <span class="theme-preview-dot" style="background: #e11d48;"></span>
-                                        <span class="theme-preview-dot" style="background: #271018;"></span>
-                                    </div>
-                                    <div class="theme-card-title">Bordo Burgundy</div>
-                                    <div class="theme-card-sub">Asil Bordo & Gül</div>
-                                </div>
-                                <div class="theme-card-option" id="themeCard-monokai" onclick="setAppTheme('monokai')">
-                                    <div class="theme-preview-dots">
-                                        <span class="theme-preview-dot" style="background: #272822;"></span>
-                                        <span class="theme-preview-dot" style="background: #f92672;"></span>
-                                        <span class="theme-preview-dot" style="background: #a6e22e;"></span>
-                                    </div>
-                                    <div class="theme-card-title">Monokai Pro</div>
-                                    <div class="theme-card-sub">Terminal & Yazılımcı</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Otomatik Arka Plan Yedek Geçmişi (Son 5 Yedek) -->
-                        <div class="card-box" style="grid-column: span 2;">
-                            <div class="card-box-header">
-                                <div class="box-title">
-                                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--success);"></i>
-                                    <span>Otomatik Sistem Yedek Geçmişi (Son 5 Yedek)</span>
-                                </div>
-                                <button type="button" class="btn btn-subtle" onclick="renderAutoBackupHistoryList()" title="Listeyi Yenile">
-                                    <i class="fa-solid fa-arrows-rotate"></i> Yenile
-                                </button>
-                            </div>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-                                Sistemden güvenli çıkış yaptığınızda veya kritik veri işlemlerinde otomatik olarak sistemin anlık bir kopyası (snapshot) saklanır. İhtiyaç halinde tek tıkla eski bir noktaya geri dönebilirsiniz.
-                            </p>
-                            <div id="autoBackupHistoryContainer">
-                                <!-- JS ile dinamik son 5 yedek listelenecek -->
-                            </div>
-                        </div>
-
-                        <!-- Sistem Güncelleme & Sürüm Yönetimi (Otomatik & Buton ile) -->
-                        <div class="card-box" style="grid-column: span 2;">
-                            <div class="card-box-header" style="display: flex; justify-content: space-between; align-items: center;">
-                                <div class="box-title">
-                                    <i class="fa-solid fa-arrows-rotate" style="color: #38bdf8;"></i>
-                                    <span>Sistem Güncelleme & Sürüm Yönetimi</span>
-                                </div>
-                                <span class="badge-pill badge-primary" id="badgeAppVersion" style="font-size: 11px; padding: 4px 10px;">Sürüm v1.1.0</span>
-                            </div>
-                            
-                            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: center;">
-                                <div>
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;" id="lblCurrentVersionText">
-                                        Mevcut Sürüm: v1.1.0 (Stabil)
-                                    </div>
-                                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0 0 10px 0;">
-                                        Sistem güncellendiğinde firmanızın kayıtlı tüm öğrenci, personel, ödeme ve kurum bilgileri <strong>asla silinmez veya bozulmaz</strong>. Yalnızca yeni özellikler, şablonlar ve hız iyileştirmeleri sisteme yüklenir.
-                                    </p>
-                                    <div style="font-size: 11px; color: var(--text-dim);" id="lblUpdateCheckTime">
-                                        Son Kontrol: <em>Henüz yapılmadı</em>
-                                    </div>
-                                </div>
-
-                                <div style="display: flex; flex-direction: column; gap: 8px;">
-                                    <button type="button" class="btn btn-primary" onclick="checkSystemUpdates(true)" id="btnCheckUpdates" style="padding: 10px 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
-                                        <i class="fa-solid fa-cloud-arrow-down" style="font-size: 15px;"></i>
-                                        <span>İnternetten Güncellemeleri Denetle</span>
-                                    </button>
-                                    <label class="btn btn-subtle" style="padding: 8px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; border: 1.5px dashed var(--accent-gold); margin: 0; font-size: 12px; background: rgba(234, 179, 8, 0.05);" title="İnternetsiz bilgisayarlarda WhatsApp veya flash ile aldığınız güncelleme paketini (.json) yükleyin">
-                                        <i class="fa-solid fa-file-arrow-up"></i>
-                                        <span style="font-weight: 700;">Paket Dosyası ile Güncelle (.JSON)</span>
-                                        <input type="file" accept=".json,.pkg" onchange="applyUpdatePackage(event)" style="display: none;">
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Güncelleme Bildirim / Durum Kutusu -->
-                            <div id="updateStatusAlert" style="display: none; margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 12.5px;"></div>
                         </div>
 
                     </div>
@@ -1856,13 +2216,38 @@
                             <select id="formTahsilatTur" class="select-control" style="width: 100%;"></select>
                         </div>
                     </div>
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label style="font-weight: 700; font-size: 12px; margin-bottom: 8px; display: block;">
+                            <i class="fa-solid fa-credit-card" style="color: var(--accent-gold);"></i> Tahsilat Yöntemi *
+                        </label>
+                        <div class="payment-method-selector-grid">
+                            <label class="payment-method-card active" id="lblAlacakPayNakit">
+                                <input type="radio" name="alacakPayYontemRadio" value="Nakit" checked onchange="handleAlacakPayMethodChange('Nakit')">
+                                <div class="pm-icon" style="color: #10b981;"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                <div class="pm-title">Nakit</div>
+                                <div class="pm-sub">Elden / Kasa</div>
+                            </label>
+                            <label class="payment-method-card" id="lblAlacakPayBanka">
+                                <input type="radio" name="alacakPayYontemRadio" value="Banka" onchange="handleAlacakPayMethodChange('Banka')">
+                                <div class="pm-icon" style="color: #0284c7;"><i class="fa-solid fa-building-columns"></i></div>
+                                <div class="pm-title">Banka</div>
+                                <div class="pm-sub">Havale / EFT</div>
+                            </label>
+                            <label class="payment-method-card" id="lblAlacakPayPOS">
+                                <input type="radio" name="alacakPayYontemRadio" value="POS" onchange="handleAlacakPayMethodChange('POS')">
+                                <div class="pm-icon" style="color: #8b5cf6;"><i class="fa-solid fa-credit-card"></i></div>
+                                <div class="pm-title">POS / Kart</div>
+                                <div class="pm-sub">Kredi Kartı</div>
+                            </label>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label>Tahsil Edilen Tutar (TL) *</label>
                         <input type="text" inputmode="numeric" id="formTahsilatTutar" class="input-control currency-mask" style="width: 100%; font-size: 15px; font-weight: 800; color: var(--success);" placeholder="0 ₺" required>
                     </div>
                     <div class="form-group">
-                        <label>Açıklama (Havale, Nakit vb.)</label>
-                        <input type="text" id="formTahsilatAciklama" class="input-control" style="width: 100%;" placeholder="Kısmi ödeme, banka dekontu vb.">
+                        <label>Açıklama / Dekont Notu</label>
+                        <input type="text" id="formTahsilatAciklama" class="input-control" style="width: 100%;" placeholder="Dekont no, ödeme notu vb.">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1952,20 +2337,41 @@
         </div>
     </div>
 
-    <!-- MODAL: ÖĞRENCİ TAHSİLAT AL -->
+    <!-- MODAL: ÖĞRENCİ TAHSİLAT AL (NAKİT / BANKA / POS SEÇENEKLİ) -->
     <div id="modalOgrenciPay" class="modal-overlay">
-        <div class="modal-card">
+        <div class="modal-card" style="max-width: 520px;">
             <div class="modal-header">
-                <h3>Tahsilat Al: <span id="payModalOgrenciAd" ></span></h3>
-                <button onclick="closeModal('modalOgrenciPay')" class="sidebar-toggle-btn">&times;</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-hand-holding-dollar" style="color: #10b981; font-size: 16px;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 15px;">Öğrenci Taksit Tahsilatı</h3>
+                        <p style="margin: 0; font-size: 11px; color: var(--text-muted);"><span id="payModalOgrenciAd" style="font-weight: 700; color: var(--text-main);">-</span></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalOgrenciPay')" class="sidebar-toggle-btn">&times;</button>
             </div>
             <form onsubmit="submitOgrenciPay(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="payModalOgrenciId">
-                    <div class="form-grid-2">
+                <input type="hidden" id="payModalOgrenciId">
+                <div class="modal-body" style="padding: 18px 22px;">
+                    
+                    <!-- ÖZET BİLGİ ŞERİDİ -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; padding: 10px 14px; background: var(--bg-card-subtle); border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        <div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Aylık Hedef Taksit</div>
+                            <div style="font-size: 14px; font-weight: 800; color: var(--primary);" id="payModalTargetDisplay">₺0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: #ef4444; text-transform: uppercase;">Kalan Genel Borç</div>
+                            <div style="font-size: 14px; font-weight: 800; color: #ef4444;" id="payModalRemainingDisplay">₺0</div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2" style="margin-bottom: 14px;">
                         <div class="form-group">
-                            <label>Ödeme Dönemi / Ay</label>
-                            <select id="payModalAySelect" class="select-control" style="width: 100%;">
+                            <label style="font-size: 12px; font-weight: 700;">Ödeme Dönemi / Ay *</label>
+                            <select id="payModalAySelect" class="select-control" style="width: 100%; font-weight: 600;">
                                 <option value="Eylül">Eylül</option>
                                 <option value="Ekim">Ekim</option>
                                 <option value="Kasım">Kasım</option>
@@ -1981,26 +2387,225 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Tahsil Edilen Tutar (TL) *</label>
-                            <input type="text" inputmode="numeric" id="payModalTutar" class="input-control currency-mask" style="width: 100%; font-weight: 800; color: var(--success);" placeholder="0 ₺" required>
+                            <label style="font-size: 12px; font-weight: 700;">Tahsil Edilen Tutar (TL) *</label>
+                            <input type="text" inputmode="numeric" id="payModalTutar" class="input-control currency-mask" style="width: 100%; font-weight: 800; color: var(--success); font-size: 15px; text-align: right;" placeholder="0 ₺" required>
                         </div>
                     </div>
-                    <div class="form-grid-2">
+
+                    <!-- ÖDEME YÖNTEMİ SEÇİCİ (NAKİT / BANKA / POS) -->
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label style="font-weight: 700; font-size: 12px; margin-bottom: 8px; display: block;">
+                            <i class="fa-solid fa-credit-card" style="color: var(--primary);"></i> Ödeme Yöntemi *
+                        </label>
+                        <div class="payment-method-selector-grid">
+                            <label class="payment-method-card active" id="lblOgrPayNakit">
+                                <input type="radio" name="ogrenciPayYontemRadio" value="Nakit" checked onchange="handleOgrenciPayMethodChange('Nakit')">
+                                <div class="pm-icon" style="color: #10b981;"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                <div class="pm-title">Nakit</div>
+                                <div class="pm-sub">Elden / Kasa</div>
+                            </label>
+                            <label class="payment-method-card" id="lblOgrPayBanka">
+                                <input type="radio" name="ogrenciPayYontemRadio" value="Banka" onchange="handleOgrenciPayMethodChange('Banka')">
+                                <div class="pm-icon" style="color: #0284c7;"><i class="fa-solid fa-building-columns"></i></div>
+                                <div class="pm-title">Banka</div>
+                                <div class="pm-sub">Havale / EFT</div>
+                            </label>
+                            <label class="payment-method-card" id="lblOgrPayPOS">
+                                <input type="radio" name="ogrenciPayYontemRadio" value="POS" onchange="handleOgrenciPayMethodChange('POS')">
+                                <div class="pm-icon" style="color: #8b5cf6;"><i class="fa-solid fa-credit-card"></i></div>
+                                <div class="pm-title">POS / Kart</div>
+                                <div class="pm-sub">Kredi Kartı</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2" style="margin-bottom: 12px;">
                         <div class="form-group">
-                            <label>Tahsilat Tarihi</label>
+                            <label style="font-size: 12px; font-weight: 600;">Tahsilat Tarihi</label>
                             <input type="date" id="payModalTarih" class="input-control" style="width: 100%;" required>
                         </div>
                         <div class="form-group">
-                            <label>Tahsilat Notu</label>
-                            <input type="text" id="payModalNot" class="input-control" style="width: 100%;">
+                            <label style="font-size: 12px; font-weight: 600;">Makbuz / Seri No</label>
+                            <input type="text" id="payModalMakbuzNo" class="input-control" style="width: 100%; font-weight: 600;" placeholder="MK-1001">
                         </div>
                     </div>
+
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: 600;">Tahsilat Notu</label>
+                        <input type="text" id="payModalNot" class="input-control" style="width: 100%;" placeholder="Taksit tahsilatı">
+                    </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
                     <button type="button" class="btn btn-subtle" onclick="closeModal('modalOgrenciPay')">İptal</button>
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Tahsilatı Kaydet & Makbuz</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-subtle" onclick="executeOgrenciPaySubmit(true)" style="font-weight: 600;" title="Kaydettikten sonra hemen makbuz yazdırır">
+                            <i class="fa-solid fa-print"></i> Kaydet &amp; Makbuz
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="executeOgrenciPaySubmit(false)" style="font-weight: 700; background: #10b981; border-color: #10b981; color: #fff;">
+                            <i class="fa-solid fa-check"></i> Tahsilatı Kaydet
+                        </button>
+                    </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: KIRTASİYE TAHSİLAT AL (NAKİT / BANKA / POS) -->
+    <div id="modalKirtasiyeTahsilat" class="modal-overlay">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-hand-holding-dollar" style="color: #10b981; font-size: 16px;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 15px;">Kırtasiye Bedeli Tahsilatı</h3>
+                        <p style="margin: 0; font-size: 11px; color: var(--text-muted);"><span id="lblKirtasiyeTahsilatOgrAd" style="font-weight: 700; color: var(--text-main);">-</span></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalKirtasiyeTahsilat')" class="sidebar-toggle-btn">&times;</button>
+            </div>
+            <form onsubmit="submitKirtasiyeTahsilat(event)">
+                <input type="hidden" id="formKirtasiyeTahsilatOgrId">
+                <div class="modal-body" style="padding: 18px 22px;">
+                    <!-- ÖZET BİLGİ KARTLARI -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; padding: 12px; background: var(--bg-card-subtle); border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        <div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Toplam Bedel</div>
+                            <div style="font-size: 14px; font-weight: 800; color: var(--text-main);" id="lblKirtasiyeModalToplam">₺0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: #10b981; text-transform: uppercase;">Ödenen</div>
+                            <div style="font-size: 14px; font-weight: 800; color: #10b981;" id="lblKirtasiyeModalOdenen">₺0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: #ef4444; text-transform: uppercase;">Kalan Borç</div>
+                            <div style="font-size: 14px; font-weight: 800; color: #ef4444;" id="lblKirtasiyeModalKalan">₺0</div>
+                        </div>
+                    </div>
+
+                    <!-- TAHSİLAT TUTARI -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="font-weight: 700; font-size: 12.5px; display: flex; justify-content: space-between;">
+                            <span>Tahsil Edilecek Tutar (₺) *</span>
+                            <span style="font-size: 11px; font-weight: 600; color: var(--primary); cursor: pointer;" onclick="fillKirtasiyeMaxRemaining()">Kalanın Tamamını Doldur</span>
+                        </label>
+                        <input type="text" inputmode="numeric" id="formKirtasiyeTutar" class="input-control currency-mask" style="width: 100%; font-size: 16px; font-weight: 800; color: #10b981; text-align: right;" placeholder="0 ₺" required>
+                    </div>
+
+                    <!-- ÖDEME YÖNTEMİ SEÇİCİ (NAKİT / BANKA / POS) -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="font-weight: 700; font-size: 12.5px; margin-bottom: 8px; display: block;">
+                            <i class="fa-solid fa-credit-card" style="color: var(--primary);"></i> Ödeme Yöntemi *
+                        </label>
+                        <div class="payment-method-selector-grid">
+                            <label class="payment-method-card active" id="lblMethodNakit">
+                                <input type="radio" name="kirtasiyeYontemRadio" value="Nakit" checked onchange="handleKirtasiyeMethodChange('Nakit')">
+                                <div class="pm-icon" style="color: #10b981;"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                <div class="pm-title">Nakit</div>
+                                <div class="pm-sub">Elden / Kasa</div>
+                            </label>
+                            <label class="payment-method-card" id="lblMethodBanka">
+                                <input type="radio" name="kirtasiyeYontemRadio" value="Banka" onchange="handleKirtasiyeMethodChange('Banka')">
+                                <div class="pm-icon" style="color: #0284c7;"><i class="fa-solid fa-building-columns"></i></div>
+                                <div class="pm-title">Banka</div>
+                                <div class="pm-sub">Havale / EFT</div>
+                            </label>
+                            <label class="payment-method-card" id="lblMethodPOS">
+                                <input type="radio" name="kirtasiyeYontemRadio" value="POS" onchange="handleKirtasiyeMethodChange('POS')">
+                                <div class="pm-icon" style="color: #8b5cf6;"><i class="fa-solid fa-credit-card"></i></div>
+                                <div class="pm-title">POS / Kart</div>
+                                <div class="pm-sub">Kredi Kartı</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- TARİH VE MAKBUZ DETAYI -->
+                    <div class="form-grid-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label style="font-size: 12px; font-weight: 600;">Tahsilat Tarihi</label>
+                            <input type="date" id="formKirtasiyeTarih" class="input-control" style="width: 100%;" required>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 12px; font-weight: 600;">Makbuz / Seri No</label>
+                            <input type="text" id="formKirtasiyeMakbuzNo" class="input-control" style="width: 100%; font-weight: 600;" placeholder="KT-1001">
+                        </div>
+                    </div>
+
+                    <!-- AÇIKLAMA -->
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 600;">Açıklama / Not</label>
+                        <input type="text" id="formKirtasiyeNot" class="input-control" style="width: 100%;" placeholder="Kırtasiye ve Kitap Seti Tahsilatı">
+                    </div>
+
+                    <!-- KİTAP TESLİMATI ONAY KUTUSU -->
+                    <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="chkKirtasiyeTeslimEt" style="width: 18px; height: 18px; cursor: pointer; accent-color: #2563eb;">
+                        <label for="chkKirtasiyeTeslimEt" style="font-size: 12.5px; font-weight: 700; color: var(--text-main); cursor: pointer; margin: 0;">
+                            📚 Kitap ve Kırtasiye Setini "Teslim Edildi" Olarak İşaretle
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" class="btn btn-subtle" onclick="closeModal('modalKirtasiyeTahsilat')">İptal</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-subtle" onclick="executeKirtasiyeSubmit(true)" style="font-weight: 600;" title="Kaydettikten sonra hemen kırtasiye makbuzu yazdırır">
+                            <i class="fa-solid fa-print"></i> Kaydet &amp; Makbuz
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="executeKirtasiyeSubmit(false)" style="font-weight: 700; background: #10b981; border-color: #10b981; color: #fff;">
+                            <i class="fa-solid fa-check"></i> Tahsilatı Kaydet
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: KIRTASİYE GEÇMİŞİ VE MAKBUZ LİSTESİ -->
+    <div id="modalKirtasiyeGecmis" class="modal-overlay">
+        <div class="modal-card" style="max-width: 660px;">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #3b82f6; font-size: 16px;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 15px;">Kırtasiye Tahsilat & Teslimat Geçmişi</h3>
+                        <p style="margin: 0; font-size: 11px; color: var(--text-muted);"><span id="lblKirtasiyeGecmisOgrAd" style="font-weight: 700; color: var(--text-main);">-</span></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalKirtasiyeGecmis')" class="sidebar-toggle-btn">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <!-- ÖĞRENCİ KIRTASİYE DETAY PANELİ -->
+                <div id="kirtasiyeGecmisSummaryBox" style="margin-bottom: 16px;"></div>
+
+                <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>KIRTASİYE ÖDEME VE MAKBUZ KAYITLARI:</span>
+                    <button type="button" class="btn btn-primary" id="btnGecmisYeniTahsilat" style="font-size: 11px; padding: 4px 10px;">
+                        <i class="fa-solid fa-plus"></i> Yeni Tahsilat Al
+                    </button>
+                </div>
+
+                <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; max-height: 280px; overflow-y: auto;">
+                    <table class="data-table" style="margin: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Makbuz No</th>
+                                <th>Ödeme Yöntemi</th>
+                                <th style="text-align: right;">Tutar</th>
+                                <th>Açıklama</th>
+                                <th style="text-align: right; width: 90px;">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kirtasiyeGecmisTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+                <button type="button" class="btn btn-subtle" onclick="closeModal('modalKirtasiyeGecmis')">Kapat</button>
+            </div>
         </div>
     </div>
 
@@ -2065,7 +2670,9 @@
                 <button type="button" class="btn btn-subtle" onclick="closeModal('modalMatrisAyAyar')">Kapat</button>
             </div>
         </div>
-    </div>\r\n\r\n    <!-- MODAL: ÖĞRENCİ SİCİL DETAY KARTI -->
+    </div>
+
+    <!-- MODAL: ÖĞRENCİ SİCİL DETAY KARTI -->
     <div id="modalOgrenciDetail" class="modal-overlay">
         <div class="modal-card" style="max-width: 650px;">
             <div class="modal-header">
@@ -2819,6 +3426,29 @@
         </div>
     </div>
 
+    <!-- MODAL: HIZLI ARAMA & KOMUT PALETİ (CTRL + K SPOTLIGHT) -->
+    <div id="modalCommandPalette" class="command-palette-overlay" onclick="closeCommandPaletteOnBackdrop(event)">
+        <div class="command-palette-card">
+            <div class="command-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="commandPaletteInput" class="command-input" placeholder="Öğrenci, personel, alacak veya menü ara..." oninput="handleCommandPaletteSearch()" onkeydown="handleCommandPaletteKeydown(event)">
+                <button type="button" class="sidebar-toggle-btn" onclick="closeCommandPalette()" title="Kapat (Esc)">&times;</button>
+            </div>
+            <div class="command-filter-bar">
+                <button type="button" id="cmdFilter-all" class="command-filter-pill active" onclick="setCommandFilter('all')">Tümü</button>
+                <button type="button" id="cmdFilter-ogrenci" class="command-filter-pill" onclick="setCommandFilter('ogrenci')">Öğrenciler</button>
+                <button type="button" id="cmdFilter-personel" class="command-filter-pill" onclick="setCommandFilter('personel')">Personel</button>
+                <button type="button" id="cmdFilter-alacak" class="command-filter-pill" onclick="setCommandFilter('alacak')">Alacaklar</button>
+                <button type="button" id="cmdFilter-menu" class="command-filter-pill" onclick="setCommandFilter('menu')">Menü &amp; Komutlar</button>
+            </div>
+            <div id="commandPaletteResults" class="command-results-list"></div>
+            <div class="command-palette-footer">
+                <span><kbd style="padding:1px 5px;border:1px solid var(--border-color);border-radius:3px;">↑↓</kbd> Gezin &bull; <kbd style="padding:1px 5px;border:1px solid var(--border-color);border-radius:3px;">Enter</kbd> Aç &bull; <kbd style="padding:1px 5px;border:1px solid var(--border-color);border-radius:3px;">Esc</kbd> Kapat</span>
+                <span>Toplam <strong id="commandPaletteTotalCount">0</strong> sonuç</span>
+            </div>
+        </div>
+    </div>
+
     <!-- YAZDIRILABİLİR MAKBUZ / DEKONT KAPSAYICISI -->
     <div id="printableReceipt"></div>
 
@@ -2830,6 +3460,144 @@
     <script src="js/ogrenci.js"></script>
     <script src="js/personel.js"></script>
     <script src="js/borc.js"></script>
+
+    <!-- MODAL: DGN SİSTEM GÜNCELLEME MERKEZİ (CANLI GITHUB KONTROLÜ & ÇEVRİMDIŞI KASA) -->
+    <div id="modalSystemUpdate" class="modal-overlay">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 700;">Sistem Güncelleme Merkezi</h3>
+                        <p style="margin: 0; font-size: 11px; color: var(--text-muted);">Bulut Senkronu &bull; Veri Kaybı Riski Yoktur</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalSystemUpdate')" class="sidebar-toggle-btn" title="Kapat">&times;</button>
+            </div>
+
+            <div class="modal-body" style="padding: 20px;">
+                
+                <!-- DURUM 1: DENETLENİYOR -->
+                <div id="updateViewChecking" style="display: none; text-align: center; padding: 24px 10px;">
+                    <div style="font-size: 32px; color: var(--primary); margin-bottom: 12px;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">
+                        Güncelleme Kataloğu Denetleniyor...
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted);">
+                        Sürüm bilgisi ve sistem bütünlüğü kontrol ediliyor. Lütfen bekleyin.
+                    </div>
+                </div>
+
+                <!-- DURUM 2: SİSTEM ZATEN EN GÜNCEL -->
+                <div id="updateViewUpToDate" style="display: none; text-align: center; padding: 12px 6px;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--success-light); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 14px auto; border: 1.5px solid var(--success-border, #bbf7d0);">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div id="modalUpToDateTitle" style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+                        Sisteminiz En Güncel Sürümde!
+                    </div>
+                    <div id="modalUpToDateDesc" style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+                        Kullandığınız <strong id="modalUpToDateVersion">v1.5.0</strong> sürümü en son özelliklere sahiptir. Tüm verileriniz yerel kasanızda güvenle korunmaktadır.
+                    </div>
+
+                    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; text-align: left; margin-bottom: 16px;">
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
+                            Aktif Sürüm Özellikleri:
+                        </div>
+                        <ul style="margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--text-main); line-height: 1.7;">
+                            <li>Öğrenci Vezne &amp; Günlük Tahsilat &amp; Kasa Raporu</li>
+                            <li>İsteğe Bağlı Makbuz Yazdırma &amp; Detaylı Ödeme Geçmişi</li>
+                            <li>Otomatik GitHub Sürüm Kontrolü &amp; Güvenli Güncelleme</li>
+                            <li>Okul 1 ve Okul 2 Ayrımı ile Çift Okul Takibi</li>
+                            <li>Canlı Döviz / Altın Kurları ve Borçtan TL Düşme Çeviricisi</li>
+                        </ul>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                        <button type="button" class="btn btn-primary" onclick="closeModal('modalSystemUpdate')" style="min-width: 110px;">
+                            Tamam
+                        </button>
+                        <button type="button" class="btn btn-subtle" onclick="runInAppSystemUpdate('1.5.0', true)" title="Sistem dosyalarını onar ve baştan doğrula">
+                            <i class="fa-solid fa-wrench"></i> Sistemi Doğrula &amp; Onar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DURUM 3: YENİ GÜNCELLEME MEVCUT -->
+                <div id="updateViewAvailable" style="display: none; padding: 4px 6px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                        <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 15px; font-weight: 800; color: var(--text-main);" id="modalNewVersionTitle">
+                                Yeni Güncelleme Hazır
+                            </div>
+                            <div style="font-size: 11.5px; color: var(--text-muted);" id="modalNewVersionDate">
+                                Yayın Tarihi: -
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px;">
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                            Bu Güncellemedeki Yenilikler:
+                        </div>
+                        <ul id="modalUpdateNotesList" style="margin: 0; padding-left: 18px; font-size: 12px; color: var(--text-main); line-height: 1.6;">
+                            <!-- Dinamik dolar -->
+                        </ul>
+                    </div>
+
+                    <div style="background: var(--success-light); border: 1px solid var(--success-border, #bbf7d0); color: var(--success); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 11.5px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                        <i class="fa-solid fa-shield-halved" style="font-size: 14px;"></i>
+                        <span><strong>Veri Güvencesi:</strong> Güncelleme esnasında tüm öğrenci, personel, borç ve alacak kayıtlarınız otomatik yedeklenir, asla silinmez.</span>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" class="btn btn-subtle" onclick="closeModal('modalSystemUpdate')">
+                            Daha Sonra
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="confirmAndStartUpdate()" id="btnStartInAppUpdate" style="padding: 0 18px; font-weight: 700;">
+                            <i class="fa-solid fa-bolt"></i> Şimdi Güncelle ve Yükle
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DURUM 4: YÜKLENİYOR (PROGRESS BAR) -->
+                <div id="updateViewInstalling" style="display: none; padding: 20px 10px; text-align: center;">
+                    <div style="font-size: 32px; color: var(--primary); margin-bottom: 12px;">
+                        <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+                    </div>
+                    <div style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;" id="updateInstallTitle">
+                        Güncelleme Yükleniyor...
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;" id="updateInstallStageText">
+                        Lütfen bekleyin, sistem güncelleniyor...
+                    </div>
+
+                    <!-- İlerleme Çubuğu -->
+                    <div class="update-progress-track">
+                        <div id="updateProgressBarFill" class="update-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); font-weight: 600;">
+                        <span id="updateProgressStepName">Hazırlanıyor</span>
+                        <span id="updateProgressPercent">0%</span>
+                    </div>
+                    <div id="updateInstallDoneActions" style="display: none; justify-content: center; margin-top: 16px;">
+                        <button type="button" class="btn btn-primary" onclick="closeModal('modalSystemUpdate')" style="min-width: 130px;">
+                            Tamam (Kapat)
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
     <script src="js/updater.js"></script>
 </body>
