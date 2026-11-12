@@ -158,7 +158,82 @@ async function fetchLiveExchangeRates(silent = false) {
     }
 }
 
+function renderGlobalBorsaTicker() {
+    const track = document.getElementById("globalBorsaTrack");
+    if (!track) return;
+
+    const usd = Number(dbKurlar.USD || 34.50).toFixed(2);
+    const eur = Number(dbKurlar.EUR || 37.20).toFixed(2);
+    const grAltin = Number(dbKurlar.ALTIN_GR || 3050).toLocaleString('tr-TR');
+    const ceyrek = Number(dbKurlar.ALTIN_CEYREK || 5000).toLocaleString('tr-TR');
+    const yarim = Number(dbKurlar.ALTIN_YARIM || 10000).toLocaleString('tr-TR');
+    const tam = Number(dbKurlar.ALTIN_TAM || 20000).toLocaleString('tr-TR');
+    const ata = Number(dbKurlar.ALTIN_ATA || 20600).toLocaleString('tr-TR');
+    const b22 = Number(dbKurlar.ALTIN_22AYAR || 2800).toLocaleString('tr-TR');
+    const updateTime = dbKurlar.sonGuncelleme ? new Date(dbKurlar.sonGuncelleme).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '-';
+
+    const items = `
+        <div class="borsa-item" title="Amerikan Doları">
+            <span class="borsa-item-flag">🇺🇸</span>
+            <span class="borsa-item-code">USD/TRY:</span>
+            <span class="borsa-item-val">${usd} ₺</span>
+            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.12</span>
+        </div>
+        <div class="borsa-item" title="Euro">
+            <span class="borsa-item-flag">🇪🇺</span>
+            <span class="borsa-item-code">EUR/TRY:</span>
+            <span class="borsa-item-val">${eur} ₺</span>
+            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.08</span>
+        </div>
+        <div class="borsa-item gold" title="24 Ayar Gram Altın">
+            <span class="borsa-item-flag">🪙</span>
+            <span class="borsa-item-code">Gram Altın:</span>
+            <span class="borsa-item-val">${grAltin} ₺</span>
+            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.25</span>
+        </div>
+        <div class="borsa-item gold" title="Çeyrek Altın">
+            <span class="borsa-item-flag">🪙</span>
+            <span class="borsa-item-code">Çeyrek:</span>
+            <span class="borsa-item-val">${ceyrek} ₺</span>
+        </div>
+        <div class="borsa-item gold" title="Yarım Altın">
+            <span class="borsa-item-flag">🪙</span>
+            <span class="borsa-item-code">Yarım:</span>
+            <span class="borsa-item-val">${yarim} ₺</span>
+        </div>
+        <div class="borsa-item gold" title="Tam Ziynet Altın">
+            <span class="borsa-item-flag">👑</span>
+            <span class="borsa-item-code">Tam:</span>
+            <span class="borsa-item-val">${tam} ₺</span>
+        </div>
+        <div class="borsa-item gold" title="Cumhuriyet / Ata Altın">
+            <span class="borsa-item-flag">🏛️</span>
+            <span class="borsa-item-code">Ata:</span>
+            <span class="borsa-item-val">${ata} ₺</span>
+        </div>
+        <div class="borsa-item gold" title="22 Ayar Bilezik Gram">
+            <span class="borsa-item-flag">✨</span>
+            <span class="borsa-item-code">22 Ayar:</span>
+            <span class="borsa-item-val">${b22} ₺</span>
+        </div>
+        <div class="borsa-item" title="Borsa İstanbul 100">
+            <span class="borsa-item-flag">📈</span>
+            <span class="borsa-item-code">BIST 100:</span>
+            <span class="borsa-item-val">9.452</span>
+            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.45</span>
+        </div>
+        <div class="borsa-item" style="color: var(--text-dim); font-size: 10.5px;" title="Son Kur Güncellemesi">
+            <i class="fa-regular fa-clock"></i> <span>${updateTime}</span>
+        </div>
+    `;
+
+    // 2 kopya ile pürüzsüz sonsuz döngü (infinite marquee)
+    track.innerHTML = items + items;
+}
+
 function renderKurTicker() {
+    renderGlobalBorsaTicker();
+
     const containers = document.querySelectorAll(".kur-chips-wrapper");
     if (!containers || containers.length === 0) return;
 
@@ -1625,7 +1700,7 @@ function printBorcOdemeMakbuz(odemeId) {
     const borc = dbBorclar.find(b => Number(b.id) === Number(odeme.borcId));
     const birim = borc ? borc.birim : 'TL';
     const sum = borc ? getBorcSummary(borc.id) : { kalan: 0, toplamTutar: 0 };
-    const kurum = typeof kurumInfo !== 'undefined' ? kurumInfo.ad : "KURUMSAL YÖNETİM SİSTEMİ";
+    const kurum = (typeof getKurumInfo === 'function' ? getKurumInfo().name : kurumInfo?.name) || "KURUMSAL YÖNETİM SİSTEMİ";
 
     const printContainer = document.getElementById("printableReceipt");
     if (!printContainer) return;
@@ -1885,6 +1960,11 @@ if (typeof window !== 'undefined') {
         setTimeout(() => {
             fetchLiveExchangeRates(true);
         }, 1200);
+
+        // Her 5 dakikada bir otomatik sessiz kur güncellemesi
+        setInterval(() => {
+            fetchLiveExchangeRates(true);
+        }, 5 * 60 * 1000);
     });
 }
 

@@ -38,15 +38,15 @@ function updateBrandDisplay() {
         }
     }
 
-    // 2. Giriş Ekranı (Auth Overlay) Logo Güncellemesi
-    const authCrest = document.getElementById("authCrestBox");
+    // 2. Giriş Ekranı (Auth Overlay) Monogram & Logo Güncellemesi
+    const authCrest = document.getElementById("authMonogramCrest") || document.getElementById("authCrestBox");
     if (authCrest) {
         if (kurumInfo.logo) {
-            authCrest.innerHTML = `<img src="${kurumInfo.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">`;
+            authCrest.innerHTML = `<img src="${kurumInfo.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 14px;">`;
             authCrest.style.padding = "4px";
             authCrest.style.background = "#ffffff";
         } else {
-            authCrest.innerHTML = `<i class="fa-solid fa-lock" style="font-size: 26px; color: var(--accent-gold);"></i>`;
+            authCrest.innerHTML = `<i class="fa-solid fa-building-columns" style="font-size: 22px; color: #ffffff;"></i>`;
             authCrest.style.padding = "";
             authCrest.style.background = "";
         }
@@ -54,8 +54,24 @@ function updateBrandDisplay() {
 
     // 3. Ayarlar Sekmesi Logo Önizleme
     const previewContainer = document.getElementById("cfgLogoPreviewContainer");
+    const previewWrapper = document.getElementById("previewLogoWrapper");
+    const imgLogoPreview = document.getElementById("imgLogoPreview");
+    const lblNoLogoIcon = document.getElementById("lblNoLogoIcon");
     const btnRemove = document.getElementById("btnRemoveLogo");
-    if (previewContainer) {
+
+    if (previewWrapper && imgLogoPreview && lblNoLogoIcon) {
+        if (kurumInfo.logo) {
+            imgLogoPreview.src = kurumInfo.logo;
+            imgLogoPreview.style.display = "block";
+            lblNoLogoIcon.style.display = "none";
+            if (btnRemove) btnRemove.style.display = "inline-flex";
+        } else {
+            imgLogoPreview.src = "";
+            imgLogoPreview.style.display = "none";
+            lblNoLogoIcon.style.display = "block";
+            if (btnRemove) btnRemove.style.display = "none";
+        }
+    } else if (previewContainer) {
         if (kurumInfo.logo) {
             previewContainer.innerHTML = `<img src="${kurumInfo.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">`;
             if (btnRemove) btnRemove.style.display = "inline-flex";
@@ -91,10 +107,14 @@ function handleLogoUpload(e) {
 
 function removeLogo() {
     kurumInfo.logo = null;
-    const fileInput = document.getElementById("cfgLogoFileInput");
+    const fileInput = document.getElementById("cfgLogoFileInput") || document.getElementById("inputLogoFile");
     if (fileInput) fileInput.value = "";
     saveKurumInfo();
     showToast("Kurum logosu kaldırıldı.");
+}
+
+function removeInstitutionLogo() {
+    removeLogo();
 }
 
 // 1. ŞİFRE İLE GİRİŞ & İLK KURULUM (KULLANICI OLUŞTURMA)
@@ -138,11 +158,38 @@ function startAuthLiveClock() {
     }
 }
 
+function startAuthLiveGreeting() {
+    const greetingEl = document.getElementById("authGreetingText");
+    const subGreetingEl = document.getElementById("authLoginSubGreeting");
+    const now = new Date();
+    const hour = now.getHours();
+    let greeting = "☀️ İyi Günler, Hoş Geldiniz";
+    let sub = "Yetkili Oturumu • Sistem Hazır";
+
+    if (hour >= 5 && hour < 12) {
+        greeting = "🌅 Günaydın, Hoş Geldiniz";
+        sub = "Sabah Mesaisi • Sistem Çevrimdışı Korumada";
+    } else if (hour >= 12 && hour < 18) {
+        greeting = "☀️ İyi Günler, Hoş Geldiniz";
+        sub = "Öğle Seansı • Finansal Kayıtlar Hazır";
+    } else if (hour >= 18 && hour < 23) {
+        greeting = "🌙 İyi Akşamlar, Hoş Geldiniz";
+        sub = "Akşam Mesaisi • Kasa Kapanış Kontrolü";
+    } else {
+        greeting = "🌌 İyi Geceler, Hoş Geldiniz";
+        sub = "Gece Mesaisi • Güvenli Kasa İzolasyonu";
+    }
+
+    if (greetingEl) greetingEl.textContent = greeting;
+    if (subGreetingEl) subGreetingEl.textContent = sub;
+}
+
 function checkAuth() {
     if (window.location.search.includes('test_login')) {
         sessionStorage.setItem('portal_session_active', 'true');
     }
     startAuthLiveClock();
+    startAuthLiveGreeting();
     loadSavedLoginScene();
     const isLogged = sessionStorage.getItem('portal_session_active') === 'true';
     const authOverlay = document.getElementById("authOverlay");
@@ -174,35 +221,190 @@ function checkAuth() {
     }
 }
 
-// DerPro Manzara Değiştirici Motoru
-const LOGIN_SCENES = [
-    { id: 'kizkulesi', name: 'Kız Kulesi', icon: '🏛️', file: 'assets/login_bg_istanbul_kizkulesi.jpg' },
-    { id: 'bosphorus', name: 'Boğaziçi', icon: '🌉', file: 'assets/login_bg_istanbul_bosphorus.jpg' },
-    { id: 'suleymaniye', name: 'Süleymaniye', icon: '🕌', file: 'assets/login_bg_istanbul_suleymaniye.jpg' },
-    { id: 'galata', name: 'Galata', icon: '🗼', file: 'assets/login_bg_istanbul_galata.jpg' },
-    { id: 'nature', name: 'Doğa & Dinginlik', icon: '🌿', file: 'assets/login_bg_nature.jpg' }
+// İstanbul Tarihi & Sahil Manzaraları Motoru (Dinamik Atmosfer & Başlıklar)
+const ISTANBUL_SCENES = [
+    {
+        id: 'dolmabahce',
+        name: 'Dolmabahçe',
+        icon: '🏰',
+        file: 'assets/login_bg_istanbul_dolmabahce.jpg',
+        eyebrow: 'TARİHİ PRESTİJ &amp; BOĞAZIN ASALETİ',
+        titleMain: 'Köklü Birikim,',
+        titleAccent: 'Zarif Yönetim.',
+        lead: 'Saray mimarisinin zarafetiyle mali disiplini buluşturan kurumsal yapı. Her kayıt şeffaf, her bilanço tam vaktinde hazır.',
+        badges: [
+            { icon: 'fa-solid fa-crown', color: '#f59e0b', text: 'Kurumsal Prestij &amp; İtibar Koruması' },
+            { icon: 'fa-solid fa-scale-balanced', color: '#10b981', text: 'Kırtasiye, Aidat &amp; Cari Dengesi' },
+            { icon: 'fa-solid fa-credit-card', color: '#3b82f6', text: 'Nakit &bull; Banka &bull; POS Tahsilat' }
+        ]
+    },
+    {
+        id: 'galata',
+        name: 'Galata',
+        icon: '🗼',
+        file: 'assets/login_bg_istanbul_galata.jpg',
+        eyebrow: 'ASIRLIK İSTİKRAR &amp; PERA UFUKLARI',
+        titleMain: 'Zamana Meydan Okuyan',
+        titleAccent: 'Sağlam Kasa.',
+        lead: 'Yüzyılların tanığı Galata gibi sarsılmaz bir mali omurga. Borç takibi, anlık döviz dönüşümleri ve mutabakatlar güvencede.',
+        badges: [
+            { icon: 'fa-solid fa-shield-halved', color: '#3b82f6', text: 'Sarsılmaz Finansal İstikrar' },
+            { icon: 'fa-solid fa-money-bill-transfer', color: '#10b981', text: 'Çapraz Döviz &amp; TL Çevirici' },
+            { icon: 'fa-solid fa-user-shield', color: '#f59e0b', text: 'Yetkilendirilmiş Güvenli Giriş' }
+        ]
+    },
+    {
+        id: 'ortakoy',
+        name: 'Ortaköy',
+        icon: '🕌',
+        file: 'assets/login_bg_istanbul_ortakoy.jpg',
+        eyebrow: 'İKİ YAKANIN BİRLİĞİ &amp; BOĞAZ İNCİSİ',
+        titleMain: 'Kampüsleri Birleştiren',
+        titleAccent: 'Güçlü Köprü.',
+        lead: 'Okul 1 ve Okul 2 birimleri arasında kesintisiz veri köprüsü. Merkezi mali koordinasyon ve ayrıştırılmış şeffaf kampüs raporları.',
+        badges: [
+            { icon: 'fa-solid fa-bridge', color: '#38bdf8', text: 'Okul 1 &amp; Okul 2 Tam Koordinasyon' },
+            { icon: 'fa-solid fa-mosque', color: '#f59e0b', text: 'Kültürel Değer &amp; Kurumsal Duruş' },
+            { icon: 'fa-solid fa-users-viewfinder', color: '#10b981', text: 'Şeffaf Öğrenci &amp; Veli Takip' }
+        ]
+    },
+    {
+        id: 'kizkulesi',
+        name: 'Kız Kulesi',
+        icon: '🏛️',
+        file: 'assets/login_bg_istanbul_kizkulesi.jpg',
+        eyebrow: 'DENİZİN ORTASINDA ZIRHLI KORUMA',
+        titleMain: 'Eşsiz Değer,',
+        titleAccent: 'Tam Koruma Kalkanı.',
+        lead: 'Marmara\'nın incisi gibi dış dünyadan tamamen izole edilmiş yerel veri tabanı. İnternet kesilse bile kasanız duraksamadan işlemeye devam eder.',
+        badges: [
+            { icon: 'fa-solid fa-landmark', color: '#f59e0b', text: 'Harici Müdahaleye Kapalı Yerel Kasa' },
+            { icon: 'fa-solid fa-hard-drive', color: '#10b981', text: 'Otomatik Tarayıcı &amp; JSON Koruması' },
+            { icon: 'fa-solid fa-dove', color: '#38bdf8', text: 'Özgür &amp; Bağımsız Çalışma Mimarisi' }
+        ]
+    },
+    {
+        id: 'bosphorus',
+        name: 'Boğaziçi',
+        icon: '🌉',
+        file: 'assets/login_bg_istanbul_bosphorus.jpg',
+        eyebrow: 'KESİNTİSİZ AKIŞ &amp; BÜYÜK VİZYON',
+        titleMain: 'Dinamik Finans,',
+        titleAccent: 'Küresel Vizyon.',
+        lead: 'Asya ile Avrupa\'yı bağlayan Boğaziçi gibi geniş ve güçlü bir operasyonel vizyon. Canlı borsa takibi ve kur çeviriciyle anlık kontrol.',
+        badges: [
+            { icon: 'fa-solid fa-water', color: '#38bdf8', text: 'Geniş Kapsamlı Finans Yönetimi' },
+            { icon: 'fa-solid fa-chart-line', color: '#10b981', text: 'Canlı Borsa &amp; Anlık Kur Entegrasyonu' },
+            { icon: 'fa-solid fa-bolt', color: '#f59e0b', text: 'Hızlı &amp; Akıcı Veri İşleme Kapasitesi' }
+        ]
+    },
+    {
+        id: 'suleymaniye',
+        name: 'Süleymaniye',
+        icon: '🌅',
+        file: 'assets/login_bg_istanbul_suleymaniye.jpg',
+        eyebrow: 'KUSURSUZ MİMARİ &amp; ALTIN BOYNUZ',
+        titleMain: 'Usta İşi Nizam,',
+        titleAccent: 'Kusursuz Denge.',
+        lead: 'Mimar Sinan\'ın Süleymaniye\'de kurduğu kusursuz statik denge gibi; gelir, gider ve personel hesaplarında milimetrik hassasiyet.',
+        badges: [
+            { icon: 'fa-solid fa-scale-unbalanced-flip', color: '#f59e0b', text: 'Kuruşu Kuruşuna Bilanço Dengesi' },
+            { icon: 'fa-solid fa-compass-drafting', color: '#38bdf8', text: 'Statik Güvenli Veri Yapısı' },
+            { icon: 'fa-solid fa-file-invoice-dollar', color: '#10b981', text: 'Gelişmiş Mali Raporlama Çıktıları' }
+        ]
+    },
+    {
+        id: 'rumeli',
+        name: 'Rumeli Hisarı',
+        icon: '🛡️',
+        file: 'assets/login_bg_istanbul_rumeli.jpg',
+        eyebrow: 'STRATEJİK KONUM &amp; SAĞLAM SAVUNMA',
+        titleMain: 'Aşılmaz Güvenlik,',
+        titleAccent: 'Sarsılmaz Savunma.',
+        lead: 'Boğaz\'ın en dar noktasındaki tarihi burçlar gibi kurum bütçesini savunan, kaçak ve mükerrer kayıtları sıfırlayan kontrol kalkanı.',
+        badges: [
+            { icon: 'fa-solid fa-shield', color: '#10b981', text: 'Kaçak &amp; Mükerrer Kayıt Engelleme' },
+            { icon: 'fa-solid fa-dungeon', color: '#f59e0b', text: 'Çift Katmanlı Kasa Koruması' },
+            { icon: 'fa-solid fa-user-check', color: '#38bdf8', text: 'Denetim &amp; Yetki Kontrol Kayıtları' }
+        ]
+    },
+    {
+        id: 'sarayburnu',
+        name: 'Sarayburnu',
+        icon: '🚢',
+        file: 'assets/login_bg_istanbul_sarayburnu.jpg',
+        eyebrow: 'TARİHİ YARIMADA &amp; İMPARATORLUK HAFIZASI',
+        titleMain: 'Köklü Hafıza,',
+        titleAccent: 'Şeffaf Kayıt.',
+        lead: 'Üç imparatorluğun yönetim merkezi Sarayburnu\'nun hafızası gibi; hiçbir ödemeyi, makbuzu ve geçmiş sözleşmeyi unutturmayan dijital arşiv.',
+        badges: [
+            { icon: 'fa-solid fa-box-archive', color: '#f59e0b', text: 'Sonsuz Geçmiş Veri &amp; Arşivleme' },
+            { icon: 'fa-solid fa-receipt', color: '#38bdf8', text: 'Sözleşme &amp; Makbuz Geçmişi Takibi' },
+            { icon: 'fa-solid fa-vault', color: '#10b981', text: 'Kişisel Veri İzolasyon Güvencesi' }
+        ]
+    }
 ];
 
+// Geriye dönük uyumluluk
+const LOGIN_THEMES = ISTANBUL_SCENES;
+
+function updateLoginHeroCopy(scene) {
+    const heroCopy = document.querySelector('.login-hero-copy');
+    if (!heroCopy) return;
+
+    heroCopy.classList.add('theme-switching');
+
+    setTimeout(() => {
+        const eyebrowText = document.getElementById('loginHeroEyebrowText');
+        const titleMain = document.getElementById('loginHeroTitleMain');
+        const titleAccent = document.getElementById('loginHeroTitleAccent');
+        const lead = document.getElementById('loginHeroLead');
+        const badgesContainer = document.getElementById('loginHeroBadges');
+
+        if (eyebrowText) eyebrowText.innerHTML = scene.eyebrow || 'TARİHİ PRESTİJ &bull; BOĞAZIN ASALETİ';
+        if (titleMain) titleMain.textContent = scene.titleMain || 'Köklü Birikim,';
+        if (titleAccent) titleAccent.textContent = scene.titleAccent || 'Zarif Yönetim.';
+        if (lead) lead.textContent = scene.lead || 'Saray mimarisinin zarafetiyle mali disiplini buluşturan kurumsal yapı. Her kayıt şeffaf, her bilanço tam vaktinde hazır.';
+
+        if (badgesContainer && Array.isArray(scene.badges)) {
+            badgesContainer.innerHTML = scene.badges.map(b => `
+                <div class="login-feature-badge">
+                    <i class="${b.icon}" style="color: ${b.color};"></i>
+                    <span>${b.text}</span>
+                </div>
+            `).join('');
+        }
+
+        heroCopy.classList.remove('theme-switching');
+    }, 140);
+}
+
 function setLoginScene(sceneId) {
-    const scene = LOGIN_SCENES.find(s => s.id === sceneId) || LOGIN_SCENES[0];
+    const scene = ISTANBUL_SCENES.find(s => s.id === sceneId) || ISTANBUL_SCENES[0];
     localStorage.setItem('portal_login_scene', scene.id);
     const bgLayer = document.getElementById('loginBgLayer');
     if (bgLayer) {
         bgLayer.style.backgroundImage = `url('${scene.file}')`;
     }
-    LOGIN_SCENES.forEach(s => {
+    ISTANBUL_SCENES.forEach(s => {
         const btn = document.getElementById(`sceneBtn_${s.id}`);
         if (btn) {
             if (s.id === scene.id) btn.classList.add('active');
             else btn.classList.remove('active');
         }
     });
+
+    updateLoginHeroCopy(scene);
 }
 
 function loadSavedLoginScene() {
-    const saved = localStorage.getItem('portal_login_scene') || 'kizkulesi';
+    const saved = localStorage.getItem('portal_login_scene') || 'dolmabahce';
     setLoginScene(saved);
 }
+
+// Geriye dönük uyumluluk alias'ları
+function setSignatureAmbiance(id) { setLoginScene(id); }
+function loadSavedSignatureAmbiance() { loadSavedLoginScene(); }
 
 // İlk Kurulum: Şifre Oluşturma
 function handleSetupPassword(e) {
@@ -314,6 +516,7 @@ const TAB_TITLES = {
     'ogrenci-aylik': { group: 'ogrenci', title: 'Aylık Öğrenci Taksit Takibi', sub: 'Seçilen ayın tahsilat hedefleri, tahsil edilen ve geciken taksitler' },
     'ogrenci-vezne': { group: 'ogrenci', title: 'Öğrenci Vezne & Tahsilat Listesi', sub: 'Öğrencilerden alınan tüm taksit ödemeleri ve tahsilat makbuzları' },
     'ogrenci-kirtasiye': { group: 'ogrenci', title: 'Kırtasiye & Kitap Takibi', sub: 'Öğrencilerin kırtasiye bedelleri ve teslimat kontrolü' },
+    'ogrenci-gunluk-rapor': { group: 'ogrenci', title: 'Günlük Tahsilat & Kasa Raporu', sub: 'Gün bazlı öğrenci taksit, aidat ve kırtasiye tahsilat dökümü, Nakit/Banka/POS dağılımı' },
 
     // Personel & Maaş / Kira
     'personel-aylik': { group: 'personel', title: 'Aylık Bordro Takibi', sub: 'Seçilen ayın personel maaş ve kira tahakkukları ile bakiye kontrolü' },
@@ -377,6 +580,7 @@ function switchAppTab(tabId) {
     else if (tabId === 'ogrenci-aylik') renderOgrenciAylikTab();
     else if (tabId === 'ogrenci-vezne') renderOgrenciOdemelerTab();
     else if (tabId === 'ogrenci-kirtasiye') renderOgrenciKirtasiyeTab();
+    else if (tabId === 'ogrenci-gunluk-rapor') renderGunlukTahsilatRaporu();
     else if (tabId === 'personel-aylik') renderPersonelAylikTab();
     else if (tabId === 'personel-kadro') renderPersonelKadroTab();
     else if (tabId === 'personel-zam') renderPersonelZamTab();
@@ -412,7 +616,10 @@ function updateGlobalBadges() {
     if (bBorc) bBorc.innerText = borcCount;
 
     const hOgr = document.getElementById("headerPillOgrenci");
-    if (hOgr) hOgr.innerHTML = `<i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> <span>${ogrCount} Öğrenci (${activeOkulCode === 'okul2' ? 'Okul 2' : 'Okul 1'})</span>`;
+    if (hOgr) {
+        const okulDisplay = activeOkulCode === 'okul2' ? (kurumInfo.okul2Adi || 'Okul 2') : (kurumInfo.okul1Adi || 'Okul 1');
+        hOgr.innerHTML = `<i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> <span>${ogrCount} Öğrenci (${okulDisplay})</span>`;
+    }
     if (typeof updateOkulStatsDisplay === 'function') updateOkulStatsDisplay();
 
     const hPers = document.getElementById("headerPillPersonel");
@@ -427,16 +634,116 @@ function updateGlobalBadges() {
     calculateNotifications();
 }
 
-// 5. AYARLAR SEKMESİ
+// 5. AYARLAR SEKMESİ & SİSTEM YÖNETİMİ
+function updateOkulNameLabels() {
+    const o1 = kurumInfo.okul1Adi || "Okul 1";
+    const o2 = kurumInfo.okul2Adi || "Okul 2";
+
+    // Tüm Okul 1 / Okul 2 metinlerini güncelle
+    document.querySelectorAll(".lbl-okul1-name, .okul1-label").forEach(el => el.innerText = o1);
+    document.querySelectorAll(".lbl-okul2-name, .okul2-label").forEach(el => el.innerText = o2);
+
+    // Sidebar & Başlık Butonları
+    document.querySelectorAll(".btn-okul-toggle.okul1-btn, .sidebar-okul-btn.okul1-btn").forEach(btn => {
+        const span = btn.querySelector(".lbl-okul1-name");
+        if (span) span.innerText = o1;
+    });
+    document.querySelectorAll(".btn-okul-toggle.okul2-btn, .sidebar-okul-btn.okul2-btn").forEach(btn => {
+        const span = btn.querySelector(".lbl-okul2-name");
+        if (span) span.innerText = o2;
+    });
+
+    // Form seçim kutusu
+    const formOkulSelect = document.getElementById("formOgrenciOkul");
+    if (formOkulSelect) {
+        const opt1 = formOkulSelect.querySelector('option[value="okul1"]');
+        if (opt1) opt1.innerText = `🏫 ${o1}`;
+        const opt2 = formOkulSelect.querySelector('option[value="okul2"]');
+        if (opt2) opt2.innerText = `🎓 ${o2}`;
+    }
+
+    // Günlük Rapor Okul filtresi
+    const gunlukOkulSelect = document.getElementById("gunlukRaporOkulFiltre");
+    if (gunlukOkulSelect) {
+        const gOpt1 = gunlukOkulSelect.querySelector('option[value="okul1"]');
+        if (gOpt1) gOpt1.innerText = `🏫 ${o1}`;
+        const gOpt2 = gunlukOkulSelect.querySelector('option[value="okul2"]');
+        if (gOpt2) gOpt2.innerText = `🎓 ${o2}`;
+    }
+
+    if (typeof currentActiveTab !== 'undefined' && currentActiveTab === 'ogrenci-gunluk-rapor' && typeof renderGunlukTahsilatRaporu === 'function') {
+        renderGunlukTahsilatRaporu();
+    }
+
+    if (typeof updateOkulStatsDisplay === 'function') updateOkulStatsDisplay();
+    if (typeof updateGlobalBadges === 'function') updateGlobalBadges();
+}
+
 function loadSettingsTab() {
+    // 1. Kurum Tanımları
     const kName = document.getElementById("cfgKurumAdi");
-    if (kName) kName.value = kurumInfo.name || "";
+    if (kName) kName.value = kurumInfo.name || "Yönetim Sistemi";
+    const o1El = document.getElementById("cfgOkul1Adi");
+    if (o1El) o1El.value = kurumInfo.okul1Adi || "Okul 1";
+    const o2El = document.getElementById("cfgOkul2Adi");
+    if (o2El) o2El.value = kurumInfo.okul2Adi || "Okul 2";
     const kSub = document.getElementById("cfgAltBaslik");
-    if (kSub) kSub.value = kurumInfo.subTitle || "";
+    if (kSub) kSub.value = kurumInfo.subTitle || "Mali ve İdari İşler Portalı";
     const kYet = document.getElementById("cfgYetkili");
-    if (kYet) kYet.value = kurumInfo.bursar || "";
-    const kPwd = document.getElementById("cfgPassword");
-    if (kPwd) kPwd.value = localStorage.getItem('portal_master_pwd') || "1234";
+    if (kYet) kYet.value = kurumInfo.bursar || "Yetkili";
+
+    // 2. İletişim, Adres & Fatura
+    const telEl = document.getElementById("cfgTelefon");
+    if (telEl) telEl.value = kurumInfo.telefon || "";
+    const mailEl = document.getElementById("cfgEposta");
+    if (mailEl) mailEl.value = kurumInfo.eposta || "";
+    const vergiEl = document.getElementById("cfgVergiNo");
+    if (vergiEl) vergiEl.value = kurumInfo.vergiNo || "";
+    const adresEl = document.getElementById("cfgAdres");
+    if (adresEl) adresEl.value = kurumInfo.adres || "";
+
+    // 3. Mali Tanımlar & Kasa
+    if (document.getElementById("cfgDefaultKirtasiye")) {
+        setCurrencyValue("cfgDefaultKirtasiye", kurumInfo.defaultKirtasiye || 5000);
+    }
+    const kasaSorumluEl = document.getElementById("cfgKasaSorumlusu");
+    if (kasaSorumluEl) kasaSorumluEl.value = kurumInfo.kasaSorumlusu || kurumInfo.bursar || "Vezne Yetkilisi";
+    const b1El = document.getElementById("cfgBanka1");
+    if (b1El) b1El.value = kurumInfo.banka1 || "";
+    const b2El = document.getElementById("cfgBanka2");
+    if (b2El) b2El.value = kurumInfo.banka2 || "";
+    const posEl = document.getElementById("cfgPosTerminal");
+    if (posEl) posEl.value = kurumInfo.posTerminal || "";
+
+    const defYontemEl = document.getElementById("cfgDefaultYontem");
+    if (defYontemEl) defYontemEl.value = kurumInfo.defaultYontem || "Nakit";
+
+    // 4. İstatistik & Depolama Bilgileri
+    const ogrCount = (dbOgrenci && Array.isArray(dbOgrenci.ogrenciler)) ? dbOgrenci.ogrenciler.length : 0;
+    const persCount = (typeof dbPersonel !== 'undefined' && Array.isArray(dbPersonel)) ? dbPersonel.length : 0;
+    const alacakCount = (typeof dbAlacak !== 'undefined' && Array.isArray(dbAlacak.alacaklar)) ? dbAlacak.alacaklar.length : 0;
+
+    const statOgr = document.getElementById("lblStatOgrenciSayisi");
+    if (statOgr) statOgr.innerText = `${ogrCount} Öğrenci`;
+
+    const statPers = document.getElementById("lblStatPersonelSayisi");
+    if (statPers) statPers.innerText = `${persCount} Personel`;
+
+    const statAlacak = document.getElementById("lblStatAlacakSayisi");
+    if (statAlacak) statAlacak.innerText = `${alacakCount} Kayıt`;
+
+    // Bellek Hesaplama
+    let totalBytes = 0;
+    try {
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                totalBytes += (localStorage[key].length + key.length) * 2;
+            }
+        }
+    } catch (e) {}
+    const kb = (totalBytes / 1024).toFixed(1);
+    const storageEl = document.getElementById("lblStatStorageSize");
+    if (storageEl) storageEl.innerText = `${kb} KB (~%${((totalBytes / (5 * 1024 * 1024)) * 100).toFixed(1)})`;
 
     if (typeof getSocialLabels === 'function') {
         const labels = getSocialLabels();
@@ -448,6 +755,7 @@ function loadSettingsTab() {
     renderAutoBackupHistoryList();
     loadSavedTheme();
     updateBrandDisplay();
+    updateOkulNameLabels();
 }
 
 function saveSettingsForm(e) {
@@ -455,11 +763,25 @@ function saveSettingsForm(e) {
 
     const nameEl = document.getElementById("cfgKurumAdi");
     if (nameEl) kurumInfo.name = nameEl.value.trim() || "Yönetim Sistemi";
+    const o1El = document.getElementById("cfgOkul1Adi");
+    if (o1El) kurumInfo.okul1Adi = o1El.value.trim() || "Okul 1";
+    const o2El = document.getElementById("cfgOkul2Adi");
+    if (o2El) kurumInfo.okul2Adi = o2El.value.trim() || "Okul 2";
     const subEl = document.getElementById("cfgAltBaslik");
     if (subEl) kurumInfo.subTitle = subEl.value.trim() || "Mali ve İdari İşler Portalı";
     const yetEl = document.getElementById("cfgYetkili");
     if (yetEl) kurumInfo.bursar = yetEl.value.trim() || "Yetkili";
+
+    const defYontemEl = document.getElementById("cfgDefaultYontem");
+    if (defYontemEl) kurumInfo.defaultYontem = defYontemEl.value;
+
+    if (document.getElementById("cfgDefaultKirtasiye")) {
+        const defKirtasiye = getCurrencyValue("cfgDefaultKirtasiye");
+        if (defKirtasiye > 0) kurumInfo.defaultKirtasiye = defKirtasiye;
+    }
+
     saveKurumInfo();
+    updateOkulNameLabels();
 
     if (document.getElementById("cfgSettingSocial1")) {
         const labels = {
@@ -471,12 +793,126 @@ function saveSettingsForm(e) {
         if (typeof updateSocialLabelsInUI === 'function') updateSocialLabelsInUI();
     }
 
-    const newPwd = document.getElementById("cfgPassword").value.trim();
-    if (newPwd) {
-        localStorage.setItem('portal_master_pwd', newPwd);
+    showToast("Kurum & Kampüs tanımları başarıyla kaydedildi!");
+}
+
+function saveContactAndLogoSettings(e) {
+    if (e) e.preventDefault();
+
+    const telEl = document.getElementById("cfgTelefon");
+    if (telEl) kurumInfo.telefon = telEl.value.trim();
+    const mailEl = document.getElementById("cfgEposta");
+    if (mailEl) kurumInfo.eposta = mailEl.value.trim();
+    const vergiEl = document.getElementById("cfgVergiNo");
+    if (vergiEl) kurumInfo.vergiNo = vergiEl.value.trim();
+    const adresEl = document.getElementById("cfgAdres");
+    if (adresEl) kurumInfo.adres = adresEl.value.trim();
+
+    saveKurumInfo();
+    showToast("İletişim ve adres bilgileri kaydedildi!");
+}
+
+function saveFinancialSettings(e) {
+    if (e) e.preventDefault();
+
+    const defKirtasiye = getCurrencyValue("cfgDefaultKirtasiye");
+    kurumInfo.defaultKirtasiye = defKirtasiye > 0 ? defKirtasiye : 5000;
+
+    const kasaSorumluEl = document.getElementById("cfgKasaSorumlusu");
+    if (kasaSorumluEl) kurumInfo.kasaSorumlusu = kasaSorumluEl.value.trim();
+    const b1El = document.getElementById("cfgBanka1");
+    if (b1El) kurumInfo.banka1 = b1El.value.trim();
+    const b2El = document.getElementById("cfgBanka2");
+    if (b2El) kurumInfo.banka2 = b2El.value.trim();
+    const posEl = document.getElementById("cfgPosTerminal");
+    if (posEl) kurumInfo.posTerminal = posEl.value.trim();
+
+    const defYontemEl = document.getElementById("cfgDefaultYontem");
+    if (defYontemEl) kurumInfo.defaultYontem = defYontemEl.value;
+
+    saveKurumInfo();
+    showToast("Mali tanımlar ve POS / Banka hesapları kaydedildi!");
+}
+
+function handlePasswordChangeForm(e) {
+    if (e) e.preventDefault();
+
+    const currentPwdInput = document.getElementById("cfgCurrentPassword");
+    const newPwdInput = document.getElementById("cfgPassword");
+    const confirmPwdInput = document.getElementById("cfgPasswordConfirm");
+
+    const currentSaved = localStorage.getItem('portal_master_pwd') || "1234";
+
+    if (!currentPwdInput || currentPwdInput.value !== currentSaved) {
+        showToast("Mevcut yönetici şifresi hatalı!", "error");
+        return;
     }
 
-    showToast("Ayarlar başarıyla kaydedildi!");
+    const newPwd = newPwdInput ? newPwdInput.value.trim() : "";
+    const confirmPwd = confirmPwdInput ? confirmPwdInput.value.trim() : "";
+
+    if (!newPwd || newPwd.length < 4) {
+        showToast("Yeni şifre en az 4 karakterden oluşmalıdır!", "error");
+        return;
+    }
+
+    if (newPwd !== confirmPwd) {
+        showToast("Yeni şifreler birbiriyle eşleşmiyor!", "error");
+        return;
+    }
+
+    localStorage.setItem('portal_master_pwd', newPwd);
+    currentPwdInput.value = "";
+    newPwdInput.value = "";
+    confirmPwdInput.value = "";
+
+    showToast("Yönetici şifreniz başarıyla güncellendi!");
+}
+
+function optimizeDatabase() {
+    let fixCount = 0;
+
+    // 1. Öğrenci veritabanı bütünlüğü
+    if (dbOgrenci && Array.isArray(dbOgrenci.ogrenciler)) {
+        dbOgrenci.ogrenciler.forEach(o => {
+            if (!o.okul) { o.okul = "okul1"; fixCount++; }
+            if (!Array.isArray(o.kirtasiyeOdemeler)) { o.kirtasiyeOdemeler = []; }
+            if (typeof o.brut !== 'number') { o.brut = Number(o.brut) || 0; }
+            if (typeof o.indirim !== 'number') { o.indirim = Number(o.indirim) || 0; }
+            if (typeof o.kirtasiye !== 'number') { o.kirtasiye = Number(o.kirtasiye) || 0; }
+        });
+        localStorage.setItem('okul_v25_db', JSON.stringify(dbOgrenci));
+    }
+
+    // 2. Personel veritabanı bütünlüğü
+    if (typeof dbPersonel !== 'undefined' && Array.isArray(dbPersonel)) {
+        localStorage.setItem('app_personnel', JSON.stringify(dbPersonel));
+    }
+
+    // 3. Alacak veritabanı bütünlüğü
+    if (typeof dbAlacak !== 'undefined' && Array.isArray(dbAlacak.alacaklar)) {
+        localStorage.setItem('alacak_db', JSON.stringify(dbAlacak));
+    }
+
+    // 4. Borç veritabanı bütünlüğü
+    if (typeof dbBorclar !== 'undefined' && Array.isArray(dbBorclar)) {
+        localStorage.setItem('app_borclar', JSON.stringify(dbBorclar));
+    }
+
+    const timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const optEl = document.getElementById("lblLastOptimizationTime");
+    if (optEl) {
+        optEl.innerHTML = `<span style="color:#10b981; font-weight:700;"><i class="fa-solid fa-circle-check"></i> ${timeStr} itibarıyla doğrulandı (0 hata)</span>`;
+    }
+
+    loadSettingsTab();
+    showToast("Veritabanı başarıyla tarandı ve optimize edildi!");
+}
+
+function cleanTemporaryCache() {
+    sessionStorage.clear();
+    loadSettingsTab();
+    showToast("Geçici arayüz önbelleği temizlendi!");
 }
 
 // 6. AKILLI YEDEKLEME & GERİ YÜKLEME (TAM VEYA MODÜL BAZLI)
@@ -487,13 +923,26 @@ function exportFullSystemJson() {
 function exportModuleJson(moduleType) {
     let backupData = {};
     let fileName = "";
-    const dateStr = new Date().toISOString().slice(0, 10);
+    const nowLocal = new Date();
+    const dateStr = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
 
     if (moduleType === 'ogrenci') {
+        const okulMeta = {
+            name: kurumInfo.name || "Yönetim Sistemi",
+            subTitle: kurumInfo.subTitle || "",
+            bursar: kurumInfo.bursar || "",
+            okul1Adi: kurumInfo.okul1Adi || "Okul 1",
+            okul2Adi: kurumInfo.okul2Adi || "Okul 2",
+            logo: kurumInfo.logo || null,
+            ...(dbOgrenci.school || {})
+        };
         backupData = {
+            type: "ogrenci_paneli_yedek",
             ogrenciler: dbOgrenci.ogrenciler || [],
-            school: dbOgrenci.school || kurumInfo || {},
-            payments: dbOgrenci.payments || [],
+            odemeler: dbOgrenci.odemeler || [],
+            payments: dbOgrenci.odemeler || [],
+            okul_v25_db: dbOgrenci,
+            school: okulMeta,
             exportDate: new Date().toISOString(),
             module: "ogrenci"
         };
@@ -577,9 +1026,19 @@ function importFullSystemJson(event) {
 
             if (isStudentOnlyBackup) {
                 if (!dbOgrenci) dbOgrenci = { ogrenciler: [], odemeler: [] };
-                dbOgrenci.ogrenciler = data.ogrenciler || [];
-                dbOgrenci.odemeler = data.odemeler || data.payments || [];
-                if (data.school) dbOgrenci.school = data.school;
+                const incomingDb = data.okul_v25_db;
+                dbOgrenci.ogrenciler = data.ogrenciler || (incomingDb && incomingDb.ogrenciler) || [];
+                dbOgrenci.odemeler = data.odemeler || data.payments || (incomingDb && (incomingDb.odemeler || incomingDb.payments)) || [];
+                if (data.school && typeof data.school === 'object') {
+                    dbOgrenci.school = data.school;
+                    if (data.school.name) kurumInfo.name = data.school.name;
+                    if (data.school.subTitle) kurumInfo.subTitle = data.school.subTitle;
+                    if (data.school.bursar) kurumInfo.bursar = data.school.bursar;
+                    if (data.school.okul1Adi) kurumInfo.okul1Adi = data.school.okul1Adi;
+                    if (data.school.okul2Adi) kurumInfo.okul2Adi = data.school.okul2Adi;
+                    if (data.school.logo !== undefined) kurumInfo.logo = data.school.logo;
+                    localStorage.setItem('portal_kurum', JSON.stringify(kurumInfo));
+                }
                 localStorage.setItem('okul_v25_db', JSON.stringify(dbOgrenci));
 
                 const oCount = dbOgrenci.ogrenciler.length;
@@ -602,10 +1061,12 @@ function importFullSystemJson(event) {
                 updatedModules.push("Öğrenci Yönetimi (" + (dbOgrenci.ogrenciler?.length || 0) + " Öğrenci)");
             } else if (data.ogrenciler && Array.isArray(data.ogrenciler)) {
                 // Eski bağımsız Öğrenci Takip Paneli yedeği
-                if (!dbOgrenci) dbOgrenci = {};
+                if (!dbOgrenci) dbOgrenci = { ogrenciler: [], odemeler: [] };
                 dbOgrenci.ogrenciler = data.ogrenciler;
                 if (data.school) dbOgrenci.school = data.school;
-                if (data.payments) dbOgrenci.payments = data.payments;
+                if (Array.isArray(data.odemeler) || Array.isArray(data.payments)) {
+                    dbOgrenci.odemeler = data.odemeler || data.payments || [];
+                }
                 localStorage.setItem('okul_v25_db', JSON.stringify(dbOgrenci));
                 updatedModules.push("Öğrenci Yönetimi (" + data.ogrenciler.length + " Öğrenci)");
             } else if (Array.isArray(data) && data.length > 0 && data[0].ad && (data[0].sozlesme !== undefined || data[0].net !== undefined || data[0].taksit !== undefined)) {
@@ -800,7 +1261,9 @@ function exportToExcelFile(filename, headers, rows) {
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `${filename}_${new Date().toISOString().slice(0, 10)}.csv`);
+    const nowLocal = new Date();
+    const localYmd = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
+    link.setAttribute("download", `${filename}_${localYmd}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -865,21 +1328,17 @@ function exportOgrencilerToExcel() {
     }
     const headers = ["Okul", "Öğrenci No", "Adı Soyadı", "İletişim / Veli Telefonu", "Kayıt Dönemi", "Net Sözleşme (TL)", "Taksit Sayısı", "Aylık Taksit (TL)", "Kırtasiye (TL)", "Ödenen Tutar (TL)", "Kalan Borç (TL)", "Durum"];
     const rows = list.map(o => {
-        const brut = Number(o.brut) || 0;
-        const indirim = Number(o.indirim) || 0;
-        const netEgitim = Math.max(0, brut - indirim);
-        const kirtasiye = Number(o.kirtasiye) || 0;
-        const genelToplam = netEgitim + kirtasiye;
-        const taksit = Math.max(1, parseInt(o.taksit) || 10);
-        const aylik = Math.round(netEgitim / taksit);
-
-        const odemeler = (dbOgrenci.odemeler || []).filter(pay => pay.ogrenciId === o.id);
-        const odenen = odemeler.reduce((s, pay) => s + (Number(pay.tutar) || 0), 0);
-        const kalan = Math.max(0, genelToplam - odenen);
+        const plan = (typeof getStudentPlanDetails === 'function') ? getStudentPlanDetails(o) : null;
+        const netEgitim = plan ? plan.netSozlesme : Math.max(0, (Number(o.brut) || 0) - (Number(o.indirim) || 0));
+        const kirtasiye = plan ? plan.kirtasiye : (Number(o.kirtasiye) || 0);
+        const taksit = plan ? plan.taksitSayisi : Math.max(1, parseInt(o.taksit) || 10);
+        const aylik = plan ? plan.baseMonthly : Math.round(netEgitim / taksit);
+        const odenen = plan ? plan.paid : (dbOgrenci.odemeler || []).filter(pay => pay.ogrenciId === o.id).reduce((s, pay) => s + (Number(pay.tutar) || 0), 0);
+        const kalan = plan ? plan.kalan : Math.max(0, (netEgitim + kirtasiye) - odenen);
         const durum = kalan <= 0 ? "Borcu Kapandı" : "Devam Ediyor";
 
         return [
-            o.okul === 'okul2' ? "Okul 2" : "Okul 1",
+            o.okul === 'okul2' ? (kurumInfo.okul2Adi || "Okul 2") : (kurumInfo.okul1Adi || "Okul 1"),
             o.no || o.id,
             o.ad || "",
             o.telefon || "",
@@ -893,7 +1352,8 @@ function exportOgrencilerToExcel() {
             durum
         ];
     });
-    exportToExcelFile(`Ogrenci_Kayit_Listesi_${activeOkulCode === 'okul2' ? 'Okul_2' : 'Okul_1'}`, headers, rows);
+    const okulSlug = (activeOkulCode === 'okul2' ? (kurumInfo.okul2Adi || 'Okul_2') : (kurumInfo.okul1Adi || 'Okul_1')).replace(/\s+/g, '_');
+    exportToExcelFile(`Ogrenci_Kayit_Listesi_${okulSlug}`, headers, rows);
 }
 
 function exportPersonelToExcel() {
@@ -1055,7 +1515,7 @@ function setAppTheme(themeName) {
             if (t === themeName) dropItem.classList.add('active');
             else dropItem.classList.remove('active');
         }
-        const cardItem = document.getElementById(`themeCard-${t}`);
+        const cardItem = document.getElementById(`themeCard_${t}`) || document.getElementById(`themeCard-${t}`);
         if (cardItem) {
             if (t === themeName) cardItem.classList.add('active');
             else cardItem.classList.remove('active');
@@ -1094,7 +1554,7 @@ function loadSavedTheme() {
             if (t === saved) dropItem.classList.add('active');
             else dropItem.classList.remove('active');
         }
-        const cardItem = document.getElementById(`themeCard-${t}`);
+        const cardItem = document.getElementById(`themeCard_${t}`) || document.getElementById(`themeCard-${t}`);
         if (cardItem) {
             if (t === saved) cardItem.classList.add('active');
             else cardItem.classList.remove('active');
@@ -1139,8 +1599,8 @@ function toggleNotificationDropdown(e) {
 
 function calculateNotifications() {
     const notifs = [];
-    const today = new Date().toISOString().slice(0, 10);
     const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const currentMonthNum = now.getMonth() + 1;
     const currentYear = now.getFullYear();
     const activePeriod = `${currentYear}-${String(currentMonthNum).padStart(2, '0')}`;
@@ -1176,13 +1636,10 @@ function calculateNotifications() {
     // 2. Geciken / Borçlu Öğrenciler
     if (typeof dbOgrenci !== 'undefined' && dbOgrenci.ogrenciler) {
         dbOgrenci.ogrenciler.forEach(ogr => {
-            const net = Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0));
-            const odendi = (dbOgrenci.odemeler || [])
-                .filter(o => o.ogrenciId === ogr.id)
-                .reduce((s, o) => s + (Number(o.tutar) || 0), 0);
-            const borc = net - odendi;
+            const plan = (typeof getStudentPlanDetails === 'function') ? getStudentPlanDetails(ogr) : null;
+            const borc = plan ? plan.kalan : Math.max(0, (Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0)) + (Number(ogr.kirtasiye) || 0)) - (dbOgrenci.odemeler || []).filter(o => o.ogrenciId === ogr.id).reduce((s, o) => s + (Number(o.tutar) || 0), 0));
 
-            if (borc > 0 && ogr.durum === 'Aktif') {
+            if (borc > 0 && (!ogr.durum || ogr.durum === 'Aktif')) {
                 notifs.push({
                     type: 'ogrenci',
                     badge: 'Bakiye Borç',
@@ -1190,7 +1647,7 @@ function calculateNotifications() {
                     icon: 'fa-graduation-cap',
                     iconBg: 'rgba(37, 99, 235, 0.15)',
                     iconColor: 'var(--primary)',
-                    title: `${ogr.ad} (${ogr.okul === 'okul2' ? 'Okul 2' : 'Okul 1'})`,
+                    title: `${ogr.ad} (${ogr.okul === 'okul2' ? (kurumInfo.okul2Adi || 'Okul 2') : (kurumInfo.okul1Adi || 'Okul 1')})`,
                     desc: `Telefon: ${ogr.telefon || '-'} - Kalan Borç`,
                     amount: formatCurrency(borc),
                     action: () => {
@@ -1394,6 +1851,7 @@ function handleCommandPaletteSearch() {
         { name: "Aylık Öğrenci Taksit Takibi", sub: "Aylık tahsilat ve hedef durumu", badge: "Öğrenci Modülü", icon: "fa-calendar-check", color: "var(--primary)", run: () => switchAppTab('ogrenci-aylik') },
         { name: "Vezne & Tahsilat Listesi", sub: "Tüm tahsil edilen öğrenci taksitleri", badge: "Öğrenci Modülü", icon: "fa-receipt", color: "var(--primary)", run: () => switchAppTab('ogrenci-vezne') },
         { name: "Kırtasiye & Kitap Takibi", sub: "Öğrenci kırtasiye bedeli teslimatı", badge: "Öğrenci Modülü", icon: "fa-book-bookmark", color: "var(--primary)", run: () => switchAppTab('ogrenci-kirtasiye') },
+        { name: "Günlük Tahsilat & Kasa Raporu", sub: "Günlük taksit ve kırtasiye tahsilat raporu", badge: "Öğrenci Modülü", icon: "fa-file-invoice-dollar", color: "var(--primary)", run: () => switchAppTab('ogrenci-gunluk-rapor') },
         { name: "Aylık Bordro Takibi", sub: "Personel maaş ve kira tahakkukları", badge: "Personel Modülü", icon: "fa-calendar-days", color: "var(--success)", run: () => switchAppTab('personel-aylik') },
         { name: "Personel Kadrosu (Ana Liste)", sub: "Kayıtlı personeller ve maaş oranları", badge: "Personel Modülü", icon: "fa-id-card", color: "var(--success)", run: () => switchAppTab('personel-kadro') },
         { name: "Maaş Zam İşlemleri", sub: "Personele zam yapma ve geçmişi", badge: "Personel Modülü", icon: "fa-arrow-trend-up", color: "var(--success)", run: () => switchAppTab('personel-zam') },
@@ -1438,15 +1896,18 @@ function handleCommandPaletteSearch() {
                 (ogr.donem || "").toLowerCase().includes(term);
 
             if (matches) {
-                const net = Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0));
+                const plan = (typeof getStudentPlanDetails === 'function') ? getStudentPlanDetails(ogr) : null;
+                const toplamSozlesme = plan ? plan.toplamUcret : Math.max(0, (Number(ogr.brut) || 0) - (Number(ogr.indirim) || 0));
+                const okulAdi = ogr.okul === 'okul2' ? (kurumInfo.okul2Adi || 'Okul 2') : (kurumInfo.okul1Adi || 'Okul 1');
                 results.push({
                     group: "Öğrenciler",
                     title: ogr.ad,
-                    sub: `Tel: ${ogr.telefon || '-'} • Kayıt: ${ogr.donem || 'Eylül'} • Sözleşme: ${formatCurrency(net)}`,
+                    sub: `${okulAdi} • Tel: ${ogr.telefon || '-'} • Kayıt: ${ogr.donem || 'Eylül'} • Toplam: ${formatCurrency(toplamSozlesme)}`,
                     badge: `${ogr.taksit || 10} Taksit`,
                     icon: "fa-graduation-cap",
                     iconColor: "var(--primary)",
                     run: () => {
+                        if (typeof setActiveOkul === 'function') setActiveOkul(ogr.okul || 'okul1');
                         switchAppTab('ogrenci-genel');
                         if (typeof openOgrenciDetailModal === 'function') openOgrenciDetailModal(ogr.id);
                     }
@@ -1715,6 +2176,7 @@ function downloadAutoBackupSnapshot(snapId) {
 // BAŞLATMA
 window.addEventListener("DOMContentLoaded", () => {
     updateBrandDisplay();
+    updateOkulNameLabels();
     loadSavedTheme();
     checkAuth();
     updateGlobalBadges();

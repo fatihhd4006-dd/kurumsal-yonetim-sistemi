@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 /* ==========================================================================
-   KURUMSAL YÃ–NETÄ°M SÄ°STEMÄ° - DERPRO ESTETÄ°K & ARAYÃœZ MOTORU
+   KURUMSAL YÃ–NETÄ°M SÄ°STEMÄ° - DGN ESTETÄ°K & ARAYÃœZ MOTORU
    5 Ã–zgÃ¼n Kurumsal Muhasebe TemasÄ±: SÄ±fÄ±r GÃ¶z KarmaÅŸasÄ± & YÃ¼ksek Dinamizm
-   1. Light (DerPro ZÃ¼mrÃ¼t & Soft Slate)
+   1. Light (DGN ZÃ¼mrÃ¼t & Soft Slate)
    2. Dark (Sapphire Derin Gece)
    3. Gray (Charcoal & Ã‡elik)
    4. Bordo (Burgundy Rose)
    5. Monokai (Developer Terminal)
    ========================================================================== */
 
-/* 1. TEMA: AÃ‡IK ZÃœMRÃœT & SOFT SLATE (DERPRO VARSAYILAN) */
+/* 1. TEMA: AÃ‡IK ZÃœMRÃœT & SOFT SLATE (DGN VARSAYILAN) */
 :root, [data-theme="light"], [data-theme="emerald"] {
     --bg-app: #f8fafc;
     --bg-body: #f8fafc;
@@ -386,7 +386,7 @@ input[type="number"] {
     font-feature-settings: "tnum";
 }
 
-/* DerPro Ä°nce KaydÄ±rma Ã‡ubuÄŸu */
+/* DGN Ä°nce KaydÄ±rma Ã‡ubuÄŸu */
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -403,7 +403,7 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   GÄ°RÄ°Å EKRANI (AUTH OVERLAY) - DERPRO SPLIT SCENIC AESTHETIC
+   GİRİŞ EKRANI (AUTH OVERLAY) - DGN EXECUTIVE SIGNATURE ARCHITECTURE
    ========================================================================== */
 .auth-overlay {
     position: fixed;
@@ -413,11 +413,11 @@ input[type="number"] {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 24px 36px 18px 36px;
+    padding: 22px 36px 16px 36px;
     overflow-y: auto;
     overflow-x: hidden;
     transition: opacity 0.35s ease, visibility 0.35s ease;
-    background: #090d16;
+    background: #060911;
 }
 
 .auth-overlay.hidden {
@@ -427,30 +427,32 @@ input[type="number"] {
     pointer-events: none !important;
 }
 
-/* Dinamik Scenic Manzara KatmanÄ± */
+/* Dinamik İstanbul Manzarası Katmanı */
 .login-bg-layer {
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-position: center center;
+    overflow: hidden;
     background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    filter: brightness(0.82) contrast(1.05);
+    background-color: #060911;
+    filter: brightness(0.82) contrast(1.06);
     transition: background-image 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* DerPro Sinematik Vignette & Karartma */
+/* Lüks Sinematik Vignette & Karartma */
 .login-bg-vignette {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: radial-gradient(circle at 60% 45%, rgba(15, 23, 42, 0.35) 0%, rgba(9, 13, 22, 0.75) 70%, rgba(4, 7, 13, 0.94) 100%),
-                linear-gradient(180deg, rgba(15, 23, 42, 0.72) 0%, transparent 22%, transparent 72%, rgba(4, 7, 13, 0.92) 100%);
+    background: radial-gradient(circle at 62% 48%, rgba(10, 15, 28, 0.32) 0%, rgba(6, 9, 17, 0.76) 70%, rgba(3, 5, 10, 0.95) 100%),
+                linear-gradient(180deg, rgba(6, 9, 17, 0.68) 0%, transparent 25%, transparent 75%, rgba(3, 5, 10, 0.92) 100%);
 }
 
-/* Ãœst Bilgi BarÄ± (Brand & CanlÄ± Saat) */
+/* Üst Bilgi Barı (Brand & Canlı Saat & Canlı Selamlama) */
 .auth-top-bar {
     position: relative;
     z-index: 2;
@@ -459,13 +461,13 @@ input[type="number"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 12px 0;
+    padding: 0 0 10px 0;
 }
 
 .auth-top-brand {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
     font-size: 13.5px;
     font-weight: 700;
     color: #ffffff;
@@ -473,9 +475,33 @@ input[type="number"] {
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
-.auth-top-brand i {
-    font-size: 15px;
-    color: #6ee7b7;
+.auth-brand-emblem-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #34d399;
+}
+
+.auth-greeting-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #f1f5f9;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .auth-top-clock {
@@ -494,13 +520,12 @@ input[type="number"] {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     font-variant-numeric: tabular-nums;
 }
-
 .auth-top-clock i {
     color: #34d399;
     font-size: 12px;
 }
 
-/* DerPro 2-SÃ¼tunlu Shell */
+/* DGN 2-Sütunlu Shell */
 .login-shell {
     position: relative;
     z-index: 2;
@@ -508,87 +533,127 @@ input[type="number"] {
     max-width: 1180px;
     margin: auto 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 380px);
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 385px);
     gap: clamp(28px, 5vw, 64px);
     align-items: center;
     padding: 12px 0;
 }
 
-/* Sol SÃ¼tun: Poetik BaÅŸlÄ±k ve Manifesto */
+/* Sol Sütun: DGN İmza Başlık, Mimari Tipografi ve Güvenlik Rozetleri */
 .login-hero-copy {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     color: #ffffff;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
     user-select: none;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.login-hero-eyebrow {
-    font-size: 12px;
+.login-hero-copy.theme-switching {
+    opacity: 0.12;
+    transform: translateY(4px);
+}
+
+.login-signature-eyebrow {
+    font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: 0.28em;
-    color: #ffe6a3;
+    letter-spacing: 0.24em;
+    color: #cbd5e1;
     text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
+}
+
+.signature-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 10px #34d399;
+    display: inline-block;
+    animation: livePulse 2s infinite ease-in-out;
 }
 
 .login-hero-title {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: clamp(2.3rem, 4.4vw, 3.75rem);
-    font-weight: 700;
-    color: #fff4d6;
-    line-height: 1.18;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
-.login-hero-title span {
-    display: block;
+.hero-title-accent {
+    background: linear-gradient(135deg, #34d399 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .login-hero-lead {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: clamp(1.2rem, 1.9vw, 1.6rem);
-    font-style: italic;
-    color: #fffaf0;
-    line-height: 1.45;
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    font-weight: 400;
+    color: #cbd5e1;
+    line-height: 1.55;
     margin: 0;
+    max-width: 560px;
     opacity: 0.95;
-    max-width: 580px;
 }
 
-.login-hero-tagline {
-    font-size: 11.5px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: #fef3c7;
-    background: rgba(15, 23, 42, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+/* 3 Canlı Güvenlik & Özellik Rozeti */
+.login-feature-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 8px;
+    max-width: 480px;
+}
+
+.login-feature-badge {
     display: inline-flex;
     align-items: center;
-    padding: 7px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(254, 243, 199, 0.25);
-    width: fit-content;
-    margin-top: 6px;
+    gap: 12px;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #f1f5f9;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-/* SaÄŸ SÃ¼tun: DerPro Minimal Buzlu Cam Kart */
+.login-feature-badge:hover {
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.login-feature-badge i {
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Sağ Sütun: DGN Minimal Buzlu Cam Kart */
 .login-card-minimal {
     width: 100%;
-    max-width: 375px;
-    padding: 32px 28px;
-    background: rgba(15, 23, 42, 0.68) !important;
-    backdrop-filter: blur(24px) saturate(190%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    max-width: 380px;
+    padding: 34px 30px;
+    background: rgba(15, 23, 42, 0.72) !important;
+    backdrop-filter: blur(28px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
     border: 1px solid rgba(255, 255, 255, 0.22) !important;
     border-radius: 24px !important;
-    box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 28px 65px -10px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
     text-align: center;
     color: #f8fafc;
     margin-left: auto;
@@ -611,10 +676,10 @@ input[type="number"] {
     width: 100%;
 }
 
-.login-logo-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
+.login-signature-monogram {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
     color: #ffffff;
     display: flex;
@@ -622,7 +687,8 @@ input[type="number"] {
     justify-content: center;
     font-size: 22px;
     margin-bottom: 12px;
-    box-shadow: 0 8px 22px rgba(4, 120, 87, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+    box-shadow: 0 8px 24px rgba(4, 120, 87, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .login-brand-title {
@@ -642,7 +708,7 @@ input[type="number"] {
 }
 
 .login-free-badge {
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -654,6 +720,21 @@ input[type="number"] {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+}
+
+.live-dot-green {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    display: inline-block;
+    animation: livePulse 2s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(1.15); }
 }
 
 .login-form-minimal {
@@ -763,7 +844,7 @@ input[type="number"] {
     border-color: rgba(255, 255, 255, 0.28) !important;
 }
 
-/* DerPro Scene Navigator (Alt Manzara SeÃ§ici) */
+/* DGN Signature Ambiance Navigator (Alt İmza Atmosferi Seçici) */
 .login-scene-navigator {
     position: relative;
     z-index: 2;
@@ -774,11 +855,11 @@ input[type="number"] {
     flex-wrap: wrap;
     margin-top: 14px;
     padding: 6px 10px;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(15, 23, 42, 0.58);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
 }
 
@@ -835,7 +916,10 @@ input[type="number"] {
     }
     .login-hero-copy {
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+    }
+    .login-feature-badges {
+        align-items: center;
     }
     .login-hero-title {
         font-size: 2.2rem;
@@ -858,7 +942,7 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   DERPRO SLEEK SIDEBAR (236px / COLLAPSED 58px)
+   DGN SLEEK SIDEBAR (236px / COLLAPSED 58px)
    ========================================================================== */
 .sidebar {
     width: var(--sidebar-width);
@@ -963,7 +1047,7 @@ input[type="number"] {
     gap: 4px;
 }
 
-/* DerPro Sleek Group Header (Zero Clutter) */
+/* DGN Sleek Group Header (Zero Clutter) */
 .nav-group {
     background: transparent;
     border: none;
@@ -1048,7 +1132,7 @@ input[type="number"] {
     padding-bottom: 4px;
 }
 
-/* DerPro Nav items: slim, elegant, height 29px */
+/* DGN Nav items: slim, elegant, height 29px */
 .nav-sub-item, .nav-item {
     display: flex;
     align-items: center;
@@ -1094,7 +1178,7 @@ input[type="number"] {
     flex-shrink: 0;
 }
 
-/* SIDEBAR FOOTER & DERPRO THEME SWITCHER */
+/* SIDEBAR FOOTER & DGN THEME SWITCHER */
 .sidebar-footer {
     padding: 8px 8px;
     border-top: 1px solid var(--border-sidebar, var(--border-color));
@@ -1290,7 +1374,7 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   MAIN WRAPPER & TOP HEADER (DERPRO HEIGHT 48px)
+   MAIN WRAPPER & TOP HEADER (DGN HEIGHT 48px)
    ========================================================================== */
 .main-wrapper {
     flex: 1;
@@ -1542,13 +1626,13 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   MAIN VIEWPORT & CARDS (DERPRO PADDING & ELEVATION)
+   MAIN VIEWPORT & CARDS (DGN PADDING & ELEVATION)
    ========================================================================== */
 .viewport-content {
-    flex: 1 1 auto;
+    flex: 1 1 0%;
     min-height: 0;
-    height: calc(100vh - var(--header-height));
-    max-height: calc(100vh - var(--header-height));
+    height: auto;
+    max-height: none;
     overflow-y: auto !important;
     overflow-x: hidden;
     padding: 16px 20px 40px 20px;
@@ -1571,7 +1655,7 @@ input[type="number"] {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* DERPRO KPI KARTLARI (ZERO CLUTTER, 10px 14px PADDING) */
+/* DGN KPI KARTLARI (ZERO CLUTTER, 10px 14px PADDING) */
 .kpi-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -1591,7 +1675,7 @@ input[type="number"] {
 }
 
 .kpi-card::before {
-    display: none !important; /* DerPro eliminates bulky colored borders for clarity */
+    display: none !important; /* DGN eliminates bulky colored borders for clarity */
 }
 
 .kpi-card:hover {
@@ -1665,7 +1749,7 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   FORM KONTROLLERÄ° VE BUTONLAR (DERPRO COMPACT)
+   FORM KONTROLLERÄ° VE BUTONLAR (DGN COMPACT)
    ========================================================================== */
 .input-control, .select-control {
     background-color: var(--bg-surface, var(--bg-card));
@@ -1747,7 +1831,7 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   TABLOLAR (DERPRO NET VE DÄ°NLENDÄ°RÄ°CÄ° TABLO STÄ°LÄ°)
+   TABLOLAR (DGN NET VE DÄ°NLENDÄ°RÄ°CÄ° TABLO STÄ°LÄ°)
    ========================================================================== */
 .table-responsive {
     overflow-x: auto;
@@ -2009,6 +2093,72 @@ input[type="number"] {
     border-color: var(--border-color);
 }
 
+.command-result-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.command-result-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+}
+
+.command-result-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.command-result-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.command-result-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+}
+
+.command-result-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg-surface, var(--bg-card));
+    border: 1px solid var(--border-color);
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-left: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.command-palette-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-card-subtle);
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
 /* ==========================================================================
    AYARLARDA TEMA KARTLARI
    ========================================================================== */
@@ -2238,34 +2388,44 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   RESMÄ° YAZDIRMA (A4 EKSTRE, SÃ–ZLEÅME Ã–DEME PLANI, MAAÅ PUSULASI)
+   RESMİ YAZDIRMA (A4 EKSTRE, SÖZLEŞME ÖDEME PLANI, MAAŞ PUSULASI)
    ========================================================================== */
 @media print {
-    body * {
-        visibility: hidden !important;
+    html, body {
+        height: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .app-container,
+    .auth-overlay,
+    .modal-overlay,
+    .toast-box,
+    .command-palette-overlay,
+    .no-print {
+        display: none !important;
     }
     #printableReceipt, #printableReceipt * {
         visibility: visible !important;
     }
     #printableReceipt {
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
+        display: block !important;
+        position: static !important;
         width: 100% !important;
-        background: white !important;
-        color: black !important;
-        padding: 20px !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 16px !important;
         margin: 0 !important;
         box-sizing: border-box !important;
         font-family: 'Poppins', Arial, sans-serif !important;
     }
-    .no-print {
-        display: none !important;
-    }
 }
 
 /* ==========================================================================
-   DERPRO EK YARDIMCI VE BİLDİRİM STİLLERİ
+   DGN EK YARDIMCI VE BİLDİRİM STİLLERİ
    ========================================================================== */
 .dynamic-brand-name {
     font-weight: 700;
@@ -2415,7 +2575,7 @@ input[type="number"] {
 }
 
 /* ==========================================================================
-   DERPRO GÃ–Z DÄ°NLENDÄ°RÄ°CÄ° SAKÄ°NLEÅTÄ°RME VE Ä°Ã‡ MÄ°MARÄ° ARINDIRMA (ZERO CLUTTER)
+   DGN GÃ–Z DÄ°NLENDÄ°RÄ°CÄ° SAKÄ°NLEÅTÄ°RME VE Ä°Ã‡ MÄ°MARÄ° ARINDIRMA (ZERO CLUTTER)
    ========================================================================== */
 /* 1. Sidebar Ä°konlarÄ±: Sakin Muted Slate, Sadece Aktif Olan Vurgulu */
 .sidebar i {
@@ -2463,7 +2623,7 @@ input[type="number"] {
     color: var(--text-main);
 }
 
-/* 3. Butonlar: GÃ¶z Alan SarÄ±/Gold Yerine TemanÄ±n Asil Ana Rengi (DerPro ZÃ¼mrÃ¼t/Safir) */
+/* 3. Butonlar: GÃ¶z Alan SarÄ±/Gold Yerine TemanÄ±n Asil Ana Rengi (DGN ZÃ¼mrÃ¼t/Safir) */
 .btn-gold {
     background: var(--primary) !important;
     color: #ffffff !important;
@@ -2474,7 +2634,7 @@ input[type="number"] {
     box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent) !important;
 }
 
-/* 4. BaÅŸlÄ±k ve BÃ¶lÃ¼m Ä°konlarÄ±: Sakin DerPro ZÃ¼mrÃ¼t */
+/* 4. BaÅŸlÄ±k ve BÃ¶lÃ¼m Ä°konlarÄ±: Sakin DGN ZÃ¼mrÃ¼t */
 .card-box-header .box-title i {
     color: var(--primary) !important;
     font-size: 13px !important;
@@ -2489,4 +2649,364 @@ input[type="number"] {
 }
 .btn-subtle:hover i:not(.fa-file-excel) {
     color: var(--text-main) !important;
+}
+/* GÃ¼ncelleme Ä°lerleme Ã‡ubuÄŸu (Update Progress Bar) */
+.update-progress-track {
+    width: 100%;
+    height: 10px;
+    background: var(--bg-card-subtle);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    margin: 14px 0 8px 0;
+}
+.update-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary) 0%, #10b981 100%);
+    border-radius: 999px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   KIRTASİYE TAHSİLAT & ÖDEME YÖNTEMLERİ (NAKİT / BANKA / POS)
+   ========================================================================== */
+.payment-method-selector-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+.payment-method-card {
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+    user-select: none;
+}
+.payment-method-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.payment-method-card:hover {
+    border-color: var(--primary);
+    background: var(--bg-card-subtle);
+}
+.payment-method-card.active {
+    border-color: var(--primary);
+    background: rgba(16, 185, 129, 0.08);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+.payment-method-card .pm-icon {
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+.payment-method-card .pm-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+.payment-method-card .pm-sub {
+    font-size: 10.5px;
+    color: var(--text-muted);
+}
+
+/* Ödeme Yöntemi Rozetleri */
+.badge-nakit {
+    background: rgba(16, 185, 129, 0.12) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    font-weight: 700;
+}
+.badge-banka {
+    background: rgba(2, 132, 199, 0.12) !important;
+    color: #0284c7 !important;
+    border: 1px solid rgba(2, 132, 199, 0.3) !important;
+    font-weight: 700;
+}
+.badge-pos {
+    background: rgba(139, 92, 246, 0.12) !important;
+    color: #7c3aed !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    font-weight: 700;
+}
+[data-theme="dark"] .badge-nakit, [data-theme="gray"] .badge-nakit, [data-theme="bordo"] .badge-nakit, [data-theme="monokai"] .badge-nakit { color: #34d399 !important; }
+[data-theme="dark"] .badge-banka, [data-theme="gray"] .badge-banka, [data-theme="bordo"] .badge-banka, [data-theme="monokai"] .badge-banka { color: #38bdf8 !important; }
+[data-theme="dark"] .badge-pos, [data-theme="gray"] .badge-pos, [data-theme="bordo"] .badge-pos, [data-theme="monokai"] .badge-pos   { color: #c084fc !important; }
+
+/* Ayarlar Sayfası Zenginleştirme Kartları */
+.settings-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 992px) {
+    .settings-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
+.settings-stat-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+.settings-stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+.settings-stat-info {
+    flex: 1;
+}
+.settings-stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.settings-stat-val {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   CANLI PİYASA & BORSA KAYAN EKRANI (GLOBAL BORSA TICKER MARQUEE)
+   ========================================================================== */
+.global-borsa-ticker-bar {
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    height: 38px;
+    padding: 0 16px;
+    gap: 12px;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    user-select: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.borsa-ticker-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #10b981;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .borsa-ticker-badge,
+[data-theme="gray"] .borsa-ticker-badge,
+[data-theme="bordo"] .borsa-ticker-badge,
+[data-theme="monokai"] .borsa-ticker-badge {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+}
+
+.borsa-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: livePulse 1.8s infinite ease-in-out;
+}
+
+.borsa-ticker-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    mask-image: linear-gradient(90deg, transparent 0%, black 2%, black 98%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 2%, black 98%, transparent 100%);
+}
+
+.borsa-ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    white-space: nowrap;
+    width: max-content;
+    animation: borsaMarqueeScroll 42s linear infinite;
+}
+
+.borsa-ticker-viewport:hover .borsa-ticker-track {
+    animation-play-state: paused;
+}
+
+@keyframes borsaMarqueeScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.borsa-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--text-main);
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--bg-card-subtle);
+    border: 1px solid var(--border-color);
+}
+
+.borsa-item-flag {
+    font-size: 12px;
+}
+
+.borsa-item-code {
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.borsa-item-val {
+    font-weight: 800;
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+}
+
+.borsa-item-change {
+    font-size: 10px;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.borsa-item.gold .borsa-item-val {
+    color: var(--accent-gold);
+}
+
+.borsa-ticker-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.borsa-ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card-subtle);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 26px;
+}
+
+.borsa-ctrl-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--bg-card);
+}
+
+@media (max-width: 768px) {
+    .borsa-ctrl-btn .btn-text {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   AYARLAR TEMA SEÇİCİ KARTLARI
+   ========================================================================== */
+.theme-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.theme-picker-card {
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px 10px;
+    background: var(--bg-card-subtle);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    position: relative;
+    text-align: left;
+    font-family: inherit;
+}
+
+.theme-picker-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.theme-picker-card.active {
+    border-color: var(--primary);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.theme-picker-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+.theme-picker-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.theme-picker-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.theme-active-tag {
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.theme-picker-card.active .theme-active-tag {
+    display: inline-block;
 }

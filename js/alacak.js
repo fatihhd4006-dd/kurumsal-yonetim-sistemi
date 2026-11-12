@@ -104,6 +104,18 @@ function renderAlacakKayitlariTab() {
     }).join("");
 }
 
+function renderAlacakMethodBadge(yontem) {
+    if (!yontem) return '';
+    const m = yontem.trim().toLowerCase();
+    if (m.includes('banka') || m.includes('havale') || m.includes('eft')) {
+        return `<span class="badge-pill badge-banka" style="margin-right: 6px;"><i class="fa-solid fa-building-columns"></i> Banka</span>`;
+    } else if (m.includes('pos') || m.includes('kart') || m.includes('kredi')) {
+        return `<span class="badge-pill badge-pos" style="margin-right: 6px;"><i class="fa-solid fa-credit-card"></i> POS</span>`;
+    } else {
+        return `<span class="badge-pill badge-nakit" style="margin-right: 6px;"><i class="fa-solid fa-money-bill-wave"></i> Nakit</span>`;
+    }
+}
+
 // 2. TAHSİLAT KAYITLARI TABLOSU
 function renderTahsilatKayitlariTab() {
     const tbody = document.getElementById("alacakTahsilatTableBody");
@@ -147,7 +159,7 @@ function renderTahsilatKayitlariTab() {
                 <td><strong>${t.cari || '-'}</strong></td>
                 <td><span class="badge-pill badge-info">${t.tur || 'Diğer'}</span></td>
                 <td style="font-weight: 800; color: #34d399; font-size: 13px;">+${formatCurrency(t.tutar)}</td>
-                <td style="color: var(--text-muted); font-size: 11px;">${t.aciklama || '-'}</td>
+                <td style="color: var(--text-muted); font-size: 11px;">${t.yontem ? renderAlacakMethodBadge(t.yontem) : ''}${t.aciklama || '-'}</td>
                 <td>
                     <div style="display: flex; gap: 4px;">
                         <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px;" onclick="openEditTahsilatModal(${t.id})" title="Düzenle">
@@ -579,7 +591,20 @@ function deleteAlacakPrompt(id) {
     }
 }
 
-// 6. TAHSİLAT EKLEME / DÜZENLEME / SİLME
+// 6. TAHSİLAT EKLEME / DÜZENLEME / SİLME (NAKİT / BANKA / POS SEÇENEKLİ)
+let selectedAlacakPayMethod = 'Nakit';
+
+function handleAlacakPayMethodChange(method) {
+    selectedAlacakPayMethod = method;
+    ['Nakit', 'Banka', 'POS'].forEach(m => {
+        const lbl = document.getElementById('lblAlacakPay' + m);
+        if (lbl) {
+            if (m === method) lbl.classList.add('active');
+            else lbl.classList.remove('active');
+        }
+    });
+}
+
 function openNewTahsilatModal() {
     document.getElementById("formTahsilatEditId").value = "";
     document.getElementById("formTahsilatModalTitle").innerText = "Yeni Tahsilat Girişi";
@@ -587,6 +612,12 @@ function openNewTahsilatModal() {
     document.getElementById("formTahsilatTarih").value = new Date().toISOString().slice(0, 10);
     populateAlacakTurSelect("formTahsilatTur");
     setCurrencyValue("formTahsilatTutar", 0);
+
+    const defaultYontem = (typeof getKurumInfo === 'function' && getKurumInfo().defaultYontem) || 'Nakit';
+    handleAlacakPayMethodChange(defaultYontem);
+    const radio = document.querySelector(`input[name="alacakPayYontemRadio"][value="${defaultYontem}"]`);
+    if (radio) radio.checked = true;
+
     openModal("modalTahsilatForm");
 }
 
@@ -603,6 +634,11 @@ function openEditTahsilatModal(id) {
     setCurrencyValue("formTahsilatTutar", t.tutar || 0);
     document.getElementById("formTahsilatAciklama").value = t.aciklama || "";
 
+    const yontem = t.yontem || 'Nakit';
+    handleAlacakPayMethodChange(yontem);
+    const radio = document.querySelector(`input[name="alacakPayYontemRadio"][value="${yontem}"]`);
+    if (radio) radio.checked = true;
+
     openModal("modalTahsilatForm");
 }
 
@@ -617,6 +653,9 @@ function submitTahsilatForm(e) {
     const tutar = getCurrencyValue("formTahsilatTutar");
     const aciklama = document.getElementById("formTahsilatAciklama").value.trim();
 
+    const checkedRadio = document.querySelector('input[name="alacakPayYontemRadio"]:checked');
+    const yontem = checkedRadio ? checkedRadio.value : (selectedAlacakPayMethod || 'Nakit');
+
     if (!ref || !cari || tutar <= 0) {
         showToast("Lütfen Referans No, Cari Adı ve geçerli tutar giriniz", "error");
         return;
@@ -629,6 +668,7 @@ function submitTahsilatForm(e) {
             t.ref = ref;
             t.cari = cari;
             t.tur = tur;
+            t.yontem = yontem;
             t.tutar = tutar;
             t.aciklama = aciklama;
             showToast("Tahsilat kaydı güncellendi");
@@ -641,10 +681,11 @@ function submitTahsilatForm(e) {
             ref,
             cari,
             tur,
+            yontem,
             tutar,
             aciklama
         });
-        showToast("Yeni tahsilat girişi kaydedildi");
+        showToast(`Yeni tahsilat girişi (${yontem}) kaydedildi`);
     }
 
     saveAlacakDb();

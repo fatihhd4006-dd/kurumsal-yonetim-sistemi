@@ -1,15 +1,15 @@
 {
   "appName": "Kurumsal Yönetim Sistemi",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "releaseDate": "2026-11-12",
-  "title": "Günlük Tahsilat Raporu, İsteğe Bağlı Makbuz & Otomatik GitHub Güncelleme",
+  "title": "Tek Tıkla İndirmesiz Doğrudan Güncelleme & Otomatik Yeniden Başlatma",
   "author": "dgn • systems",
   "notes": [
+    "Uygulama içi yerel güncelleme köprüsü eklendi: ZIP indirmeden doğrudan sistem klasörüne yükler ve pencereyi otomatik yeniden açar.",
+    "Veri_Profili ve Otomatik_Yedekler klasörleri her güncellemede %100 korunur.",
     "Öğrenci Vezne ve Takip modülüne Günlük Tahsilat & Kasa Raporu eklendi.",
     "Tahsilat işlemleri makbuzsuz sessiz kaydedilebilir, makbuzlar istenen anda yazdırılabilir hâle getirildi.",
-    "Sistemi_Baslat.bat açılışına Veri_Profili'ni koruyan otomatik GitHub güncelleme motoru eklendi.",
-    "Ayarlar > Güncellemeleri Denetle butonu canlı GitHub sürüm kontrolüne bağlandı.",
-    "5 Özgün Kurumsal Tema, Okul 1 / Okul 2 ayrımı ve canlı Döviz / Altın çeviricisi korunup optimize edildi."
+    "Sistemi_Baslat.bat Türkçe kullanıcı adı/boşluk URI dönüşümü ve açılışta otomatik güncelleme kontrolü ile yenilendi."
   ],
   "minAppVersion": "1.0.0",
   "downloadUrl": "https://github.com/fatihhd4006-dd/kurumsal-yonetim-sistemi/archive/refs/heads/main.zip"
