@@ -388,18 +388,24 @@ function renderPersonelZamTab() {
     if (!tbody) return;
 
     if (dbPersonelChanges.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 25px; color: var(--text-muted);">Henüz uygulanmış bir zam geçmişi bulunmuyor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 25px; color: var(--text-muted);">Henüz uygulanmış bir zam geçmişi bulunmuyor.</td></tr>`;
         return;
     }
 
     tbody.innerHTML = [...dbPersonelChanges].reverse().map(c => {
         const p = dbPersonel.find(item => item.code === c.code);
         const name = p ? p.name : c.code;
+        const isKira = (c.type === 'KİRA');
+        const badgeStyle = isKira
+            ? 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);'
+            : 'background: rgba(59, 130, 246, 0.15); color: #60a5fa;';
+        const typeLabel = isKira ? 'Kira Bedeli' : getSocialLabelByType(c.type);
 
         return `
             <tr>
                 <td style="color: var(--text-muted); font-size: 11px;">${c.date || '-'}</td>
                 <td><strong>${name}</strong></td>
+                <td><span class="badge-pill" style="${badgeStyle}; font-weight: 700;">${typeLabel}</span></td>
                 <td><span class="badge-pill badge-info">${c.effectiveMonth}</span></td>
                 <td style="font-weight: 800; color: #ffd700;">${formatCurrency(c.newRate)}</td>
                 <td style="font-size: 11px; color: var(--text-muted);">${c.note || '-'}</td>
@@ -424,17 +430,26 @@ function renderPersonelKiraTab() {
         return;
     }
 
+    const now = new Date();
+    const curPeriod = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+
     tbody.innerHTML = kiraList.map(p => {
+        const curRent = getEffectiveRate(p.code, 'KİRA', curPeriod) || Number(p.rent) || 0;
         return `
             <tr>
-                <td><strong>${p.name}</strong></td>
-                <td style="font-weight: 800; color: var(--text-main);">${formatCurrency(p.rent)}</td>
+                <td><strong>${p.name}</strong> <span style="font-size: 10.5px; color: var(--text-dim);">(${p.code})</span></td>
+                <td style="font-weight: 800; color: #10b981; font-size: 14px;">${formatCurrency(curRent)}</td>
                 <td><span class="badge-pill badge-info">${p.startRent || '-'}</span></td>
                 <td style="color: var(--text-muted);">${formatCurrency(p.initialDebt || 0)}</td>
                 <td>
-                    <button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="openPersonelPayModal('${p.code}', 'KİRA', '', ${p.rent})">
-                        <i class="fa-solid fa-money-bill-transfer"></i> Kira Öde
-                    </button>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="openPersonelPayModal('${p.code}', 'KİRA', '', ${curRent})">
+                            <i class="fa-solid fa-money-bill-transfer"></i> Kira Öde
+                        </button>
+                        <button class="btn btn-subtle" style="padding: 4px 8px; font-size: 11px; color: #d97706; border-color: #f59e0b;" onclick="openZamModal('${p.code}', 'KİRA')" title="Kira Zammı Uygula">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Kira Zammı
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -979,29 +994,42 @@ function printPersonelDekont(payId) {
     }
 }
 
-// ZAM MODALI
+// ZAM MODALI (MAAŞ / KİRA / SOSYAL HAK)
 function openZamModal(code, defaultType) {
     updateSocialLabelsInUI();
 
-    const salaryStaff = dbPersonel.filter(item => (Number(item.salary) > 0 || Number(item.sosyal1) > 0 || Number(item.sosyal2) > 0 || Number(item.sosyal3) > 0 || !item.rent || item.salary > 0));
-    if (salaryStaff.length === 0) {
-        showToast("Sistemde kayıtlı personel bulunmuyor.", "error");
+    const isKiraDefault = (defaultType === 'KİRA');
+    const eligibleStaff = dbPersonel.filter(item => {
+        if (isKiraDefault) return Number(item.rent) > 0;
+        return (Number(item.salary) > 0 || Number(item.rent) > 0 || Number(item.sosyal1) > 0 || Number(item.sosyal2) > 0 || Number(item.sosyal3) > 0);
+    });
+
+    if (eligibleStaff.length === 0) {
+        showToast(isKiraDefault ? "Sistemde tanımlı kira / mülk kaydı bulunmuyor." : "Sistemde kayıtlı personel veya mülk kaydı bulunmuyor.", "error");
         return;
     }
 
     const selectEl = document.getElementById("zamPersonelSelect");
     if (selectEl) {
-        selectEl.innerHTML = salaryStaff.map(p => `
-            <option value="${p.code}" ${code === p.code ? 'selected' : ''}>${p.name} (Sicil: ${p.code})</option>
-        `).join("");
+        selectEl.innerHTML = eligibleStaff.map(p => {
+            let roleTag = "Personel";
+            if (Number(p.rent) > 0 && (!p.salary || Number(p.salary) === 0)) roleTag = "Mülk Sahibi";
+            else if (Number(p.rent) > 0 && Number(p.salary) > 0) roleTag = "Personel & Mülk";
+            return `<option value="${p.code}" ${code === p.code ? 'selected' : ''}>${p.name} (${roleTag} - ${p.code})</option>`;
+        }).join("");
     }
 
     const targetTypeSelect = document.getElementById("zamTargetType");
     if (targetTypeSelect) {
-        targetTypeSelect.value = defaultType || "MAAŞ";
+        targetTypeSelect.value = defaultType || (code && dbPersonel.find(x => x.code === code && Number(x.rent) > 0 && !x.salary) ? "KİRA" : "MAAŞ");
     }
 
-    const targetCode = code || (selectEl ? selectEl.value : salaryStaff[0].code);
+    const titleEl = document.getElementById("modalZamTitle");
+    if (titleEl) {
+        titleEl.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${defaultType === 'KİRA' ? 'Kira Zammı Uygula' : 'Maaş / Kira / Sosyal Hak Zammı Uygula'}`;
+    }
+
+    const targetCode = code || (selectEl ? selectEl.value : eligibleStaff[0].code);
     if (selectEl) selectEl.value = targetCode;
 
     onZamPersonelChange(targetCode);
@@ -1011,7 +1039,7 @@ function openZamModal(code, defaultType) {
     const curYear = now.getFullYear();
     const curM = (now.getMonth() + 1).toString().padStart(2, '0');
     document.getElementById("zamEffectiveMonth").value = `${curYear}-${curM}`;
-    document.getElementById("zamNote").value = "Dönemsel artış";
+    document.getElementById("zamNote").value = defaultType === 'KİRA' ? "Dönemsel kira artışı" : "Dönemsel artış";
 
     openModal("modalZam");
 }
@@ -1020,13 +1048,27 @@ function onZamPersonelChange(code) {
     const p = dbPersonel.find(item => item.code === code);
     if (!p) return;
 
-    const targetType = document.getElementById("zamTargetType")?.value || "MAAŞ";
+    let targetType = document.getElementById("zamTargetType")?.value || "MAAŞ";
+
+    // Eğer mülk sahibiyse ve maaşı yoksa otomatik KİRA seç
+    if (Number(p.rent) > 0 && (!p.salary || Number(p.salary) === 0) && (!p.sosyal1 && !p.sosyal2 && !p.sosyal3)) {
+        const targetTypeSelect = document.getElementById("zamTargetType");
+        if (targetTypeSelect && targetType !== 'KİRA') {
+            targetTypeSelect.value = 'KİRA';
+            targetType = 'KİRA';
+        }
+    }
+
     const nowPeriod = getPeriodStr(new Date().getFullYear(), new Date().getMonth() + 1);
-    const currentRate = getEffectiveRate(p.code, targetType, nowPeriod);
+    let currentRate = getEffectiveRate(p.code, targetType, nowPeriod);
+    if (!currentRate && targetType === 'KİRA') {
+        currentRate = Number(p.rent) || 0;
+    }
 
     const disp = document.getElementById("zamCurrentSalaryDisplay");
     if (disp) {
-        disp.innerHTML = `Mevcut ${getSocialLabelByType(targetType)} Tutarı: <strong style="color: var(--primary);">${formatCurrency(currentRate)}</strong>`;
+        const labelName = (targetType === 'KİRA') ? 'Kira Bedeli' : getSocialLabelByType(targetType);
+        disp.innerHTML = `Mevcut ${labelName}: <strong style="color: var(--primary); font-size: 13px;">${formatCurrency(currentRate)}</strong>`;
     }
 
     setCurrencyValue("zamNewRate", currentRate);
@@ -1048,7 +1090,7 @@ function submitZamForm(e) {
     const note = document.getElementById("zamNote").value.trim();
 
     if (!code) {
-        showToast("Lütfen bir personel seçiniz", "error");
+        showToast("Lütfen bir personel / mülk seçiniz", "error");
         return;
     }
 
@@ -1066,6 +1108,8 @@ function submitZamForm(e) {
     const pName = p ? p.name : code;
 
     const newId = (dbPersonelChanges.reduce((max, item) => Math.max(max, item.id), 0) || 0) + 1;
+    const labelName = (targetType === 'KİRA') ? 'Kira Bedeli' : getSocialLabelByType(targetType);
+
     dbPersonelChanges.push({
         id: newId,
         date: new Date().toISOString().slice(0, 10),
@@ -1073,7 +1117,7 @@ function submitZamForm(e) {
         type: targetType,
         effectiveMonth,
         newRate,
-        note: note || `${getSocialLabelByType(targetType)} artışı`
+        note: note || `${labelName} artışı`
     });
 
     savePersonelDb();
@@ -1081,7 +1125,8 @@ function submitZamForm(e) {
     renderPersonelZamTab();
     renderPersonelAylikTab();
     renderPersonelKadroTab();
-    showToast(`${pName} için ${effectiveMonth} döneminden itibaren yeni ${getSocialLabelByType(targetType)} ${formatCurrency(newRate)} olarak güncellendi!`);
+    renderPersonelKiraTab();
+    showToast(`${pName} için ${effectiveMonth} döneminden itibaren yeni ${labelName} ${formatCurrency(newRate)} olarak güncellendi!`);
 }
 
 function deleteZamPrompt(id) {
@@ -1091,6 +1136,7 @@ function deleteZamPrompt(id) {
         renderPersonelZamTab();
         renderPersonelAylikTab();
         renderPersonelKadroTab();
+        renderPersonelKiraTab();
         showToast("Zam kaydı iptal edildi");
     }
 }

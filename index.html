@@ -87,8 +87,8 @@
                         <div class="login-signature-monogram">
                             <i class="fa-solid fa-key" style="color: var(--accent-gold);"></i>
                         </div>
-                        <h2 class="login-brand-title">İlk Kurulum</h2>
-                        <div class="login-secure-label">Yönetici Giriş Şifresi Belirleyin</div>
+                        <h2 class="login-brand-title">Şifre Kurulumu</h2>
+                        <div class="login-secure-label">Yönetici Giriş Şifresi Belirleyin (Verileriniz Korunur)</div>
                         <div class="login-free-badge">
                             <i class="fa-solid fa-shield-check"></i> Sistem Başlatıcı
                         </div>
@@ -102,6 +102,11 @@
                             <span>Şifreyi Kaydet ve Başlat</span>
                         </button>
                     </form>
+                    <div style="margin-top: 12px;">
+                        <button type="button" class="auth-reset-btn" onclick="localStorage.setItem('portal_user_initialized','true'); checkAuth();">
+                            <i class="fa-solid fa-arrow-left"></i> Şifre Ekranına Geri Dön
+                        </button>
+                    </div>
                 </div>
 
                 <!-- DURUM B: SONRAKİ GİRİŞLER - ŞİFRE İLE GİRİŞ -->
@@ -278,10 +283,6 @@
                             <button class="nav-sub-item" data-tab="ogrenci-kirtasiye" onclick="switchAppTab('ogrenci-kirtasiye')" title="Kırtasiye Takibi">
                                 <i class="fa-solid fa-book-bookmark"></i>
                                 <span>Kırtasiye Takibi</span>
-                            </button>
-                            <button class="nav-sub-item" data-tab="ogrenci-gunluk-rapor" onclick="switchAppTab('ogrenci-gunluk-rapor')" title="Günlük Tahsilat Raporu">
-                                <i class="fa-solid fa-file-invoice-dollar"></i>
-                                <span>Günlük Tahsilat Raporu</span>
                             </button>
                         </div>
                     </div>
@@ -1023,11 +1024,14 @@
                                     <option value="Banka">🏦 Banka</option>
                                     <option value="POS">💳 POS</option>
                                 </select>
+                                <button type="button" class="btn btn-primary" onclick="openGunlukRaporFromVezne()" title="Günlük Tahsilat &amp; Kasa Raporu Ekranını Aç">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i> Günlük Rapor
+                                </button>
                                 <button type="button" class="btn btn-subtle" onclick="exportVezneGunlukExcel()" title="Seçili Günün Raporunu Excel İndir">
                                     <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Günlük Excel
                                 </button>
-                                <button type="button" class="btn btn-primary" onclick="printVezneGunlukRapor()" title="Seçili Günün Kasa &amp; Tahsilat Raporunu A4 Yazdır">
-                                    <i class="fa-solid fa-print"></i> Günlük Rapor (A4)
+                                <button type="button" class="btn btn-subtle" onclick="printVezneGunlukRapor()" title="Seçili Günün Kasa &amp; Tahsilat Raporunu A4 Yazdır">
+                                    <i class="fa-solid fa-print"></i> A4 Yazdır
                                 </button>
                             </div>
                         </div>
@@ -1172,6 +1176,9 @@
                     <div class="card-box" style="margin-bottom: 16px; padding: 14px 18px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                             <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <button type="button" class="btn btn-subtle" onclick="switchAppTab('ogrenci-vezne')" title="Vezne &amp; Tahsilat listesine geri dön">
+                                    <i class="fa-solid fa-arrow-left"></i> Vezne &amp; Tahsilat'a Dön
+                                </button>
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">
                                         <i class="fa-regular fa-calendar" style="color: var(--primary);"></i> Tarih:
@@ -1419,17 +1426,22 @@
                     </div>
                 </section>
 
-                <!-- ZAM İŞLEMLERİ -->
+                <!-- ZAM İŞLEMLERİ (MAAŞ & KİRA) -->
                 <section id="view-personel-zam" class="view-section">
                     <div class="card-box">
                         <div class="card-box-header">
                             <div class="box-title">
                                 <i class="fa-solid fa-arrow-trend-up"></i>
-                                <span>Personel Maaş Zam Geçmişi</span>
+                                <span>Maaş &amp; Kira Zam Geçmişi</span>
                             </div>
-                            <button class="btn btn-primary" onclick="openZamModal()">
-                                <i class="fa-solid fa-arrow-trend-up"></i> + Yeni Zam Uygula
-                            </button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-primary" onclick="openZamModal('', 'MAAŞ')">
+                                    <i class="fa-solid fa-arrow-trend-up"></i> + Maaş Zammı
+                                </button>
+                                <button class="btn btn-subtle" onclick="openZamModal('', 'KİRA')" style="font-weight: 700; color: #d97706; border-color: #f59e0b;">
+                                    <i class="fa-solid fa-building"></i> + Kira Zammı
+                                </button>
+                            </div>
                         </div>
 
                         <div class="table-responsive">
@@ -1437,9 +1449,10 @@
                                 <thead>
                                     <tr>
                                         <th>İşlem Tarihi</th>
-                                        <th>Personel</th>
+                                        <th>Personel / Mülk</th>
+                                        <th>Zam Kalemi</th>
                                         <th>Geçerlilik Ayı</th>
-                                        <th>Yeni Net Maaş</th>
+                                        <th>Yeni Tutar</th>
                                         <th>Açıklama</th>
                                         <th>İşlem</th>
                                     </tr>
@@ -1458,6 +1471,9 @@
                                 <i class="fa-solid fa-building"></i>
                                 <span>Bina, Ofis ve Mülk Kira Takibi</span>
                             </div>
+                            <button class="btn btn-primary" onclick="openZamModal('', 'KİRA')">
+                                <i class="fa-solid fa-arrow-trend-up"></i> + Kira Zammı Uygula
+                            </button>
                         </div>
 
                         <div class="table-responsive">
@@ -1982,6 +1998,24 @@
                                     <i class="fa-solid fa-floppy-disk"></i> Özelleştirme Bilgilerini Kaydet
                                 </button>
                             </form>
+
+                            <!-- Yönetici Şifresi Değiştirme (Veri Kaybı Olmadan) -->
+                            <div style="border-top: 1px solid var(--border-color); margin-top: 16px; padding-top: 14px;">
+                                <div style="font-size: 12.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-key" style="color: var(--accent-gold);"></i>
+                                    <span>Yönetici Giriş Şifresini Değiştir</span>
+                                </div>
+                                <form onsubmit="handlePasswordChangeForm(event)">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                                        <input type="password" id="cfgCurrentPassword" class="input-control" placeholder="Mevcut şifre" required>
+                                        <input type="password" id="cfgPassword" class="input-control" placeholder="Yeni şifre (min 4)" required minlength="4">
+                                        <input type="password" id="cfgPasswordConfirm" class="input-control" placeholder="Yeni şifre tekrar" required minlength="4">
+                                    </div>
+                                    <button type="submit" class="btn btn-subtle" style="width: 100%; font-weight: 600;">
+                                        <i class="fa-solid fa-shield-check"></i> Şifreyi Güncelle (Veriler Korunur)
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
                         <!-- 3. KART: SİSTEM GÜNCELLEME & SÜRÜM YÖNETİMİ (GÜNCELLEME) -->
@@ -2828,14 +2862,14 @@
     <div id="modalZam" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Maaş / Sosyal Hak Zammı Uygula</h3>
+                <h3 id="modalZamTitle"><i class="fa-solid fa-arrow-trend-up"></i> Maaş / Kira / Sosyal Hak Zammı Uygula</h3>
                 <button onclick="closeModal('modalZam')" class="sidebar-toggle-btn">&times;</button>
             </div>
             <form onsubmit="submitZamForm(event)">
                 <div class="modal-body">
                     <div class="form-grid-2">
                         <div class="form-group">
-                            <label>Personel / Hak Sahibi *</label>
+                            <label>Personel / Mülk Sahibi *</label>
                             <select id="zamPersonelSelect" class="select-control" style="width: 100%;" onchange="onZamPersonelChange(this.value)">
                             </select>
                         </div>
@@ -2843,6 +2877,7 @@
                             <label>Zam Kalemi *</label>
                             <select id="zamTargetType" class="select-control" style="width: 100%;" onchange="onZamTypeChange()">
                                 <option value="MAAŞ">Net Maaş</option>
+                                <option value="KİRA">Mülk / Kira Bedeli</option>
                                 <option value="SOSYAL-1" id="optZamSosyal1">Sosyal-1</option>
                                 <option value="SOSYAL-2" id="optZamSosyal2">Sosyal-2</option>
                                 <option value="SOSYAL-3" id="optZamSosyal3">Sosyal-3</option>
@@ -3353,6 +3388,17 @@
                         <div class="form-group">
                             <label>🪙 22 Ayar Bilezik (gr) Fiyatı (₺)</label>
                             <input type="number" step="1" min="1" id="kurInputALTIN_22AYAR" class="input-control" style="width: 100%; font-weight: 700;">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>📈 BIST 100 Endeksi (Puan)</label>
+                            <input type="number" step="0.01" min="1" id="kurInputBIST100" class="input-control" style="width: 100%; font-weight: 700;" placeholder="10450">
+                        </div>
+                        <div class="form-group">
+                            <label>💷 İngiliz Sterlini (GBP ₺)</label>
+                            <input type="number" step="0.01" min="1" id="kurInputGBP" class="input-control" style="width: 100%; font-weight: 700;" placeholder="66.60">
                         </div>
                     </div>
                 </div>

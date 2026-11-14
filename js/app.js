@@ -547,8 +547,9 @@ function switchAppTab(tabId) {
     }
 
     // Sidebar items aktiflik
+    const navTab = (tabId === "ogrenci-gunluk-rapor") ? "ogrenci-vezne" : tabId;
     document.querySelectorAll(".nav-item, .nav-sub-item").forEach(btn => {
-        if (btn.getAttribute("data-tab") === tabId) {
+        if (btn.getAttribute("data-tab") === navTab) {
             btn.classList.add("active");
         } else {
             btn.classList.remove("active");

@@ -1,7 +1,8 @@
 ﻿param(
     [string]$SourceDir = (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Kurumsal_Yonetim_Sistemi'),
     [string]$GitHubDir = (Join-Path ([Environment]::GetFolderPath('Desktop')) 'GitHub_Yukleme_Paketi'),
-    [string]$PortableZip = (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Kurumsal_Yonetim_Sistemi_Portable.zip')
+    [string]$PortableZip = (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Kurumsal_Yonetim_Sistemi_Portable.zip'),
+    [string]$StandaloneOgrenciHtml = (Join-Path (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Yeni klasör (2)') 'ogrenci_takip_paneli.html')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,13 +68,52 @@ try {
     }
 }
 
+# Bagimsiz Ogrenci Takip Paneli dosyasini ve tasinabilir ZIP paketini hazirla
+$StandaloneDir = Split-Path -Path $StandaloneOgrenciHtml -Parent
+$OgrenciPortableZip = Join-Path $StandaloneDir 'Ogrenci_Takip_Paneli_Portable.zip'
+
+if ($StandaloneOgrenciHtml -and (Test-Path $StandaloneOgrenciHtml)) {
+    Copy-Item -Path $StandaloneOgrenciHtml -Destination (Join-Path $GitHubDir 'ogrenci_takip_paneli.html') -Force
+
+    $ogrTempStage = Join-Path ([System.IO.Path]::GetTempPath()) ('ogr_pkg_' + [Guid]::NewGuid().ToString('N'))
+    try {
+        $ogrStageInner = Join-Path $ogrTempStage 'Ogrenci_Takip_Paneli'
+        New-Item -ItemType Directory -Path $ogrStageInner -Force | Out-Null
+
+        Copy-Item -Path $StandaloneOgrenciHtml -Destination (Join-Path $ogrStageInner 'ogrenci_takip_paneli.html') -Force
+        foreach ($extraFile in @('Ogrenci_Panelini_Baslat.bat', 'Ogrenci_Guncelle.ps1', 'Beni_Oku.txt')) {
+            $srcExtra = Join-Path $StandaloneDir $extraFile
+            if (Test-Path $srcExtra) {
+                Copy-Item -Path $srcExtra -Destination (Join-Path $ogrStageInner $extraFile) -Force
+            }
+        }
+
+        if (Test-Path $OgrenciPortableZip) {
+            Remove-Item -Path $OgrenciPortableZip -Force
+        }
+        [System.IO.Compression.ZipFile]::CreateFromDirectory(
+            $ogrTempStage,
+            $OgrenciPortableZip,
+            [System.IO.Compression.CompressionLevel]::Optimal,
+            $false
+        )
+        Copy-Item -Path $OgrenciPortableZip -Destination (Join-Path $GitHubDir 'Ogrenci_Takip_Paneli_Portable.zip') -Force
+    } finally {
+        if (Test-Path $ogrTempStage) {
+            Remove-Item -Path $ogrTempStage -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 $ghCount = (Get-ChildItem -Path $GitHubDir -File -Recurse).Count
 $zipSizeMb = [math]::Round(((Get-Item $PortableZip).Length / 1MB), 2)
+$ogrZipSizeKb = if (Test-Path $OgrenciPortableZip) { [math]::Round(((Get-Item $OgrenciPortableZip).Length / 1KB), 1) } else { 0 }
 
 Write-Host ""
 Write-Host "========================================================"
 Write-Host " [BASARILI] Bulut ve Kurum Paketleri Guncellendi! (v$verStr)"
-Write-Host " - GitHub Klasoru : $GitHubDir ($ghCount dosya)"
-Write-Host " - Taşınabilir ZIP: $PortableZip ($zipSizeMb MB)"
+Write-Host " - GitHub Klasoru     : $GitHubDir ($ghCount dosya)"
+Write-Host " - Kurumsal ZIP       : $PortableZip ($zipSizeMb MB)"
+Write-Host " - Ogrenci Paneli ZIP : $OgrenciPortableZip ($ogrZipSizeKb KB)"
 Write-Host " - Veri_Profili ve Otomatik_Yedekler haric tutuldu."
 Write-Host "========================================================"

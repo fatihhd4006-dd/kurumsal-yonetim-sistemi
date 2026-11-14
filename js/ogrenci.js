@@ -727,6 +727,15 @@ function renderOgrenciOdemelerTab() {
     }).join("");
 }
 
+function openGunlukRaporFromVezne() {
+    const vezneTarihEl = document.getElementById("vezneRaporTarih");
+    const raporTarihEl = document.getElementById("gunlukRaporTarih");
+    if (vezneTarihEl && raporTarihEl && vezneTarihEl.value) {
+        raporTarihEl.value = vezneTarihEl.value;
+    }
+    switchAppTab("ogrenci-gunluk-rapor");
+}
+
 function printVezneGunlukRapor() {
     const opts = getVezneReportOptions();
     const reportData = getFilteredTahsilatReportData(opts);

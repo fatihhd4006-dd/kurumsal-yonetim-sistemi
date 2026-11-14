@@ -20,19 +20,29 @@ const BORC_BIRIMLERI = {
 // DÖVİZ VE ALTIN KURLARI (CANLI İNTERNETTEN ÇEKME VE MANUEL GİRİŞ)
 // ============================================================================
 const DEFAULT_KUR_LISTESI = {
-    USD: 34.50,
-    EUR: 37.20,
-    ALTIN_GR: 3050.00,
-    ALTIN_CEYREK: 5000.00,
-    ALTIN_YARIM: 10000.00,
-    ALTIN_TAM: 20000.00,
-    ALTIN_ATA: 20600.00,
-    ALTIN_22AYAR: 2800.00,
+    USD: 50.36,
+    EUR: 55.56,
+    GBP: 66.60,
+    ALTIN_GR: 6280.00,
+    ALTIN_CEYREK: 10266.00,
+    ALTIN_YARIM: 20532.00,
+    ALTIN_TAM: 41064.00,
+    ALTIN_ATA: 42220.00,
+    ALTIN_22AYAR: 5745.00,
+    BIST100: 10450.00,
+    degisimler: {
+        USD: "%0,22",
+        EUR: "%-0,24",
+        GBP: "%-0,12",
+        ALTIN_GR: "%0,32",
+        ALTIN_CEYREK: "%0,54",
+        BIST100: "%0,45"
+    },
     sonGuncelleme: new Date().toISOString()
 };
 
 let dbKurlar = JSON.parse(localStorage.getItem('app_doviz_kurlar'));
-if (!dbKurlar || typeof dbKurlar !== 'object') {
+if (!dbKurlar || typeof dbKurlar !== 'object' || !dbKurlar.ALTIN_GR || Number(dbKurlar.ALTIN_GR) < 4000) {
     dbKurlar = { ...DEFAULT_KUR_LISTESI };
     localStorage.setItem('app_doviz_kurlar', JSON.stringify(dbKurlar));
 } else {
@@ -52,14 +62,15 @@ function saveKurlarDb() {
 
 function getBirimKur(birimCode) {
     if (!birimCode || birimCode === 'TL') return 1;
-    if (birimCode === 'USD') return Number(dbKurlar.USD) || 34.50;
-    if (birimCode === 'EUR') return Number(dbKurlar.EUR) || 37.20;
-    if (birimCode === 'ALTIN_GR') return Number(dbKurlar.ALTIN_GR) || 3050.00;
-    if (birimCode === 'ALTIN_CEYREK') return Number(dbKurlar.ALTIN_CEYREK) || 5000.00;
-    if (birimCode === 'ALTIN_YARIM') return Number(dbKurlar.ALTIN_YARIM) || 10000.00;
-    if (birimCode === 'ALTIN_TAM') return Number(dbKurlar.ALTIN_TAM) || 20000.00;
-    if (birimCode === 'ALTIN_ATA') return Number(dbKurlar.ALTIN_ATA) || 20600.00;
-    if (birimCode === 'ALTIN_22AYAR') return Number(dbKurlar.ALTIN_22AYAR) || 2800.00;
+    if (birimCode === 'USD') return Number(dbKurlar.USD) || 50.36;
+    if (birimCode === 'EUR') return Number(dbKurlar.EUR) || 55.56;
+    if (birimCode === 'GBP') return Number(dbKurlar.GBP) || 66.60;
+    if (birimCode === 'ALTIN_GR') return Number(dbKurlar.ALTIN_GR) || 6280.00;
+    if (birimCode === 'ALTIN_CEYREK') return Number(dbKurlar.ALTIN_CEYREK) || 10266.00;
+    if (birimCode === 'ALTIN_YARIM') return Number(dbKurlar.ALTIN_YARIM) || 20532.00;
+    if (birimCode === 'ALTIN_TAM') return Number(dbKurlar.ALTIN_TAM) || 41064.00;
+    if (birimCode === 'ALTIN_ATA') return Number(dbKurlar.ALTIN_ATA) || 42220.00;
+    if (birimCode === 'ALTIN_22AYAR') return Number(dbKurlar.ALTIN_22AYAR) || 5745.00;
     return 1;
 }
 
@@ -74,80 +85,172 @@ function convertTLToBirim(tlTutar, birimCode, customKur = null) {
     return (Number(tlTutar) || 0) / kur;
 }
 
+function parseTruncgilNum(val) {
+    if (!val) return 0;
+    if (typeof val === 'number') return val;
+    let str = "";
+    if (typeof val === 'string') str = val;
+    else if (typeof val === 'object') {
+        str = val["Alış"] || val["Alis"] || val["Al\u0131\u015f"] || val["Satış"] || val["Satis"] || Object.values(val)[0] || "";
+    }
+    if (!str) return 0;
+    const cleaned = String(str).replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '');
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+}
+
+function parseTruncgilChange(val) {
+    if (!val || typeof val !== 'object') return "";
+    const ch = val["Değişim"] || val["Degisim"] || val["De\u011fi\u015fim"] || "";
+    if (!ch) return "";
+    return String(ch).trim();
+}
+
 async function fetchLiveExchangeRates(silent = false) {
     try {
         if (!silent && typeof showToast === 'function') {
-            showToast("Canlı piyasa kurları sorgulanıyor...", "info");
+            showToast("Canlı serbest piyasa ve borsa kurları alınıyor...", "info");
         }
         let updatedCount = 0;
+        if (!dbKurlar.degisimler) dbKurlar.degisimler = {};
 
-        // 1. Döviz Kurları (USD, EUR) - Serbest Piyasa Open API
-        try {
-            const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.rates && data.rates.TRY) {
-                    const usdTry = parseFloat(data.rates.TRY);
-                    if (usdTry > 10) {
-                        dbKurlar.USD = Math.round(usdTry * 100) / 100;
-                        updatedCount++;
-                    }
-                    if (data.rates.EUR) {
-                        const eurTry = usdTry / parseFloat(data.rates.EUR);
-                        if (eurTry > 10) {
-                            dbKurlar.EUR = Math.round(eurTry * 100) / 100;
-                            updatedCount++;
-                        }
-                    }
-                }
-            }
-        } catch (e1) {
-            console.warn("Döviz kuru servisi erişim uyarısı (er-api):", e1);
-        }
-
-        // 2. Altın Kurları - Finans Truncgil API
+        // 1. Birincil Kaynak: Türkiye Finans Truncgil API (Döviz, Altın & Gümüş)
+        let truncgilSuccess = false;
         try {
             const resGold = await fetch("https://finans.truncgil.com/today.json", { cache: "no-store" });
             if (resGold.ok) {
                 const gData = await resGold.json();
                 if (gData && typeof gData === 'object') {
-                    if (gData["gram-altin"] && gData["gram-altin"].Alış) {
-                        const gr = parseFloat(String(gData["gram-altin"].Alış).replace(/\./g, '').replace(',', '.'));
-                        if (gr > 500) { dbKurlar.ALTIN_GR = Math.round(gr); updatedCount++; }
+                    // Dövizler
+                    if (gData.USD) {
+                        const usd = parseTruncgilNum(gData.USD);
+                        if (usd > 20) {
+                            dbKurlar.USD = Math.round(usd * 100) / 100;
+                            const ch = parseTruncgilChange(gData.USD);
+                            if (ch) dbKurlar.degisimler.USD = ch;
+                            updatedCount++;
+                        }
                     }
-                    if (gData["ceyrek-altin"] && gData["ceyrek-altin"].Alış) {
-                        const ceyrek = parseFloat(String(gData["ceyrek-altin"].Alış).replace(/\./g, '').replace(',', '.'));
-                        if (ceyrek > 1000) { dbKurlar.ALTIN_CEYREK = Math.round(ceyrek); updatedCount++; }
+                    if (gData.EUR) {
+                        const eur = parseTruncgilNum(gData.EUR);
+                        if (eur > 20) {
+                            dbKurlar.EUR = Math.round(eur * 100) / 100;
+                            const ch = parseTruncgilChange(gData.EUR);
+                            if (ch) dbKurlar.degisimler.EUR = ch;
+                            updatedCount++;
+                        }
                     }
-                    if (gData["yarim-altin"] && gData["yarim-altin"].Alış) {
-                        const yarim = parseFloat(String(gData["yarim-altin"].Alış).replace(/\./g, '').replace(',', '.'));
-                        if (yarim > 2000) dbKurlar.ALTIN_YARIM = Math.round(yarim);
+                    if (gData.GBP) {
+                        const gbp = parseTruncgilNum(gData.GBP);
+                        if (gbp > 20) {
+                            dbKurlar.GBP = Math.round(gbp * 100) / 100;
+                            const ch = parseTruncgilChange(gData.GBP);
+                            if (ch) dbKurlar.degisimler.GBP = ch;
+                        }
                     }
-                    if (gData["tam-altin"] && gData["tam-altin"].Alış) {
-                        const tam = parseFloat(String(gData["tam-altin"].Alış).replace(/\./g, '').replace(',', '.'));
-                        if (tam > 4000) dbKurlar.ALTIN_TAM = Math.round(tam);
+
+                    // Altınlar
+                    if (gData["gram-altin"]) {
+                        const gr = parseTruncgilNum(gData["gram-altin"]);
+                        if (gr > 1000) {
+                            dbKurlar.ALTIN_GR = Math.round(gr);
+                            const ch = parseTruncgilChange(gData["gram-altin"]);
+                            if (ch) dbKurlar.degisimler.ALTIN_GR = ch;
+                            updatedCount++;
+                        }
                     }
-                    if (gData["cumhuriyet-altini"] && gData["cumhuriyet-altini"].Alış) {
-                        const ata = parseFloat(String(gData["cumhuriyet-altini"].Alış).replace(/\./g, '').replace(',', '.'));
-                        if (ata > 4000) dbKurlar.ALTIN_ATA = Math.round(ata);
+                    if (gData["ceyrek-altin"]) {
+                        const ceyrek = parseTruncgilNum(gData["ceyrek-altin"]);
+                        if (ceyrek > 2000) {
+                            dbKurlar.ALTIN_CEYREK = Math.round(ceyrek);
+                            const ch = parseTruncgilChange(gData["ceyrek-altin"]);
+                            if (ch) dbKurlar.degisimler.ALTIN_CEYREK = ch;
+                            updatedCount++;
+                        }
                     }
-                    if (gData["22-ayar-bilezik"] && gData["22-ayar-bilezik"].Alış) {
-                        const b = parseFloat(String(gData["22-ayar-bilezik"].Alış).replace(/\./g, '').replace(',', '.'));
-                        if (b > 500) dbKurlar.ALTIN_22AYAR = Math.round(b);
+                    if (gData["yarim-altin"]) {
+                        const yarim = parseTruncgilNum(gData["yarim-altin"]);
+                        if (yarim > 4000) dbKurlar.ALTIN_YARIM = Math.round(yarim);
                     }
+                    if (gData["tam-altin"]) {
+                        const tam = parseTruncgilNum(gData["tam-altin"]);
+                        if (tam > 8000) dbKurlar.ALTIN_TAM = Math.round(tam);
+                    }
+                    const ataItem = gData["cumhuriyet-altini"] || gData["ata-altin"];
+                    if (ataItem) {
+                        const ata = parseTruncgilNum(ataItem);
+                        if (ata > 8000) dbKurlar.ALTIN_ATA = Math.round(ata);
+                    }
+                    if (gData["22-ayar-bilezik"]) {
+                        const b22 = parseTruncgilNum(gData["22-ayar-bilezik"]);
+                        if (b22 > 1000) dbKurlar.ALTIN_22AYAR = Math.round(b22);
+                    }
+                    if (gData["gumus"]) {
+                        const gumus = parseTruncgilNum(gData["gumus"]);
+                        if (gumus > 10) dbKurlar.GUMUS = Math.round(gumus * 100) / 100;
+                    }
+
+                    truncgilSuccess = true;
                 }
             }
-        } catch (e2) {
-            console.warn("Altın kuru servisi erişim uyarısı (truncgil):", e2);
+        } catch (e1) {
+            console.warn("Truncgil finans API uyarısı:", e1);
+        }
+
+        // 2. Yedek Döviz Servisi (Eğer Truncgil çevrimdışıysa Frankfurter veya er-api)
+        if (!truncgilSuccess) {
+            try {
+                const resF = await fetch("https://api.frankfurter.app/latest?from=USD&to=TRY,EUR", { cache: "no-store" });
+                if (resF.ok) {
+                    const fData = await resF.json();
+                    if (fData && fData.rates && fData.rates.TRY) {
+                        const usdTry = parseFloat(fData.rates.TRY);
+                        if (usdTry > 20) {
+                            dbKurlar.USD = Math.round(usdTry * 100) / 100;
+                            updatedCount++;
+                        }
+                        if (fData.rates.EUR) {
+                            const eurTry = usdTry / parseFloat(fData.rates.EUR);
+                            if (eurTry > 20) {
+                                dbKurlar.EUR = Math.round(eurTry * 100) / 100;
+                                updatedCount++;
+                            }
+                        }
+                    }
+                }
+            } catch (e2) {
+                try {
+                    const resEr = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
+                    if (resEr.ok) {
+                        const erData = await resEr.json();
+                        if (erData && erData.rates && erData.rates.TRY) {
+                            const usdTry = parseFloat(erData.rates.TRY);
+                            if (usdTry > 20) {
+                                dbKurlar.USD = Math.round(usdTry * 100) / 100;
+                                updatedCount++;
+                            }
+                            if (erData.rates.EUR) {
+                                const eurTry = usdTry / parseFloat(erData.rates.EUR);
+                                if (eurTry > 20) {
+                                    dbKurlar.EUR = Math.round(eurTry * 100) / 100;
+                                    updatedCount++;
+                                }
+                            }
+                        }
+                    }
+                } catch (e3) {
+                    console.warn("Yedek döviz servisi uyarısı:", e3);
+                }
+            }
         }
 
         saveKurlarDb();
 
         if (!silent && typeof showToast === 'function') {
             if (updatedCount > 0) {
-                showToast(`Piyasa kurları güncellendi! (USD: ${dbKurlar.USD} ₺, EUR: ${dbKurlar.EUR} ₺, Gr Altın: ${Number(dbKurlar.ALTIN_GR).toLocaleString('tr-TR')} ₺)`);
+                showToast(`Canlı borsa ve kurlar güncellendi! (USD: ${dbKurlar.USD} ₺, EUR: ${dbKurlar.EUR} ₺, Gram Altın: ${Number(dbKurlar.ALTIN_GR).toLocaleString('tr-TR')} ₺)`);
             } else {
-                showToast("Canlı kur servisine ulaşılamadı. Mevcut kayıtlı kurlar kullanılıyor.", "info");
+                showToast("Canlı kur servisine ulaşılamadı. Kayıtlı güncel kurlar kullanılıyor.", "info");
             }
         }
     } catch (err) {
@@ -158,43 +261,65 @@ async function fetchLiveExchangeRates(silent = false) {
     }
 }
 
+function renderFormatChangeTag(changeVal) {
+    if (!changeVal) return '';
+    const s = String(changeVal).trim();
+    const isDown = s.includes('-') || s.startsWith('-');
+    const color = isDown ? '#f87171' : '#34d399';
+    const icon = isDown ? 'fa-arrow-trend-down' : 'fa-arrow-trend-up';
+    let clean = s.replace(/[%]/g, '').trim();
+    if (clean.startsWith('+') || clean.startsWith('-')) clean = clean.substring(1);
+    const display = (isDown ? '-%' : '+%') + clean;
+    return `<span class="borsa-item-change" style="color: ${color};"><i class="fa-solid ${icon}"></i> ${display}</span>`;
+}
+
 function renderGlobalBorsaTicker() {
     const track = document.getElementById("globalBorsaTrack");
     if (!track) return;
 
-    const usd = Number(dbKurlar.USD || 34.50).toFixed(2);
-    const eur = Number(dbKurlar.EUR || 37.20).toFixed(2);
-    const grAltin = Number(dbKurlar.ALTIN_GR || 3050).toLocaleString('tr-TR');
-    const ceyrek = Number(dbKurlar.ALTIN_CEYREK || 5000).toLocaleString('tr-TR');
-    const yarim = Number(dbKurlar.ALTIN_YARIM || 10000).toLocaleString('tr-TR');
-    const tam = Number(dbKurlar.ALTIN_TAM || 20000).toLocaleString('tr-TR');
-    const ata = Number(dbKurlar.ALTIN_ATA || 20600).toLocaleString('tr-TR');
-    const b22 = Number(dbKurlar.ALTIN_22AYAR || 2800).toLocaleString('tr-TR');
+    const usd = Number(dbKurlar.USD || 50.36).toFixed(2);
+    const eur = Number(dbKurlar.EUR || 55.56).toFixed(2);
+    const gbp = Number(dbKurlar.GBP || 66.60).toFixed(2);
+    const grAltin = Number(dbKurlar.ALTIN_GR || 6280).toLocaleString('tr-TR');
+    const ceyrek = Number(dbKurlar.ALTIN_CEYREK || 10266).toLocaleString('tr-TR');
+    const yarim = Number(dbKurlar.ALTIN_YARIM || 20532).toLocaleString('tr-TR');
+    const tam = Number(dbKurlar.ALTIN_TAM || 41064).toLocaleString('tr-TR');
+    const ata = Number(dbKurlar.ALTIN_ATA || 42220).toLocaleString('tr-TR');
+    const b22 = Number(dbKurlar.ALTIN_22AYAR || 5745).toLocaleString('tr-TR');
+    const bist100 = Number(dbKurlar.BIST100 || 10450).toLocaleString('tr-TR');
+    const deg = dbKurlar.degisimler || {};
     const updateTime = dbKurlar.sonGuncelleme ? new Date(dbKurlar.sonGuncelleme).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '-';
 
     const items = `
-        <div class="borsa-item" title="Amerikan Doları">
+        <div class="borsa-item" title="Amerikan Doları (Serbest Piyasa)">
             <span class="borsa-item-flag">🇺🇸</span>
             <span class="borsa-item-code">USD/TRY:</span>
             <span class="borsa-item-val">${usd} ₺</span>
-            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.12</span>
+            ${renderFormatChangeTag(deg.USD || "%0,22")}
         </div>
-        <div class="borsa-item" title="Euro">
+        <div class="borsa-item" title="Euro (Serbest Piyasa)">
             <span class="borsa-item-flag">🇪🇺</span>
             <span class="borsa-item-code">EUR/TRY:</span>
             <span class="borsa-item-val">${eur} ₺</span>
-            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.08</span>
+            ${renderFormatChangeTag(deg.EUR || "%-0,24")}
+        </div>
+        <div class="borsa-item" title="İngiliz Sterlini">
+            <span class="borsa-item-flag">🇬🇧</span>
+            <span class="borsa-item-code">GBP/TRY:</span>
+            <span class="borsa-item-val">${gbp} ₺</span>
+            ${renderFormatChangeTag(deg.GBP || "%-0,12")}
         </div>
         <div class="borsa-item gold" title="24 Ayar Gram Altın">
             <span class="borsa-item-flag">🪙</span>
             <span class="borsa-item-code">Gram Altın:</span>
             <span class="borsa-item-val">${grAltin} ₺</span>
-            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.25</span>
+            ${renderFormatChangeTag(deg.ALTIN_GR || "%0,32")}
         </div>
-        <div class="borsa-item gold" title="Çeyrek Altın">
+        <div class="borsa-item gold" title="Yeni Tarihli Çeyrek Altın">
             <span class="borsa-item-flag">🪙</span>
             <span class="borsa-item-code">Çeyrek:</span>
             <span class="borsa-item-val">${ceyrek} ₺</span>
+            ${renderFormatChangeTag(deg.ALTIN_CEYREK || "%0,54")}
         </div>
         <div class="borsa-item gold" title="Yarım Altın">
             <span class="borsa-item-flag">🪙</span>
@@ -206,21 +331,21 @@ function renderGlobalBorsaTicker() {
             <span class="borsa-item-code">Tam:</span>
             <span class="borsa-item-val">${tam} ₺</span>
         </div>
-        <div class="borsa-item gold" title="Cumhuriyet / Ata Altın">
+        <div class="borsa-item gold" title="Cumhuriyet / Ata Lira">
             <span class="borsa-item-flag">🏛️</span>
-            <span class="borsa-item-code">Ata:</span>
+            <span class="borsa-item-code">Ata Lira:</span>
             <span class="borsa-item-val">${ata} ₺</span>
         </div>
-        <div class="borsa-item gold" title="22 Ayar Bilezik Gram">
+        <div class="borsa-item gold" title="22 Ayar Bilezik (Gram)">
             <span class="borsa-item-flag">✨</span>
             <span class="borsa-item-code">22 Ayar:</span>
             <span class="borsa-item-val">${b22} ₺</span>
         </div>
-        <div class="borsa-item" title="Borsa İstanbul 100">
+        <div class="borsa-item" title="Borsa İstanbul 100 Endeksi">
             <span class="borsa-item-flag">📈</span>
             <span class="borsa-item-code">BIST 100:</span>
-            <span class="borsa-item-val">9.452</span>
-            <span class="borsa-item-change"><i class="fa-solid fa-arrow-trend-up"></i> %0.45</span>
+            <span class="borsa-item-val">${bist100}</span>
+            ${renderFormatChangeTag(deg.BIST100 || "%0,45")}
         </div>
         <div class="borsa-item" style="color: var(--text-dim); font-size: 10.5px;" title="Son Kur Güncellemesi">
             <i class="fa-regular fa-clock"></i> <span>${updateTime}</span>
@@ -1864,14 +1989,16 @@ function openKurAyarlariModal() {
         if (el) el.value = val;
     };
 
-    setVal("kurInputUSD", dbKurlar.USD || 34.50);
-    setVal("kurInputEUR", dbKurlar.EUR || 37.20);
-    setVal("kurInputALTIN_GR", dbKurlar.ALTIN_GR || 3050);
-    setVal("kurInputALTIN_CEYREK", dbKurlar.ALTIN_CEYREK || 5000);
-    setVal("kurInputALTIN_YARIM", dbKurlar.ALTIN_YARIM || 10000);
-    setVal("kurInputALTIN_TAM", dbKurlar.ALTIN_TAM || 20000);
-    setVal("kurInputALTIN_ATA", dbKurlar.ALTIN_ATA || 20600);
-    setVal("kurInputALTIN_22AYAR", dbKurlar.ALTIN_22AYAR || 2800);
+    setVal("kurInputUSD", dbKurlar.USD || 50.36);
+    setVal("kurInputEUR", dbKurlar.EUR || 55.56);
+    setVal("kurInputGBP", dbKurlar.GBP || 66.60);
+    setVal("kurInputALTIN_GR", dbKurlar.ALTIN_GR || 6280);
+    setVal("kurInputALTIN_CEYREK", dbKurlar.ALTIN_CEYREK || 10266);
+    setVal("kurInputALTIN_YARIM", dbKurlar.ALTIN_YARIM || 20532);
+    setVal("kurInputALTIN_TAM", dbKurlar.ALTIN_TAM || 41064);
+    setVal("kurInputALTIN_ATA", dbKurlar.ALTIN_ATA || 42220);
+    setVal("kurInputALTIN_22AYAR", dbKurlar.ALTIN_22AYAR || 5745);
+    setVal("kurInputBIST100", dbKurlar.BIST100 || 10450);
 
     openModal('modalKurAyarlari');
 }
@@ -1884,14 +2011,16 @@ function saveKurAyarlariForm(e) {
         return isNaN(v) || v <= 0 ? def : v;
     };
 
-    dbKurlar.USD = getNum("kurInputUSD", 34.50);
-    dbKurlar.EUR = getNum("kurInputEUR", 37.20);
-    dbKurlar.ALTIN_GR = getNum("kurInputALTIN_GR", 3050);
-    dbKurlar.ALTIN_CEYREK = getNum("kurInputALTIN_CEYREK", 5000);
-    dbKurlar.ALTIN_YARIM = getNum("kurInputALTIN_YARIM", 10000);
-    dbKurlar.ALTIN_TAM = getNum("kurInputALTIN_TAM", 20000);
-    dbKurlar.ALTIN_ATA = getNum("kurInputALTIN_ATA", 20600);
-    dbKurlar.ALTIN_22AYAR = getNum("kurInputALTIN_22AYAR", 2800);
+    dbKurlar.USD = getNum("kurInputUSD", 50.36);
+    dbKurlar.EUR = getNum("kurInputEUR", 55.56);
+    dbKurlar.GBP = getNum("kurInputGBP", 66.60);
+    dbKurlar.ALTIN_GR = getNum("kurInputALTIN_GR", 6280);
+    dbKurlar.ALTIN_CEYREK = getNum("kurInputALTIN_CEYREK", 10266);
+    dbKurlar.ALTIN_YARIM = getNum("kurInputALTIN_YARIM", 20532);
+    dbKurlar.ALTIN_TAM = getNum("kurInputALTIN_TAM", 41064);
+    dbKurlar.ALTIN_ATA = getNum("kurInputALTIN_ATA", 42220);
+    dbKurlar.ALTIN_22AYAR = getNum("kurInputALTIN_22AYAR", 5745);
+    dbKurlar.BIST100 = getNum("kurInputBIST100", 10450);
 
     saveKurlarDb();
     closeModal('modalKurAyarlari');
